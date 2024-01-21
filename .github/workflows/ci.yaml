@@ -27,6 +27,6 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.KEY }}
+          key: ${{ secrets.KEY }}
           command_timeout: 5m
           script: carshenas-frontend/deploy.sh
