@@ -1,0 +1,32 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  build:
+    name: Build Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Build
+        run: docker build .
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    timeout-minutes: 5
+    steps:
+      - name: Run Command
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.KEY }}
+          command_timeout: 5m
+          script: carshenas-frontend/deploy.sh
