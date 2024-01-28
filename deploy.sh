@@ -12,5 +12,4 @@ cd carshenas-frontend
 git checkout $branch
 git pull origin $branch
 docker compose build $image
-docker compose down
-docker compose up -d
+docker compose up --force-recreate $image -d

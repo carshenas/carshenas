@@ -21,12 +21,22 @@ jobs:
     needs: [build]
     timeout-minutes: 5
     steps:
-      - name: Run Command
+      - name: Run Command for Main Branch
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           command_timeout: 5m
-          script: carshenas-frontend/deploy.sh ${{ GITHUB_REF##*/ }}
+          script: carshenas-frontend/deploy.sh main
+        if: github.ref == 'refs/heads/main'
 
+      - name: Run Command for Development Branch
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          command_timeout: 5m
+          script: carshenas-frontend/deploy.sh development
+        if: github.ref == 'refs/heads/development'
