@@ -1,11 +1,11 @@
 #! /bin/bash
 
 if [ $1 == "main" ]; then
-  branch = main
-  image = main
+  branch=main
+  image=main
 else
-  branch = development
-  image = development
+  branch=development
+  image=development
 fi
 
 cd carshenas-frontend
