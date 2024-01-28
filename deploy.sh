@@ -10,6 +10,6 @@ fi
 
 cd carshenas-frontend
 git checkout "$branch"
-git pull origin "$branch"
+git pull origin "$branch" --rebase
 docker compose build "$image"
 docker compose up --force-recreate "$image" -d
