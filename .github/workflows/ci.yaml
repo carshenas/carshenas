@@ -4,13 +4,12 @@ on:
   push:
     branches:
       - main
+      - development
 
 jobs:
-
   build:
     name: Build Test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
@@ -29,4 +28,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           command_timeout: 5m
-          script: carshenas-frontend/deploy.sh
+          script: carshenas-frontend/deploy.sh ${GITHUB_REF##*/}
