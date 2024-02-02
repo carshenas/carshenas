@@ -12,6 +12,5 @@ declare namespace NodeJS {
     // app config
     BASE_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
     DISPLAY_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
-    WEBSITE_URL: string | undefined
   }
 }
