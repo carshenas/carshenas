@@ -34,22 +34,8 @@ export default createVuetify({
   },
   defaults: {
     VBtn: {
-      color: 'primary'
-    },
-    VTextField: {
-      variant: 'outlined',
-      clearable: true,
-      clearIcon: 'mdi-close'
-    },
-    VAutocomplete: {
-      variant: 'outlined',
-      clearIcon: 'mdi-close',
-      itemValue: 'id'
-    },
-    VSelect: {
-      variant: 'outlined',
-      clearIcon: 'mdi-close',
-      itemValue: 'id'
+      color: 'primary',
+      flat: true
     }
   }
 })
