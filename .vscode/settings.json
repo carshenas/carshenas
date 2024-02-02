@@ -15,9 +15,11 @@
   "editor.suggest.showStatusBar": true,
   // Prettier
   "prettier.printWidth": 80,
+  "prettier.useTabs": true,
   "prettier.tabWidth": 2,
   "prettier.singleQuote": false,
   "prettier.trailingComma": "none",
   "prettier.bracketSpacing": true,
+  // CSpell
   "cSpell.words": ["carshenas", "Composables", "pinia", "vuetify"]
 }
