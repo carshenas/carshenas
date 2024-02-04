@@ -7,7 +7,13 @@ import { RouterView } from 'vue-router'
 </template>
 
 <style lang="scss">
+body {
+  display: grid;
+  place-items: center;
+}
+
 #app {
+  width: 100%;
   max-width: 480px;
 }
 </style>
