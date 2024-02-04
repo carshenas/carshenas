@@ -5,3 +5,9 @@ import { RouterView } from 'vue-router'
 <template>
   <RouterView />
 </template>
+
+<style lang="scss">
+#app {
+  max-width: 480px;
+}
+</style>
