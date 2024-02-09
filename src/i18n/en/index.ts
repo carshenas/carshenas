@@ -1,5 +1,7 @@
 import search from './search'
+import shared from './shared'
 
 export default {
-  search
+  search,
+  shared
 }
