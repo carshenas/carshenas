@@ -9,7 +9,7 @@ defineProps<{
 <template>
   <router-link
     class="category w-100 d-flex flex-column justify-center align-center"
-    :to="{ name: 'ProductsPage', params: { categoryId: id } }"
+    :to="{ name: 'ProductsPage', query: { categoryId: id } }"
   >
     <div class="icon w-100 bg-primary rounded-circle d-flex justify-center align-center">
       <img :src="icon" :alt="title" width="32" />
