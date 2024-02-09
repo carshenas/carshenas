@@ -1,17 +1,18 @@
 import { md3 } from 'vuetify/blueprints'
 import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+// Styles
+import 'vuetify/styles'
 
 // Icons
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import { aliases, md } from 'vuetify/iconsets/md'
 
-// Styles
-import 'vuetify/styles'
-
 // I18n
 import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
 import { useI18n } from 'vue-i18n'
-
 import i18n from './i18n'
 
 export default createVuetify({
@@ -36,6 +37,8 @@ export default createVuetify({
           'on-secondary': '#FFFFFF',
           background: '#FFFFFF',
           'on-background': '#262626',
+          text: '#262626',
+          'on-text': '#ffffff',
           surface: '#262626',
           'on-surface': '#FFFFFF',
           success: '#A80710',
@@ -51,6 +54,8 @@ export default createVuetify({
       }
     }
   },
+  components,
+  directives,
   defaults: {
     VBtn: {
       color: 'primary',
