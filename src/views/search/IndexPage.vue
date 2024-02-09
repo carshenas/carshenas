@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type PopularSearch from '@/types/dto/popular-search'
-import type Category from '@/types/dto/category'
 import CategoryList from '@/components/CategoryList.vue'
 
 const popularSearches = ref<PopularSearch[]>([
