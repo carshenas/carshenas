@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type PopularModel from '@/types/dto/popular-model'
-
+import CategoryList from '@/components/CategoryList.vue'
 
 const popularModels = ref<PopularModel[]>([
   { id: 1, title: '206', image: "../../../public/PopularModelsIMG/206.png" },
@@ -27,7 +27,7 @@ const popularModels = ref<PopularModel[]>([
       </v-btn>
     </section>
 
-    <section class="my-6">
+    <section class="my-12">
       <h2 class="title-sm">
         {{ $t('landing.popularModels') }}
       </h2>
@@ -37,7 +37,14 @@ const popularModels = ref<PopularModel[]>([
         </a>
       </div>
     </section>
-
+    <section class="my-12">
+      <div>
+        <h2 class="title-sm">
+          {{ $t('landing.popularCatagories') }}
+        </h2>
+      </div>
+      <CategoryList class="mt-4" />
+    </section>
   </div>
 </template>
 
