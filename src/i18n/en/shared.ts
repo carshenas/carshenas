@@ -1,3 +1,4 @@
 export default {
-  search: 'Search'
+  search: 'Search',
+  more: '+more'
 }

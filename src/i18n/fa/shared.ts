@@ -1,3 +1,4 @@
 export default {
-  search: 'جستجو'
+  search: 'جستجو',
+  more: 'مشاهده همه'
 }

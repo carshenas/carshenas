@@ -38,12 +38,25 @@ const popularModels = ref<PopularModel[]>([
       </div>
     </section>
     <section class="my-12">
-      <div>
+      <div class="d-flex justify-space-between align-center">
         <h2 class="title-sm">
           {{ $t('landing.popularCatagories') }}
         </h2>
+        <v-btn variant="text">
+          {{ $t('shared.more') }}
+        </v-btn>
       </div>
       <CategoryList class="mt-4" />
+    </section>
+    <section class="my-12">
+      <div class="d-flex justify-space-between align-center">
+        <h2 class="title-sm">
+          {{ $t('landing.blog') }}
+        </h2>
+        <v-btn variant="text">
+          {{ $t('shared.more') }}
+        </v-btn>
+      </div>
     </section>
   </div>
 </template>
