@@ -1,8 +1,8 @@
 import search from './search'
 import shared from './shared'
-import landing from './landing'
+import home from './home'
 export default {
   search,
   shared,
-  landing
+  home
 }

@@ -14,9 +14,9 @@ const router = createRouter({
       component: () => import('../views/product/ListPage.vue')
     },
     {
-      path: '/landing',
-      name: 'LandingPage',
-      component: () => import('../views/landing/IndexPage.vue')
+      path: '/home',
+      name: 'HomePage',
+      component: () => import('../views/home/IndexPage.vue')
     }
   ]
 })

@@ -1,4 +1,4 @@
-export default interface BlogPost {
+export default interface Posts {
   id: number
   title: string
   image: string
