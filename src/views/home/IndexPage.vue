@@ -2,7 +2,7 @@
 import CategoryList from '@/components/CategoryList.vue'
 import popularModels from './components/popularModels.vue';
 import blogPost from './components/blogPosts.vue'
-import sectionTitle from './components/sectionTitle.vue';
+
 </script>
 
 <template>
@@ -25,20 +25,42 @@ import sectionTitle from './components/sectionTitle.vue';
     </header>
 
     <section class="my-12">
-      <sectionTitle :title="$t('home.popularCatagories')" />
+
+      <h2 class="title-sm">
+        {{ $t('home.popularModels') }}
+      </h2>
 
       <popularModels />
+
     </section>
 
     <section class="my-12">
-      <sectionTitle :title="$t('home.popularCatagories')" :buttonContent="$t('shared.more')" />
+      <div class="d-flex justify-space-between align-center">
+        <h2 class="title-sm">
+          {{ $t('home.popularCatagories') }}
+        </h2>
+
+        <v-btn variant="text">
+          {{ $t('shared.more') }}
+        </v-btn>
+      </div>
 
       <CategoryList class="mt-4" />
+
     </section>
 
     <section class="my-12">
+      <div class="d-flex justify-space-between align-center">
 
-      <sectionTitle :title="$t('home.blog')" :buttonContent="$t('shared.more')" />
+        <h2 class="title-sm">
+          {{ $t('home.blog') }}
+        </h2>
+
+        <v-btn variant="text">
+          {{ $t('shared.more') }}
+        </v-btn>
+
+      </div>
 
       <blogPost />
     </section>
