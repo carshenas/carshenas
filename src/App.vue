@@ -16,4 +16,9 @@ body {
   width: 100%;
   max-width: 480px;
 }
+
+#app>div {
+  max-width: 100vw;
+}
+
 </style>
