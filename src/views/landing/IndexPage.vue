@@ -1,13 +1,45 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type PopularModel from '@/types/dto/popular-model'
+import type BlogPost from '@/types/dto/blog'
 import CategoryList from '@/components/CategoryList.vue'
 
 const popularModels = ref<PopularModel[]>([
-  { id: 1, title: '206', image: "../../../public/PopularModelsIMG/206.png" },
-  { id: 2, title: 'samand', image: "../../../public/PopularModelsIMG/samand.png" },
-  { id: 3, title: '206', image: "../../../public/PopularModelsIMG/206.png" },
-  { id: 4, title: 'samand', image: "../../../public/PopularModelsIMG/samand.png" }
+  { id: 1, title: '206', image: "/PopularModelsIMG/206.png" },
+  { id: 2, title: 'samand', image: "/PopularModelsIMG/samand.png" },
+  { id: 3, title: '206', image: "/PopularModelsIMG/206.png" },
+  { id: 4, title: 'samand', image: "/PopularModelsIMG/samand.png" }
+])
+
+const blogPost = ref<BlogPost[]>([
+  {
+    id: 1,
+    title: 'بررسی اجمالی خودرو کلاسیک بر بی ام و e30',
+    image: ' /blog-images/test1.jpg',
+    date: '۲۲ خرداد 1402',
+    tag: 'کلاسیک باز'
+  },
+  {
+    id: 2,
+    title: 'بررسی اجمالی خودرو کلاسیک بر بی ام و e30',
+    image: ' /blog-images/test1.jpg',
+    date: '۲۲ خرداد 1402',
+    tag: 'کلاسیک باز'
+  },
+  {
+    id: 3,
+    title: 'بررسی اجمالی خودرو کلاسیک بر بی ام و e30',
+    image: ' /blog-images/test1.jpg',
+    date: '۲۲ خرداد 1402',
+    tag: 'کلاسیک باز'
+  },
+  {
+    id: 4,
+    title: 'بررسی اجمالی خودرو کلاسیک بر بی ام و e30',
+    image: ' /blog-images/test1.jpg',
+    date: '۲۲ خرداد 1402',
+    tag: 'کلاسیک باز'
+  }
 ])
 
 </script>
@@ -37,6 +69,7 @@ const popularModels = ref<PopularModel[]>([
         </a>
       </div>
     </section>
+
     <section class="my-12">
       <div class="d-flex justify-space-between align-center">
         <h2 class="title-sm">
@@ -48,6 +81,7 @@ const popularModels = ref<PopularModel[]>([
       </div>
       <CategoryList class="mt-4" />
     </section>
+
     <section class="my-12">
       <div class="d-flex justify-space-between align-center">
         <h2 class="title-sm">
@@ -57,7 +91,30 @@ const popularModels = ref<PopularModel[]>([
           {{ $t('shared.more') }}
         </v-btn>
       </div>
+
+      <div class="mt-4  d-flex overflow-auto over">
+        <v-card class="ml-4" v-for="blog in blogPost" :key="blog.id" width="258" min-width="258" height="145">
+          <v-img class="px-3 py-2" :src="blog.image" cover gradient=" rgba(12,6,52,.6), rgba(12,6,52,.6)">
+            <div class="d-flex justify-end">
+              <v-btn density="compact" icon="more_vert" variant="text">
+              </v-btn>
+            </div>
+            <h3 class="mt-7 title-sm ">
+              {{ blog.title }}
+            </h3>
+            <div class="d-flex justify-space-between mt-2">
+              <span class="subtitle">
+                {{ blog.tag }}
+              </span>
+              <span class="subtitle">
+                {{ blog.date }}
+              </span>
+            </div>
+          </v-img>
+        </v-card>
+      </div>
     </section>
+
   </div>
 </template>
 
