@@ -12,8 +12,14 @@ const router = createRouter({
       path: '/product/list',
       name: 'ProductsPage',
       component: () => import('../views/product/ListPage.vue')
+    },
+    {
+      path: '/landing',
+      name: 'LandingPage',
+      component: () => import('../views/landing/IndexPage.vue')
     }
   ]
 })
+
 
 export default router
