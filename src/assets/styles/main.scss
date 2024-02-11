@@ -1,6 +1,16 @@
+@import 'resets';
+@import 'typography';
+
 .title-sm {
   font-size: 0.875rem;
   font-style: normal;
   font-weight: 500;
   line-height: 20px;
+}
+
+.body-lg {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5em;
 }
