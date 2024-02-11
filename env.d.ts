@@ -2,15 +2,15 @@
 
 declare namespace NodeJS {
   interface ProcessEnv {
-    APP_VERSION: string | undefined
-    APP_STAGE: 'DEVELOPMENT' | 'PRODUCTION' | undefined
+    VITE_APP_VERSION: string | undefined
+    VITE_APP_STAGE: 'DEVELOPMENT' | 'PRODUCTION' | undefined
 
     // api
-    SSL_ENABLED: 'true' | 'false' | undefined
-    API_SERVER: string | undefined
+    VITE_SSL_ENABLED: 'true' | 'false' | undefined
+    VITE_API_SERVER: string | undefined
 
     // app config
-    BASE_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
-    DISPLAY_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
+    VITE_BASE_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
+    VITE_DISPLAY_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
   }
 }

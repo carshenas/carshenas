@@ -2,8 +2,10 @@
 import { ref } from 'vue'
 import type PopularSearch from '@/types/dto/popular-search'
 import CategoryList from '@/components/CategoryList.vue'
+import { RouterLink } from 'vue-router'
+import ProductList from '@/components/ProductList.vue'
 
-const popularSearches = ref<PopularSearch[]>([
+const suggestions = ref<PopularSearch[]>([
   { id: 1, title: 'ساینا' },
   { id: 2, title: 'لنت ترمز' },
   { id: 3, title: '207' },
@@ -37,15 +39,11 @@ const search = ref<string>()
       </template>
     </v-text-field>
 
-    <v-chip
-      v-for="popularSearch in popularSearches"
-      :key="popularSearch.id"
-      variant="outlined"
-      class="ml-4 mt-4"
-      rounded
-    >
-      {{ popularSearch.title }}
-    </v-chip>
+    <v-chip-group column class="mt-4">
+      <v-chip v-for="suggestion in suggestions" :key="suggestion.id" variant="outlined" rounded>
+        {{ suggestion.title }}
+      </v-chip>
+    </v-chip-group>
 
     <h2 class="title-sm mt-6">
       {{
@@ -56,5 +54,23 @@ const search = ref<string>()
     </h2>
 
     <CategoryList class="mt-4" />
+
+    <div class="mt-6 w-100 d-flex">
+      <h2 class="title-sm">
+        {{
+          $t('search.searchInProducts', {
+            item: search
+          })
+        }}
+      </h2>
+
+      <v-spacer />
+
+      <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
+        {{ $t('search.viewAll') }}
+      </RouterLink>
+    </div>
+
+    <ProductList class="mt-4" />
   </div>
 </template>
