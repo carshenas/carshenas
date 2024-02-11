@@ -1,4 +1,4 @@
 export default {
   search: 'جستجو',
-  more: 'مشاهده همه'
+  viewAll: 'مشاهده همه'
 }

@@ -14,12 +14,11 @@ const router = createRouter({
       component: () => import('../views/product/ListPage.vue')
     },
     {
-      path: '/home',
+      path: '/',
       name: 'HomePage',
       component: () => import('../views/home/IndexPage.vue')
     }
   ]
 })
-
 
 export default router

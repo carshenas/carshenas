@@ -1,4 +1,4 @@
 export default {
   search: 'Search',
-  more: '+more'
+  viewAll: 'view all'
 }
