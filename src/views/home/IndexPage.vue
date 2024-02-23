@@ -13,7 +13,7 @@ import blogPost from './components/blogPosts.vue'
         {{ $t('home.headline') }}
       </h1>
 
-      <v-btn block rounded="pill" color="outline" size="x-large" variant="outlined"
+      <v-btn block rounded="pill" color="outline" size="x-large" variant="outlined" to="/search"
         class="d-flex justify-space-between mt-6 mb-12" hide-details>
         {{ $t('shared.search') }}
         <template v-slot:append>

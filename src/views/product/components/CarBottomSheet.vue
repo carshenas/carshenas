@@ -1,7 +1,7 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue'
 import type Brands from '@/types/dto/brands'
 import CarBrandsList from './CarBrandsList.vue'
 import SelectedBrandModels from './SelectedBrandModels.vue'
@@ -9,7 +9,7 @@ import SelectedBrandModels from './SelectedBrandModels.vue'
 const sheet = ref(false)
 const carBrands = ref<Brands[]>([
   { id: 1, icon: "../../../../public/icons/battery.svg", name: "سایپا", models: ["کوییک", "ساینا", "پراید"] },
-  { id: 1, icon: "../../../../public/icons/battery.svg", name: "ایرانخودرو", models: ["تارا", "سمند", "دنا"] },
+  { id: 2, icon: "../../../../public/icons/battery.svg", name: "ایرانخودرو", models: ["تارا", "سمند", "دنا"] },
 ])
 const selectedBrand = ref<Brands | null>(null)
 
@@ -20,6 +20,13 @@ const selectBrand = (brand: Brands) => {
 const goBack = () => {
   selectedBrand.value = null
 }
+
+
+const emit = defineEmits(['modelSelected']);
+
+const handleModelSelected = (modelName: string) => {
+  emit('modelSelected', modelName);
+};
 </script>
     
 
@@ -40,7 +47,8 @@ const goBack = () => {
     </template>
 
     <CarBrandsList v-if="!selectedBrand" :carBrands="carBrands" @selectBrand="selectBrand" />
-    <SelectedBrandModels v-if="selectedBrand" :selectedBrand="selectedBrand" @goBack="goBack" />
+    <SelectedBrandModels v-if="selectedBrand" :selectedBrand="selectedBrand" @goBack="goBack"
+      @modelSelected="handleModelSelected" />
   </v-bottom-sheet>
 </template>
 

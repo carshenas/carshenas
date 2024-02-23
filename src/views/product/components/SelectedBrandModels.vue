@@ -20,7 +20,7 @@ defineProps({
       {{ selectedBrand.name }}
     </v-btn>
     <div v-if="selectedBrand">
-      <v-list-item v-for="model in selectedBrand.models" :key="model">
+      <v-list-item v-for="model in selectedBrand.models" :key="model" @click="$emit('modelSelected', model)">
         {{ model }}
       </v-list-item>
     </div>

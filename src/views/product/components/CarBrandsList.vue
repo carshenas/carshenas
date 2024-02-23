@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type Brands from '@/types/dto/brands';
 
-// Define props using defineProps
 defineProps({
   carBrands: {
     type: Array as () => Brands[],

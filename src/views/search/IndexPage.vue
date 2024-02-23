@@ -18,14 +18,8 @@ const search = ref<string>()
 </script>
 
 <template>
-  <div class="pa-4">
-    <v-text-field
-      v-model="search"
-      :placeholder="$t('shared.search')"
-      variant="outlined"
-      rounded
-      hide-details
-    >
+  <div class="z">
+    <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details>
       <template v-slot:prepend-inner>
         <v-btn variant="text" class="pa-0" size="x-small" color="text">
           <v-icon icon="arrow_forward_ios" />
