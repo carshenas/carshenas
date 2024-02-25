@@ -1,4 +1,5 @@
 export default {
   search: 'جستجو',
-  viewAll: 'مشاهده همه'
+  viewAll: 'مشاهده همه',
+  carFilter: 'فیلتر خودرو'
 }

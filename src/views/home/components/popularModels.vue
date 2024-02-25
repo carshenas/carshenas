@@ -3,7 +3,7 @@
 import { ref } from 'vue'
 import type PopularModel from '@/types/dto/popular-model'
 
-const loading = ref(true);
+const loading = ref(false);
 const skeletonArray = [1, 2, 3];
 const Models = ref<PopularModel[]>([
   { id: 1, title: '206', image: "/PopularModelsIMG/206.png" },

@@ -3,7 +3,7 @@
 import { ref } from 'vue'
 import type Posts from '@/types/dto/blog'
 
-const loading = ref(true);
+const loading = ref(false);
 const skeletonArray = [1, 2];
 const Post = ref<Posts[]>([
   {
@@ -38,9 +38,9 @@ const Post = ref<Posts[]>([
 </script>
 
 <template>
-  <div v-if="!loading" class="mt-4  d-flex overflow-auto over">
+  <div v-if="!loading" class="mt-4 d-flex overflow-auto">
     <v-card class="ml-4" v-for="blog in Post" :key="blog.id" width="258" min-width="258" height="145">
-      <v-img class="px-3 py-2" :src="blog.image" cover gradient=" rgba(12,6,52,.6), rgba(12,6,52,.6)">
+      <v-img class="px-3 py-2 text-white" :src="blog.image" cover gradient=" rgba(12,6,52,.6), rgba(12,6,52,.6)">
         <div class="d-flex justify-end">
           <v-btn density="compact" icon="more_vert" variant="text">
           </v-btn>
