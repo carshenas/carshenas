@@ -1,8 +1,8 @@
 import type { FetchOptions, FetchPath, FetchResponse } from './types'
 import { generateURL, mergeOptions } from './helpers'
 
-const useFetch = async <D>(path: FetchPath, options: FetchOptions): Promise<any> => {
-  const url = generateURL(path, { baseURL: options.baseURL, parameters: options.parameters })
+const useFetch = async <D = unknown>(path: FetchPath, options?: FetchOptions): Promise<any> => {
+  const url = generateURL(path, { baseURL: options?.baseURL, parameters: options?.parameters })
   const mergedOptions = mergeOptions(options)
 
   try {

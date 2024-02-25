@@ -1,8 +1,12 @@
-import { defaultHeaders } from './defaults'
+import { defaultHeaders, defaultScheme } from './constants'
 import type { FetchPath, CreateURLOptions, FetchOptions } from './types'
 
 export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => {
-  const baseURL = new URL(options.baseURL || location.origin)
+  let baseURL
+
+  if (options.baseURL && !/^[a-z0-9]+:\/\//.test(options.baseURL.toString()))
+    baseURL = new URL(`${defaultScheme}://${options.baseURL}`)
+  else baseURL = new URL(options.baseURL || location.origin)
 
   const stringifiedUrl = Array.isArray(path) ? path.join('/') : path
   const url = new URL(stringifiedUrl, baseURL)
@@ -16,12 +20,12 @@ export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => 
   return url
 }
 
-export const mergeOptions = (options: FetchOptions): FetchOptions => ({
+export const mergeOptions = (options?: FetchOptions): FetchOptions => ({
   ...options,
-  headers: generateHeaders(options.headers)
+  headers: generateHeaders(options?.headers)
 })
 
-const generateHeaders = (headers: HeadersInit | undefined) => {
+const generateHeaders = (headers?: HeadersInit | undefined) => {
   const mergedHeaders = new Headers({ ...defaultHeaders, ...headers })
 
   return mergedHeaders
