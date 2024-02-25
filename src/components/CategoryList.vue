@@ -4,10 +4,10 @@ import type Category from '@/types/dto/category'
 import { ref, onMounted } from 'vue'
 
 // Services
-import { getCategoryListService } from '@/services/carshenas/products/category'
+import { getCategoryListService } from '@/services/carshenas/category'
 
 const loading = ref<boolean>(false)
-const categories = ref<Category[]>([])
+const categories = ref<Category[]>()
 
 const getCategories = async () => {
   loading.value = true
@@ -17,6 +17,8 @@ const getCategories = async () => {
     categories.value = response
   } catch (e) {
     console.error(e)
+  } finally {
+    loading.value = false
   }
 }
 
