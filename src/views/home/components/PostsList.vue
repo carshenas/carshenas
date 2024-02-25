@@ -33,7 +33,7 @@ onMounted(() => getPosts())
       height="145"
     >
       <v-img
-        class="px-3 py-2"
+        class="px-3 py-2 text-white"
         :src="post.image"
         cover
         gradient=" rgba(12,6,52,.6), rgba(12,6,52,.6)"

@@ -17,6 +17,7 @@ import blogPost from './components/PostsList.vue'
         color="outline"
         size="x-large"
         variant="outlined"
+        to="/search"
         class="d-flex justify-space-between mt-6 mb-12"
         hide-details
       >
