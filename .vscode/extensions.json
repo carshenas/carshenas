@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "Vue.volar",
-    "Vue.vscode-typescript-vue-plugin",
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "streetsidesoftware.code-spell-checker",
@@ -10,5 +9,9 @@
     "zixuanchen.vitest-explorer",
     "sourcegraph.cody-ai"
   ],
-  "unwantedRecommendations": ["octref.vetur", "wayou.vscode-todo-highlight"]
+  "unwantedRecommendations": [
+    "octref.vetur",
+    "wayou.vscode-todo-highlight",
+    "Vue.vscode-typescript-vue-plugin"
+  ]
 }

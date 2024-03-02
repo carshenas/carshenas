@@ -1,25 +1,39 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type PopularSearch from '@/types/dto/popular-search'
 import CategoryList from '@/components/CategoryList.vue'
 import { RouterLink } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
+import SearchSuggestions from './components/SearchSuggestions.vue'
+import { useDatabaseStore } from '@/stores/database'
+import { onBeforeRouteLeave } from 'vue-router'
+import { generateNumericId } from '@/helpers/general'
 
-const suggestions = ref<PopularSearch[]>([
-  { id: 1, title: 'ساینا' },
-  { id: 2, title: 'لنت ترمز' },
-  { id: 3, title: '207' },
-  { id: 4, title: 'آینه پراید' },
-  { id: 5, title: 'لوازم دنا' },
-  { id: 6, title: 'سوپرا' }
-])
-
+const { openDb, getDb, getStore, add } = useDatabaseStore()
 const search = ref<string>()
+
+openDb('search', undefined, (db: IDBDatabase) => {
+  db.createObjectStore('suggestions', { keyPath: 'id' })
+})
+
+onBeforeRouteLeave(async (to, from, next) => {
+  if ((to.name === 'ProductsPage' || to.name === 'ProductDetail') && search.value) {
+    const searchDb = await getDb('search')
+    const suggestions = getStore(searchDb, 'suggestions')
+    add(suggestions, { title: search.value, id: generateNumericId() })
+  }
+  next()
+})
 </script>
 
 <template>
   <div class="z">
-    <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details>
+    <v-text-field
+      v-model="search"
+      :placeholder="$t('shared.search')"
+      variant="outlined"
+      rounded
+      hide-details
+    >
       <template v-slot:prepend-inner>
         <v-btn variant="text" class="pa-0" size="x-small" color="text">
           <v-icon icon="arrow_forward_ios" />
@@ -33,11 +47,7 @@ const search = ref<string>()
       </template>
     </v-text-field>
 
-    <v-chip-group column class="mt-4">
-      <v-chip v-for="suggestion in suggestions" :key="suggestion.id" variant="outlined" rounded>
-        {{ suggestion.title }}
-      </v-chip>
-    </v-chip-group>
+    <SearchSuggestions />
 
     <h2 class="title-sm mt-6">
       {{

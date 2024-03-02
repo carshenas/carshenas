@@ -1,4 +1,4 @@
-export default interface PopularSearch {
+export default interface SearchSuggestion {
   title: string
   id: number
 }

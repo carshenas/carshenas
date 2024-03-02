@@ -72,7 +72,6 @@ pnpm lint
 For an improved development experience, we recommend using the following extensions:
 
 - **Vue language feature (Volar)**: Enhances Vue.js development by providing advanced language features and improved performance.
-- **Typescript Vue Plugin (Volar)**: A plugin that augments TypeScript support for Vue.js, offering better code intelligence and tooling.
 - **ESLint**: Helps maintain code quality by identifying and fixing common programming errors and enforcing code style.
 - **Prettier**: Automatically formats your code to ensure a consistent and readable style across your project.
 - **Better Comments**: Allows you to create more informative and visually distinct comments in your code for better readability.
@@ -85,6 +84,7 @@ For an improved development experience, we recommend using the following extensi
 
 - **Vetur**: As it might conflict with or duplicate functionality provided by Volar for Vue.js development.
 - **TODO Highlight**: As it might not be necessary when using ESLint and other code analysis tools.
+- **Typescript Vue Plugin (Volar)**: A plugin that augments TypeScript support for Vue.js, offering better code intelligence and tooling.
 
 **Do not change .vscode folder settings**
 
