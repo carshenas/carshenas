@@ -6,6 +6,7 @@ defineProps<{
   title: string
   price: number
 }>()
+
 </script>
 
 <template>

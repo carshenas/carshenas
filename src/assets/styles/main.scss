@@ -1,6 +1,12 @@
 @import 'resets';
 @import 'typography';
 
+body {
+  height: 100dvh;
+}
+#app {
+  height: 100dvh;
+}
 .headline-sm {
   font-size: 1.5rem;
   font-style: normal;

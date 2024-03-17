@@ -14,6 +14,16 @@ const router = createRouter({
       component: () => import('../views/product/ListPage.vue')
     },
     {
+      path: '/profile',
+      name: 'userProfile',
+      component: () => import('../views/profile/indexPage.vue')
+    },
+    {
+      path: '/profile/info',
+      name: 'userProfileInfo',
+      component: () => import('../views/profile/infoPage.vue')
+    },
+    {
       path: '/',
       name: 'HomePage',
       component: () => import('../views/home/IndexPage.vue')
