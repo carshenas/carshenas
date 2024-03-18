@@ -6,8 +6,15 @@ export default {
   email: 'ایمیل',
   nationalCode: 'کد ملی',
   addresses: 'آدرس ها',
+  address: 'آدرس',
   orders: 'سفارش ها',
   support: 'پشتیبانی',
   notification: 'اعلان',
-  logout: 'خروج'
+  logout: 'خروج',
+  newAddress: 'آدرس جدید',
+  state: 'استان',
+  city: 'شهر',
+  plaque: 'پلاک',
+  unit: 'واحد',
+  postalCode: 'کد پستی',
 }

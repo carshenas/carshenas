@@ -1,7 +1,4 @@
 <script setup lang="ts">
-
-
-
 </script>
 <template>
     <section class="pa-4 d-flex flex-column ga-8 h-100">
@@ -22,7 +19,7 @@
 
             <div>
                 <v-btn block rounded="pill" color="primary" size="x-large" hide-details>
-                    ثبت
+                    {{ $t('shared.submit') }}
                 </v-btn>
             </div>
         </v-form>

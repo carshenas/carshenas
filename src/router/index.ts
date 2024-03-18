@@ -23,6 +23,12 @@ const router = createRouter({
       name: 'userProfileInfo',
       component: () => import('../views/profile/infoPage.vue')
     },
+
+    {
+      path: '/profile/addresses',
+      name: 'userProfileAddresses',
+      component: () => import('../views/profile/addressesPage.vue')
+    },
     {
       path: '/',
       name: 'HomePage',
