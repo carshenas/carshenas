@@ -23,11 +23,15 @@ const router = createRouter({
       name: 'userProfileInfo',
       component: () => import('../views/profile/infoPage.vue')
     },
-
     {
       path: '/profile/addresses',
       name: 'userProfileAddresses',
       component: () => import('../views/profile/addressesPage.vue')
+    },
+    {
+      path: '/profile/orders',
+      name: 'userProfileOrders',
+      component: () => import('../views/profile/ordersPage.vue')
     },
     {
       path: '/',

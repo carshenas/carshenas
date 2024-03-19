@@ -50,7 +50,9 @@ const user = ref<users[]>([
           {{ $t('profile.orders') }}
         </span>
       </div>
-      <v-icon icon="arrow_back_ios" color="primary" />
+      <v-btn to="/profile/orders" variant="text">
+        <v-icon icon="arrow_back_ios" color="primary" />
+      </v-btn>
     </div>
 
     <div class="d-flex w-100 justify-space-between">

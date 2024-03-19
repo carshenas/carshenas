@@ -51,7 +51,7 @@ const address = ref<addresses[]>([
         </v-card>
       </v-bottom-sheet>
 
-      <v-card class="mx-auto pa-2" max-width="344" v-for="(addr, index) in address" :key="index">
+      <v-card class="mx-auto w-100 pa-2" v-for="(addr, index) in address" :key="index">
         <div class="d-flex align-center justify-space-between">
           <span>{{ addr.receiver }}</span>
           <v-btn icon="border_color" variant="text" />
