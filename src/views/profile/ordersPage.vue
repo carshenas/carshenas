@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type Order from "@/types/dto/order";
+import OrderCards from "./components/orderCards.vue";
+import OrderItemCards from './components/orderItemCards.vue';
 
 const Orders = ref<Order[]>([
   {
@@ -14,13 +16,15 @@ const Orders = ref<Order[]>([
         itemId: 101,
         itemAmount: 1,
         itemName: 'Product A',
-        itemPrice: '50.00'
+        itemPrice: '100000',
+        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
       },
       {
         itemId: 102,
         itemAmount: 2,
         itemName: 'Product B',
-        itemPrice: '25.00'
+        itemPrice: '100000',
+        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
       }
     ]
   },
@@ -35,11 +39,11 @@ const Orders = ref<Order[]>([
         itemId: 201,
         itemAmount: 1,
         itemName: 'Product C',
-        itemPrice: '30.00'
+        itemPrice: '100000',
+        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
       }
     ]
-  }
-  ,
+  },
   {
     OrderId: 3,
     state: 'canceled',
@@ -48,86 +52,45 @@ const Orders = ref<Order[]>([
     postalCode: '54321',
     orderDetail: [
       {
-        itemId: 201,
+        itemId: 301,
         itemAmount: 1,
-        itemName: 'Product C',
-        itemPrice: '30.00'
+        itemName: 'Product D',
+        itemPrice: '100000',
+        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
       }
     ]
   },
 ]);
 
-const getStateClass = (state: string) => {
-  switch (state) {
-    case 'successful':
-      return 'text-green-darken-4';
-    case 'canceled':
-      return 'text-red-darken-4';
-    case 'doing':
-      return 'text-orange';
-    default:
-      return '';
-  }
+const selectedOrderIndex = ref<number | null>(null);
+
+const toggleOrderDetail = (index: number) => {
+  selectedOrderIndex.value = index;
 }
 
-const getStateText = (state: string) => {
-  switch (state) {
-    case 'successful':
-      return 'تحویل داده شد';
-    case 'doing':
-      return 'درجریان';
-    case 'canceled':
-      return 'لغو شده';
-    default:
-      return '';
-  }
-}
+const clearSelectedOrderIndex = () => {
+  selectedOrderIndex.value = null;
+};
 
-const getStateIcon = (state: string) => {
-  switch (state) {
-    case 'successful':
-      return 'done';
-    case 'doing':
-      return 'pending';
-    case 'canceled':
-      return 'close';
-    default:
-      return '';
-  }
-}
 </script>
 
 <template>
-
-  <section class="pa-4 d-flex flex-column ga-8 h-100">
+  <section class="pa-4 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
-      <v-btn icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
+      <v-btn v-if="selectedOrderIndex === null" icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
+      <v-btn v-if="selectedOrderIndex !== null" icon="arrow_forward_ios" variant="text"
+        @click="clearSelectedOrderIndex" />
       <h1>{{ $t('profile.orders') }}</h1>
       <v-btn icon="" variant="text" />
+
+
     </div>
-    <div class="d-flex flex-column ga-4">
-
-      <v-card class="mx-auto w-100 pa-2" v-for="(order, index) in Orders" :key="index">
-        <div class="d-flex align-center justify-space-between">
-          <span :class="getStateClass(order.state)">{{ getStateText(order.state) }}
-            <v-icon :icon=getStateIcon(order.state) size="x-small" />
-          </span>
-
-          <v-btn icon="more_horiz" variant="text" />
-        </div>
-
-        <v-card-text class="title-md">{{ order.OrderId }}</v-card-text>
-
-        <div class="d-flex w-100 justify-space-between text-grey">
-          <div>
-            <span>{{ order.date }}</span>
-          </div>
-          <div>
-            <span>{{ order.price }}</span>
-          </div>
-        </div>
-      </v-card>
+    <div class=" d-flex flex-column ga-4 mt-4" v-if="selectedOrderIndex === null">
+      <OrderCards v-for="(order, index) in Orders" :key="index" :order="order"
+        :toggleOrderDetail="() => toggleOrderDetail(index)" :index="index" />
     </div>
+
+
+    <OrderItemCards v-if="selectedOrderIndex !== null" :orderDetail="Orders[selectedOrderIndex].orderDetail" />
   </section>
-
 </template>

@@ -7,9 +7,10 @@ export default interface Order {
   orderDetail: OrderItems[]
 }
 
-interface OrderItems {
+export interface OrderItems {
   itemId: number
   itemAmount: number
   itemName: string
   itemPrice: string
+  itemImage: string
 }
