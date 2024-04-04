@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue'
-import type Posts from '@/types/dto/blog'
+import type Posts from '@/types/dto/post'
 
 const loading = ref(false);
 const skeletonArray = [1, 2];
