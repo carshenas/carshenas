@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref, watchEffect } from 'vue'
 import CategoryList from '@/components/CategoryList.vue'
 import { RouterLink } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
@@ -7,11 +7,31 @@ import SearchSuggestions from './components/SearchSuggestions.vue'
 import { useDatabaseStore } from '@/stores/database'
 import { onBeforeRouteLeave } from 'vue-router'
 import { generateNumericId } from '@/helpers/general'
+import type { Category } from '@/types/dto/category'
+import { getCategoryListService } from '@/services/carshenas/category'
+import { debounce } from 'lodash'
 
-const { openDb, getDb, getStore, add } = useDatabaseStore()
+const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
 const search = ref<string>()
 
-openDb('search', undefined, (db: IDBDatabase) => {
+const categories = ref<Category[]>()
+const getCategories = async () => {
+  try {
+    const response = await getCategoryListService({ title: search.value || '' })
+    categories.value = response
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+const onInput = debounce(() => {
+  if (!search.value || search.value.length < 2) return
+
+  getCategories()
+  getProd()
+}, 500)
+
+openDatabase('search', undefined, (db: IDBDatabase) => {
   db.createObjectStore('suggestions', { keyPath: 'id' })
 })
 
@@ -33,6 +53,7 @@ onBeforeRouteLeave(async (to, from, next) => {
       variant="outlined"
       rounded
       hide-details
+      @input="onInput"
     >
       <template v-slot:prepend-inner>
         <v-btn variant="text" class="pa-0" size="x-small" color="text">
@@ -47,7 +68,7 @@ onBeforeRouteLeave(async (to, from, next) => {
       </template>
     </v-text-field>
 
-    <SearchSuggestions />
+    <SearchSuggestions :title="search" @select="search = $event" />
 
     <h2 class="title-sm mt-6">
       {{
@@ -57,7 +78,7 @@ onBeforeRouteLeave(async (to, from, next) => {
       }}
     </h2>
 
-    <CategoryList class="mt-4" />
+    <CategoryList :items="categories" class="mt-4" />
 
     <div class="mt-6 w-100 d-flex">
       <h2 class="title-sm">
@@ -75,6 +96,6 @@ onBeforeRouteLeave(async (to, from, next) => {
       </RouterLink>
     </div>
 
-    <ProductList class="mt-4" />
+    <ProductList :items="products" class="mt-4" />
   </div>
 </template>

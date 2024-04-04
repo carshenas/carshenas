@@ -12,5 +12,8 @@ declare namespace NodeJS {
     // app config
     VITE_BASE_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
     VITE_DISPLAY_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
+
+    // Database
+    VITE_INDEXED_DB_VERSION: number
   }
 }

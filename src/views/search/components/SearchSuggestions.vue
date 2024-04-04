@@ -1,7 +1,19 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import type SearchSuggestion from '@/types/dto/popular-search'
 import { useDatabaseStore } from '@/stores/database'
+
+const props = withDefaults(
+  defineProps<{
+    title?: string
+  }>(),
+  {
+    title: ''
+  }
+)
+const emits = defineEmits<{
+  (event: 'select', payload: string): void
+}>()
 
 const { getDb, getStore, getAll } = useDatabaseStore()
 
@@ -20,12 +32,22 @@ const getSuggestions = async () => {
   }
 }
 
+const filteredSuggestions = computed((): SearchSuggestion[] => {
+  return suggestions.value.filter((suggest) => suggest.title.indexOf(props.title) > -1)
+})
+
 onMounted(() => getSuggestions())
 </script>
 
 <template>
   <v-chip-group column class="mt-4">
-    <v-chip v-for="suggestion in suggestions" :key="suggestion.id" variant="outlined" rounded>
+    <v-chip
+      v-for="suggestion in filteredSuggestions"
+      :key="suggestion.id"
+      variant="outlined"
+      rounded
+      @click="emits('select', suggestion.title)"
+    >
       {{ suggestion.title }}
     </v-chip>
   </v-chip-group>

@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import CategoryItem from '@/components/CategoryItem.vue'
-import type Category from '@/types/dto/category'
+import type { Category } from '@/types/dto/category'
 import { ref, onMounted } from 'vue'
 
 // Services
 import { getCategoryListService } from '@/services/carshenas/category'
 
+const props = defineProps<{
+  items?: Category[]
+}>()
 const loading = ref<boolean>(false)
-const categories = ref<Category[]>()
+const categories = ref<Category[]>(props.items || [])
 
 const getCategories = async () => {
   loading.value = true
@@ -22,7 +25,7 @@ const getCategories = async () => {
   }
 }
 
-onMounted(() => getCategories())
+onMounted(() => (!categories.value ? getCategories() : undefined))
 </script>
 
 <template>

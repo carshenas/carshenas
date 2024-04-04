@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 
 export const useDatabaseStore = defineStore('database', () => {
-  const openDb = async (
+  const open = async (
     name: string,
     // @ts-ignore
-    version: number = import.meta.env.VITE_INDEX_DB_VERSION,
+    version: number = import.meta.env.VITE_INDEXED_DB_VERSION,
     upgradeCallback?: (db: IDBDatabase) => void
   ) => {
     if (!indexedDB) throw new Error('IndexedDB is not supported by your browser')
@@ -56,26 +56,44 @@ export const useDatabaseStore = defineStore('database', () => {
     })
   }
 
-  const getAll = <D>(store: IDBObjectStore, filters?: Record<string, string>) => {
-    return new Promise<D[]>((resolve) => {
-      let result: D[] = []
-      store.openCursor().onsuccess = (event: Event) => {
-        const cursor = (event.target as IDBRequest)?.result
-        if (cursor) {
-          if (filters) {
-            for (const key in filters) {
-              if (filters[key] !== cursor.value[key]) {
-                cursor.continue()
-                return
+  const getAll = async <D>(
+    store: IDBObjectStore, 
+    filters?: Record<string, string>,
+    pageSize = 10,
+    pageNumber = 1
+  ) => {
+  
+    const offset = (pageNumber - 1) * pageSize;
+  
+    return new Promise<D[]>(resolve => {
+      const result: D[] = [];
+  
+      store.openCursor(null, 'next')
+        .onsuccess = (event: Event) => {
+          const cursor = (event.target as IDBRequest)?.result;
+  
+          if(cursor) {
+            if (filters) {
+              for (const key in filters) {
+                if (filters[key] !== cursor.value[key]) {
+                  cursor.continue()
+                  return
+                }
               }
             }
+  
+            result.push(cursor.value);
+            
+            if (result.length >= offset + pageSize) {
+              return resolve(result.slice(offset, offset + pageSize));  
+            }
+  
+            cursor.continue();
+          } else {
+            resolve(result.slice(offset, offset + pageSize));
           }
-          result = result.concat(cursor.value)
-          return cursor.continue()
-        }
-        resolve(result)
-      }
-    })
+        };
+    });
   }
 
   const deleteItem = (store: IDBObjectStore, key: IDBValidKey) => {
@@ -91,7 +109,7 @@ export const useDatabaseStore = defineStore('database', () => {
   }
 
   return {
-    openDb,
+    open,
     getDb,
     getStore,
     clearStore,
