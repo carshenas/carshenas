@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/search',
-      name: 'SearchPage',
-      component: () => import('../views/search/IndexPage.vue')
+      path: '/',
+      name: 'home',
+      component: HomeView
     },
     {
       path: '/product/list',
