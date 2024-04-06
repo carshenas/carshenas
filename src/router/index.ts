@@ -16,22 +16,27 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'userProfile',
-      component: () => import('../views/profile/indexPage.vue')
+      component: () => import('../views/profile/IndexPage.vue')
     },
     {
       path: '/profile/info',
       name: 'userProfileInfo',
-      component: () => import('../views/profile/infoPage.vue')
+      component: () => import('../views/profile/InfoPage.vue')
     },
     {
       path: '/profile/addresses',
       name: 'userProfileAddresses',
-      component: () => import('../views/profile/addressesPage.vue')
+      component: () => import('../views/profile/AddressesPage.vue')
     },
     {
       path: '/profile/orders',
       name: 'userProfileOrders',
-      component: () => import('../views/profile/ordersPage.vue')
+      component: () => import('../views/profile/OrdersPage.vue')
+    },
+    {
+      path: '/profile/support',
+      name: 'userProfileSupport',
+      component: () => import('../views/profile/SupportPage.vue')
     },
     {
       path: '/',

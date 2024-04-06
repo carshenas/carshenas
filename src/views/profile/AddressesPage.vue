@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type addresses from "@/types/dto/addresses";
-import newAddressInfo from "./components/newAddressInfo.vue";
-import newAddressMap from "./components/newAddressMap.vue";
+import newAddressInfo from "./components/NewAddressInfo.vue";
+import newAddressMap from "./components/NewAddressMap.vue";
 
 const showInfo = ref(false);
 const toggleShowInfo = () => {
@@ -24,7 +24,6 @@ const address = ref<addresses[]>([
     postalCode: "1458886878"
   }
 ])
-
 
 </script>
 <template>

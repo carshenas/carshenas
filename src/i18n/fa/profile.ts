@@ -17,4 +17,5 @@ export default {
   plaque: 'پلاک',
   unit: 'واحد',
   postalCode: 'کد پستی',
+  newTicket: 'تیکت جدید',
 }

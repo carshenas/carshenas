@@ -9,5 +9,6 @@ export default {
   orders: 'Orders',
   support: 'Support',
   notification: 'Notification',
-  logout: 'Logout'
+  logout: 'Logout',
+  newTicket: 'New ticket',
 }
