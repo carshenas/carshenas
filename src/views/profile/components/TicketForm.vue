@@ -3,6 +3,7 @@
 const props = defineProps < {
     showForm: boolean;
 } > ();
+
 </script>
 
 
@@ -15,7 +16,7 @@ const props = defineProps < {
                 placeholder="Pick an avatar"></v-file-input>
         </div>
         <div>
-            <v-btn block rounded="pill" color="primary" size="x-large" class="me-4"> ثبت درخواست </v-btn>
+            <v-btn block rounded="pill" color="primary" size="x-large" class="me-4">{{ $t('shared.submit') }} </v-btn>
         </div>
     </form>
 </template>

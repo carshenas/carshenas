@@ -9,7 +9,7 @@ export default {
   address: 'آدرس',
   orders: 'سفارش ها',
   support: 'پشتیبانی',
-  notification: 'اعلان',
+  notification: 'اعلان ها',
   logout: 'خروج',
   newAddress: 'آدرس جدید',
   state: 'استان',

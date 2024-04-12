@@ -74,7 +74,7 @@ const goBack = () => {
   <section class="pa-4 d-flex flex-column ga-8 h-screen">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="goBack" />
-      <h1>{{ $t('profile.addresses') }}</h1>
+      <h1>{{ $t('profile.support') }}</h1>
       <v-btn icon="" variant="text" />
     </div>
     <div class="d-flex flex-column ga-4 flex-grow-1">

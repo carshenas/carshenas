@@ -74,7 +74,9 @@ const user = ref<users[]>([
           {{ $t('profile.notification') }}
         </span>
       </div>
-      <v-icon icon="arrow_back_ios" color="primary" />
+      <v-btn to="/profile/notifications" variant="text">
+        <v-icon icon="arrow_back_ios" color="primary" />
+      </v-btn>
     </div>
 
     <div class="w-100 bg-primary divider"></div>
