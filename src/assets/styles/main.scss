@@ -1,5 +1,41 @@
 @import './base/index';
 @import './utilities/index';
+@import 'resets';
+@import 'typography';
+
+body {
+  height: 100dvh;
+}
+#app {
+  height: 100dvh;
+}
+.headline-sm {
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 2rem;
+}
+
+.title-sm {
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.title-md {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.body-lg {
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5em;
+}
 
 .v-btn {
   letter-spacing: normal !important;
