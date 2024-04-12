@@ -15,6 +15,36 @@ const router = createRouter({
       component: () => import('../views/product/ListPage.vue')
     },
     {
+      path: '/profile',
+      name: 'userProfile',
+      component: () => import('../views/profile/IndexPage.vue')
+    },
+    {
+      path: '/profile/info',
+      name: 'userProfileInfo',
+      component: () => import('../views/profile/InfoPage.vue')
+    },
+    {
+      path: '/profile/addresses',
+      name: 'userProfileAddresses',
+      component: () => import('../views/profile/AddressesPage.vue')
+    },
+    {
+      path: '/profile/orders',
+      name: 'userProfileOrders',
+      component: () => import('../views/profile/OrdersPage.vue')
+    },
+    {
+      path: '/profile/car-support',
+      name: 'userProfileSupport',
+      component: () => import('../views/profile/SupportPage.vue')
+    },
+    {
+      path: '/profile/notifications',
+      name: 'userNotifications',
+      component: () => import('../views/profile/NotifPage.vue')
+    },
+    {
       path: '/',
       name: 'HomePage',
       component: () => import('../views/home/IndexPage.vue')
