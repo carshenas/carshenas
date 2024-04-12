@@ -2,7 +2,9 @@
 import { ref } from 'vue';
 import type Ticket from "@/types/dto/tickets"
 import { useRouter } from 'vue-router';
-import test from 'node:test';
+import TicketList from './components/TicketList.vue';
+import TicketDetails from './components/TicketDetails.vue';
+import TicketForm from "./components/TicketForm.vue";
 
 const router = useRouter();
 
@@ -41,34 +43,15 @@ const tickets = ref<Ticket[]>([
   }
 ]);
 
-const getStateData = (state: string) => {
-  switch (state) {
-    case 'approved':
-      return {
-        class: 'text-green-darken-4',
-        text: 'پاسخ داده شد',
-        icon: 'done'
-      };
-    case 'doing':
-      return {
-        class: 'text-orange',
-        text: 'درجریان',
-        icon: 'pending'
-      };
-    case 'rejected':
-      return {
-        class: 'text-red-darken-4',
-        text: 'رد شده',
-        icon: 'close'
-      };
-    default:
-      return {
-        class: '',
-        text: '',
-        icon: ''
-      };
-  }
-}
+const handleTicketSelected = (ticket: Ticket) => {
+  selectedTicket.value = ticket;
+};
+
+const showForm = ref(false);
+
+const toggleFormVisibility = () => {
+  showForm.value = !showForm.value;
+};
 
 const selectedTicket = ref<Ticket | null>(null);
 
@@ -76,59 +59,37 @@ const goBack = () => {
   if (selectedTicket.value) {
     selectedTicket.value = null
   }
+  if (showForm.value) {
+    showForm.value = !showForm.value;
+  }
   else {
     router.go(-1);
   }
 }
 
+
 </script>
 <template>
 
-  <section class="pa-4 d-flex flex-column ga-8 h-100">
+  <section class="pa-4 d-flex flex-column ga-8 h-screen">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="goBack" />
       <h1>{{ $t('profile.addresses') }}</h1>
       <v-btn icon="" variant="text" />
     </div>
-    <div class="d-flex flex-column ga-4">
-      <div v-if="!selectedTicket">
-        <v-btn block class="justify-space-between" rounded="lg" color="primary" size="x-large" append-icon="add">
+    <div class="d-flex flex-column ga-4 flex-grow-1">
+      <div v-if="!selectedTicket && !showForm">
+        <v-btn block class="justify-space-between" rounded="lg" color="primary" size="x-large" append-icon="add"
+          @click="toggleFormVisibility">
           {{ $t('profile.newTicket') }}
         </v-btn>
       </div>
-      <div v-if="!selectedTicket">
-        <v-card class="mx-auto w-100 pa-2" v-for="(ticket, id) in tickets" :key="id">
-          <div class="d-flex align-center justify-space-between">
-            <span :class="getStateData(ticket.state).class">{{ getStateData(ticket.state).text }}
-              <v-icon :icon="getStateData(ticket.state).icon" size="x-small" />
-            </span>
-            <v-btn @click="selectedTicket = ticket" icon="more_horiz" variant="text" />
-          </div>
-          <v-card-text>{{ ticket.messages[0].text }}</v-card-text>
-          <div class="d-flex w-100 justify-space-between text-grey">
-            <div>
-              <v-icon icon="calendar_month" />
-              <span>{{ ticket.messages[0].date }}</span>
-            </div>
-          </div>
-        </v-card>
+      <div v-if="!selectedTicket && !showForm">
+        <TicketList v-for="(ticket, index) in tickets" :key="index" :ticket="ticket"
+          @ticketSelected="handleTicketSelected" />
       </div>
-      <div v-if="selectedTicket">
-        <v-card class="w-auto pa-2 my-4 text-sm"
-          :class="{ 'bg-primary ml-5': message.sender === 'user', 'bg-white mr-5': message.sender !== 'user' }"
-          v-for="(message, index) in selectedTicket.messages" :key="index">
-          <div class="d-flex align-center justify-space-between">
-            <span>{{ message.sender === 'user' ? selectedTicket.user : selectedTicket.supportEmployee }}</span>
-          </div>
-          <v-card-text class="pa-2">
-            <div>
-              <p>{{ message.text }}</p>
-              <span>{{ message.time }}</span>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
-
+      <TicketDetails :selectedTicket="selectedTicket" />
+      <TicketForm :showForm="showForm" />
     </div>
   </section>
 
