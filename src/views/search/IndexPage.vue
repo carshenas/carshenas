@@ -15,10 +15,19 @@ const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
 const search = ref<string>()
 
 const categories = ref<Category[]>()
+const products = ref<Category[]>()
 const getCategories = async () => {
   try {
     const response = await getCategoryListService({ title: search.value || '' })
     categories.value = response
+  } catch (e) {
+    console.error(e)
+  }
+}
+const getProducts = async () => {
+  try {
+    // const response = await getProductListService({ title: search.value || '' })
+    // products.value = response
   } catch (e) {
     console.error(e)
   }
@@ -28,7 +37,7 @@ const onInput = debounce(() => {
   if (!search.value || search.value.length < 2) return
 
   getCategories()
-  getProd()
+  getProducts()
 }, 500)
 
 openDatabase('search', undefined, (db: IDBDatabase) => {
@@ -46,7 +55,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <div class="z">
+  <v-container>
     <v-text-field
       v-model="search"
       :placeholder="$t('shared.search')"
@@ -97,5 +106,5 @@ onBeforeRouteLeave(async (to, from, next) => {
     </div>
 
     <ProductList :items="products" class="mt-4" />
-  </div>
+  </v-container>
 </template>

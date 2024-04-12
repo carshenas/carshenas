@@ -1,33 +1,5 @@
-@import 'resets';
-@import 'typography';
-
-.headline-sm {
-  font-size: 1.5rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 2rem;
-}
-
-.title-sm {
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 20px;
-}
-
-.title-md {
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-}
-
-.body-lg {
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.5em;
-}
+@import './base/index';
+@import './utilities/index';
 
 .v-btn {
   letter-spacing: normal !important;

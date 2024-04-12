@@ -33,7 +33,7 @@ import blogPost from './components/PostsList.vue'
         {{ $t('home.popularModels') }}
       </h2>
 
-      <PopularModels />
+      <!-- <PopularModels /> -->
     </section>
 
     <section class="my-12">
@@ -61,7 +61,7 @@ import blogPost from './components/PostsList.vue'
         </v-btn>
       </div>
 
-      <blogPost />
+      <!-- <blogPost /> -->
     </section>
   </div>
 </template>

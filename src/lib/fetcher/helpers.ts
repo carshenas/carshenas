@@ -1,11 +1,11 @@
-import { defaultHeaders, defaultScheme } from './constants'
+import { defaultHeaders } from './constants'
 import type { FetchPath, CreateURLOptions, FetchOptions } from './types'
 
 export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => {
   let baseURL
 
   if (options.baseURL && !/^[a-z0-9]+:\/\//.test(options.baseURL.toString()))
-    baseURL = new URL(`${defaultScheme}://${options.baseURL}`)
+    baseURL = new URL(options.baseURL)
   else baseURL = new URL(options.baseURL || location.origin)
 
   const stringifiedUrl = Array.isArray(path) ? path.join('/') : path

@@ -60,6 +60,9 @@ export default createVuetify({
     VBtn: {
       color: 'primary',
       flat: true
+    },
+    VTextField: {
+      variant: 'outlined'
     }
   }
 })

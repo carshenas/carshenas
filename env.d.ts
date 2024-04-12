@@ -6,7 +6,7 @@ declare namespace NodeJS {
     VITE_APP_STAGE: 'DEVELOPMENT' | 'PRODUCTION' | undefined
 
     // api
-    VITE_SSL_ENABLED: 'true' | 'false' | undefined
+    VITE_SSL_ENABLED: boolean | undefined
     VITE_API_SERVER: string | undefined
 
     // app config
@@ -15,5 +15,8 @@ declare namespace NodeJS {
 
     // Database
     VITE_INDEXED_DB_VERSION: number
+
+    // static files
+    VITE_API_STATIC_SERVER: string
   }
 }
