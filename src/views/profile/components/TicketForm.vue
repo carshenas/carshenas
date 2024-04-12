@@ -7,7 +7,7 @@ const props = defineProps < {
 
 
 <template>
-    <form class="d-flex flex-column flex-grow-1 justify-space-between ">
+    <form v-if="props.showForm" class="d-flex flex-column flex-grow-1 justify-space-between">
         <div>
             <v-select label="شماره سفارش"></v-select>
             <v-textarea label="متن پیام" row-height="30" rows="4" variant="filled" auto-grow shaped></v-textarea>
