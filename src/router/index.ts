@@ -34,13 +34,13 @@ const router = createRouter({
       component: () => import('../views/profile/OrdersPage.vue')
     },
     {
-      path: '/profile/support',
+      path: '/profile/car-support',
       name: 'userProfileSupport',
       component: () => import('../views/profile/SupportPage.vue')
     },
     {
       path: '/profile/notifications',
-      name: 'userProfileSupport',
+      name: 'userNotifications',
       component: () => import('../views/profile/NotifPage.vue')
     },
     {

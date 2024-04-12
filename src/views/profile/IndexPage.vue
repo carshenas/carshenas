@@ -62,7 +62,7 @@ const user = ref<users[]>([
           {{ $t('profile.support') }}
         </span>
       </div>
-      <v-btn to="/profile/support" variant="text">
+      <v-btn to="/profile/car-support" variant="text">
         <v-icon icon="arrow_back_ios" color="primary" />
       </v-btn>
     </div>
