@@ -1,27 +1,83 @@
+.headline-lg {
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 2.5rem;
+}
+
+.headline-md {
+  font-size: 1.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.75rem;
+}
+
 .headline-sm {
   font-size: 1.5rem;
   font-style: normal;
-  font-weight: 400;
-  line-height: 2rem;
+  font-weight: 500;
+  line-height: 1.5rem;
 }
 
-.title-sm {
-  font-size: 1rem;
+.title-lg {
+  font-size: 1.375rem;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px;
+  line-height: 1.75rem;
 }
 
 .title-md {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-style: normal;
-  font-weight: 700;
-  line-height: 24px;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+.title-sm {
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.25rem;
 }
 
 .body-lg {
   font-size: 1rem;
   font-style: normal;
-  font-weight: 400;
-  line-height: 1.5em;
+  font-weight: 500;
+  line-height: 1.5rem;
+}
+
+.body-md {
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+.body-sm {
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1rem;
+}
+
+.label-lg {
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.25rem;
+}
+
+.label-md {
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1rem;
+}
+
+.label-sm {
+  font-size: 0.6875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1rem;
 }

@@ -1,5 +1,5 @@
 <template>
-  <v-container class="h-100">
+  <v-container>
     <h1 class="title-md">{{ $t('auth.login') }}</h1>
 
     <p class="body-lg mt-4">{{ $t('auth.enterPhone') }}</p>

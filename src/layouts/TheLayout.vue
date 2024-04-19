@@ -24,7 +24,7 @@ const openBasket = () => {
     <v-app-bar-nav-icon :icon="isMenuOpen ? 'close' : 'menu'" @click="openMenu" />
 
     <v-app-bar-title class="font-weight-bold">
-      <div class="d-flex align-center">
+      <RouterLink :to="{ name: 'HomePage' }" class="d-flex align-center">
         <ImageLoader
           src="@/assets/images/app/logo.svg"
           width="32"
@@ -32,10 +32,10 @@ const openBasket = () => {
           :types="['webp']"
         />
 
-        <span>
+        <span class="title-md text-secondary">
           {{ $t('app.name') }}
         </span>
-      </div>
+      </RouterLink>
     </v-app-bar-title>
 
     <template #append>
