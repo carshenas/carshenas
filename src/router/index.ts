@@ -16,7 +16,7 @@ const router = createRouter({
     {
       path: '/auth',
       name: 'AuthPage',
-      component: () => import('@/views/profile/AuthPage.vue')
+      component: () => import('@/views/profile/auth/IndexPage.vue')
     },
     {
       path: '/product',

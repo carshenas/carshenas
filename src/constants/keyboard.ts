@@ -1,0 +1,23 @@
+export const SYSTEM_KEYS = [
+	'Delete',
+	'Backspace',
+	'Tab',
+	'Esc',
+	'Escape',
+	'Enter',
+	'Home',
+	'End',
+	'PageUp',
+	'PageDown',
+	'Del',
+	'Delete',
+	'Left',
+	'ArrowLeft',
+	'Right',
+	'ArrowRight',
+	'Insert',
+	'Up',
+	'ArrowUp',
+	'Down',
+	'ArrowDown'
+]

@@ -5,6 +5,7 @@ import shared from './shared'
 import home from './home'
 import productList from './productList'
 import auth from './auth'
+import validation from './validation'
 
 export default {
   app,
@@ -13,5 +14,6 @@ export default {
   shared,
   home,
   productList,
-  auth
+  auth,
+  validation
 }
