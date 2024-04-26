@@ -1,11 +1,24 @@
 <script lang="ts" setup>
 import ImageLoader from '@/components/ImageLoader.vue'
+import ColorSelector from './components/detail/ColorSelector.vue'
 
 const product = {
   images: ['@/assets/images/logo.svg', '@/assets/images/logo.svg'],
   title: 'باتری ماشین',
   description: 'این تست است برای توضیحات باتری خودرو',
-  price: 250000
+  price: 250000,
+  parent: [
+    { title: 'باتری', id: 1 },
+    { title: 'باتری پراید', id: 2 }
+  ],
+  score: 3.8,
+  votersCount: 256,
+  comprehensiveDescription: '',
+  colors: [
+    { id: 1, code: '#ff0000', title: 'قرمز' },
+    { id: 2, code: '#00ff00', title: 'سبز' },
+    { id: 3, code: '#0000ff', title: 'آبی' }
+  ]
 }
 </script>
 
@@ -16,7 +29,23 @@ const product = {
     </v-carousel-item>
   </v-carousel>
 
-  <
+  <v-breadcrumbs :items="product.parent">
+    <template v-slot:title="{ item }">
+      {{ item.title }}
+    </template>
+  </v-breadcrumbs>
+
+  <h1 class="px-4 title-md">{{ product.title }}</h1>
+
+  <div class="mt-4 px-4">
+    <v-icon icon="mdi_star" />
+
+    <span>{{ product.score }}</span>
+
+    <span>{{ product.votersCount }}</span>
+  </div>
+
+  <ColorSelector :items="product.colors" />
 </template>
 
 <style lang="scss">
