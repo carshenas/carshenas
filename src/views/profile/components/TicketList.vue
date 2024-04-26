@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import type Ticket from "@/types/dto/tickets"
-import { defineEmits } from 'vue';
+import type Ticket from '@/types/dto/tickets'
 
 const props = defineProps<{
-  ticket: Ticket;
+  ticket: Ticket
 }>()
 
-const emit = defineEmits(['ticketSelected']);
+const emit = defineEmits(['ticketSelected'])
 
 const handleMoreClick = () => {
-  emit('ticketSelected', props.ticket);
+  emit('ticketSelected', props.ticket)
 }
 
 const getStateData = (state: string) => {
@@ -19,32 +18,33 @@ const getStateData = (state: string) => {
         class: 'text-green-darken-4',
         text: 'پاسخ داده شد',
         icon: 'done'
-      };
+      }
     case 'doing':
       return {
         class: 'text-orange',
         text: 'درجریان',
         icon: 'pending'
-      };
+      }
     case 'rejected':
       return {
         class: 'text-red-darken-4',
         text: 'رد شده',
         icon: 'close'
-      };
+      }
     default:
       return {
         class: '',
         text: '',
         icon: ''
-      };
+      }
   }
 }
 </script>
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(ticket.state).class">{{ getStateData(ticket.state).text }}
+      <span :class="getStateData(ticket.state).class"
+        >{{ getStateData(ticket.state).text }}
         <v-icon :icon="getStateData(ticket.state).icon" size="x-small" />
       </span>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />

@@ -15,6 +15,8 @@ const product = {
       <ImageLoader :src="image" height="100%" width="100%" :alt="`${product.title} ${index + 1}`" />
     </v-carousel-item>
   </v-carousel>
+
+  <
 </template>
 
 <style lang="scss">
