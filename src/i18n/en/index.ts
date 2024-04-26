@@ -6,6 +6,7 @@ import home from './home'
 import profile from './profile'
 import productList from './productList'
 import auth from './auth'
+import validation from './validation'
 
 export default {
   app,
@@ -15,5 +16,6 @@ export default {
   home,
   productList,
   auth,
+  validation,
   profile
 }
