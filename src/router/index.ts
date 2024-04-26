@@ -4,14 +4,29 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
+      path: '/',
+      name: 'HomePage',
+      component: () => import('@/views/home/IndexPage.vue')
+    },
+    {
       path: '/search',
       name: 'SearchPage',
       component: () => import('../views/search/IndexPage.vue')
     },
     {
-      path: '/product/list',
+      path: '/product',
       name: 'ProductsPage',
-      component: () => import('../views/product/ListPage.vue')
+      component: () => import('@/views/product/ListPage.vue')
+    },
+    {
+      path: '/product/:id(\\d+)',
+      name: 'ProductDetailPage',
+      component: () => import('@/views/product/DetailPage.vue')
+    },
+    {
+      path: '/auth',
+      name: 'AuthPage',
+      component: () => import('@/views/profile/AuthPage.vue')
     },
     {
       path: '/profile',
@@ -42,31 +57,6 @@ const router = createRouter({
       path: '/profile/notifications',
       name: 'userNotifications',
       component: () => import('../views/profile/NotifPage.vue')
-    },
-    {
-      path: '/',
-      name: 'HomePage',
-      component: () => import('@/views/home/IndexPage.vue')
-    },
-    {
-      path: '/search',
-      name: 'SearchPage',
-      component: () => import('@/views/search/IndexPage.vue')
-    },
-    {
-      path: '/auth',
-      name: 'AuthPage',
-      component: () => import('@/views/profile/AuthPage.vue')
-    },
-    {
-      path: '/product',
-      name: 'ProductsPage',
-      component: () => import('@/views/product/ListPage.vue')
-    },
-    {
-      path: '/product/:id(\\d+)',
-      name: 'ProductDetailPage',
-      component: () => import('@/views/product/DetailPage.vue')
     }
   ]
 })
