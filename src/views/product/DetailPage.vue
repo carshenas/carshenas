@@ -19,10 +19,16 @@ const product = {
     { id: 1, code: '#ff0000', title: 'قرمز' },
     { id: 2, code: '#00ff00', title: 'سبز' },
     { id: 3, code: '#0000ff', title: 'آبی' }
-  ]
+  ],
+  warranty: [
+    { id: 1, icon: '', title: 'ایران خودرو' },
+    { id: 2, icon: '', title: 'سایپا' }
+  ],
+  summeeryImages:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/Saipa_Quik_001.jpg/1280px-Saipa_Quik_001.jpg',
+  summery:
+    'باتری پراید بصورت فابریک یک باتری ۵۰ آمپر است. ولتاژ باطری پراید مانند تمام خودروهای سبک با پلتفرم مشابه نظیر تیبا، ساینا و کوئیک ۱۲ ولت است. ضمنا فضایی که در داخل کاپوت پراید برای باتری آن در نظر گرفته شده است ۲۵*۱۸*۲۳ سانتی متر است.'
 }
-
-const selectedColor = ref(null) // This will hold the ID of the selected color
 </script>
 
 <template>
@@ -53,20 +59,37 @@ const selectedColor = ref(null) // This will hold the ID of the selected color
         }}
       </span>
     </p>
-
-
-      <!-- <v-radio-group v-model="selectedColor" inline>
-        <v-radio
-          v-for="color in product.colors"
-          :key="color.id"
-          :color="color.code"
-          :value="color.id"
-        ></v-radio>
-      </v-radio-group> -->
   </div>
 
   <ColorSelector :items="product.colors" />
 
+  <div class="mt-4 px-4 d-flex flex-column ga-8">
+    <div class="d-flex align-center">
+      <h4 role="heading">{{ $t('productDetail.warranty') }}</h4>
+      <div class="w-100 border h-0 mx-2"></div>
+    </div>
+    <v-radio-group dir="ltr">
+      <v-radio
+        class="d-flex w-100 justify-space-between"
+        v-for="warranty in product.warranty"
+        :key="warranty.id"
+        :label="warranty.title"
+        :value="warranty.id"
+        color="primary"
+      />
+    </v-radio-group>
+  </div>
+
+  <div class="mt-4 px-4 d-flex flex-column ga-8">
+    <div class="d-flex align-center">
+      <h4 role="heading" class="text-no-wrap">{{ $t('productDetail.summery') }}</h4>
+      <div class="w-100 border h-0 mx-2"></div>
+    </div>
+    <p class="text-justify">{{ product.summery }}</p>
+    <v-container>
+      <v-img :width="400" aspect-ratio="16/9" cover :src="product.summeeryImages"></v-img>
+    </v-container>
+  </div>
 </template>
 
 <style lang="scss">
@@ -79,5 +102,11 @@ const selectedColor = ref(null) // This will hold the ID of the selected color
     width: 100%;
     height: 100%;
   }
+}
+.text-summery {
+  text-align: justify;
+  font-size: 14px;
+  line-height: 28px;
+  width: 400;
 }
 </style>
