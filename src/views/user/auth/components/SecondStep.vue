@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-defineProps<{ number: string }>()
+defineProps<{ number: string; loading: boolean }>()
 const router = useRouter()
 const counterInitiateValue = 5
 const counter = ref(counterInitiateValue)
@@ -54,6 +54,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <v-btn>{{ $t('auth.login') }}</v-btn>
+    <v-btn :loading="loading">{{ $t('auth.login') }}</v-btn>
   </div>
 </template>

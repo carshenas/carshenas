@@ -6,8 +6,10 @@ export const generateNumericId = (): number => {
 export const camelCaseToSnakeCase = (input: string) =>
   input.replace(/[A-Z]+(?![a-z])|[A-Z]/g, ($, ofs) => (ofs ? '_' : '') + $.toLowerCase())
 
-export const JSONToSnakeCase = (input: any) => {
-  const strToObj = JSON.stringify(input)
-
-  for (const obj of strToObj) console.log(obj)
+export const camelCaseObjectToSnakeCase = (object: Record<string, string>) => {
+  const snakeCaseObj: Record<string, string> = {}
+  for (const item in object) {
+    snakeCaseObj[camelCaseToSnakeCase(item)] = object[item]
+  }
+  return snakeCaseObj
 }

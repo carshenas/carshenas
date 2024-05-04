@@ -16,7 +16,7 @@ const props = reactive({
   number: '09393557744'
 })
 
-const loading = ref<boolean>()
+const loading = ref<boolean>(false)
 const next = async () => {
   const { valid: isValid } = await form.value!.validate()
 
