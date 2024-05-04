@@ -1,5 +1,5 @@
 import { defaultHeaders } from './constants'
-import type { FetchPath, CreateURLOptions, FetchOptions } from './types'
+import type { FetchPath, CreateURLOptions, FetcherOptions } from './types'
 
 export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => {
   let baseURL
@@ -20,8 +20,11 @@ export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => 
   return url
 }
 
-export const mergeOptions = (options?: FetchOptions): FetchOptions => ({
-  ...options,
+const bodyNormalizer = <D>(body: D): BodyInit =>
+  body instanceof FormData || body instanceof Blob ? body : JSON.stringify(body)
+
+export const mergeOptions = <D = unknown>(options?: FetcherOptions<D>): RequestInit => ({
+  ...(options?.body ? { body: bodyNormalizer<D>(options?.body) } : {}),
   headers: generateHeaders(options?.headers)
 })
 
