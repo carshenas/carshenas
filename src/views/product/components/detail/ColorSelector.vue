@@ -3,7 +3,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{ items: { id: number; code: string; title: string }[] }>()
 
-const selectedColorId = defineModel<number>(props.items[0].title)
+const selectedColorId = defineModel<number>()
 
 const selectedColorTitle = computed(
   () => props.items.find((item) => item.id === selectedColorId.value)!.title
@@ -15,7 +15,7 @@ const selectedColorTitle = computed(
     <div class="title" role="heading">{{ $t('shared.color') }} : {{ selectedColorTitle }}</div>
 
     <v-radio-group
-      v-for="color in $props.items"
+      v-for="color in  props.items"
       :key="color.id"
       v-model="selectedColorId"
       :value="color.id"

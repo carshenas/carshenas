@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
 import ImageLoader from '@/components/ImageLoader.vue'
 import ColorSelector from './components/detail/ColorSelector.vue'
 
@@ -20,6 +21,8 @@ const product = {
     { id: 3, code: '#0000ff', title: 'آبی' }
   ]
 }
+
+const selectedColor = ref(null) // This will hold the ID of the selected color
 </script>
 
 <template>
@@ -37,12 +40,32 @@ const product = {
 
   <h1 class="px-4 title-md">{{ product.title }}</h1>
 
-  <div class="mt-4 px-4">
-    <v-icon icon="mdi_star" />
+  <div class="mt-4 px-4 d-flex flex-column ga-8">
+    <p>
+      <v-icon icon="mdi_star" />
+      <span>{{ product.score }} </span>
 
-    <span>{{ product.score }}</span>
+      <span>
+        {{
+          $t('productDetail.scoreText', {
+            count: product.votersCount
+          })
+        }}
+      </span>
+    </p>
 
-    <span>{{ product.votersCount }}</span>
+    <h3>
+      {{ $t('productDetail.color') }}
+    </h3>
+    
+      <v-radio-group v-model="selectedColor" inline>
+        <v-radio
+          v-for="color in product.colors"
+          :key="color.id"
+          :color="color.code"
+          :value="color.id"
+        ></v-radio>
+      </v-radio-group>
   </div>
 
   <ColorSelector :items="product.colors" />
