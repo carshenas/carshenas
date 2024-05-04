@@ -54,21 +54,19 @@ const selectedColor = ref(null) // This will hold the ID of the selected color
       </span>
     </p>
 
-    <h3>
-      {{ $t('productDetail.color') }}
-    </h3>
-    
-      <v-radio-group v-model="selectedColor" inline>
+
+      <!-- <v-radio-group v-model="selectedColor" inline>
         <v-radio
           v-for="color in product.colors"
           :key="color.id"
           :color="color.code"
           :value="color.id"
         ></v-radio>
-      </v-radio-group>
+      </v-radio-group> -->
   </div>
 
   <ColorSelector :items="product.colors" />
+
 </template>
 
 <style lang="scss">
