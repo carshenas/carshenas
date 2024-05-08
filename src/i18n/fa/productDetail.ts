@@ -3,5 +3,7 @@ export default {
   scoreText: '  از  {count} امتیاز ثبت شده',
   color: 'رنگ:   ',
   warranty: 'گارانتی',
-  summery: 'معرفی اجمالی'
+  summery: 'معرفی اجمالی',
+  details: 'مشخصات',
+  addToCart: 'افزودن به سبد '
 }

@@ -9,7 +9,7 @@ const selectedColorTitle = computed(() => {
   const selectedColor = props.items.find((item) => item.id === selectedColorId.value)
   return selectedColor?.title || '' // Return an empty string if selectedColor is undefined
 })
-function updateSelectedColor(colorId: string) {
+function updateSelectedColor(colorId: number) {
   selectedColorId.value = colorId
 }
 </script>
@@ -40,6 +40,7 @@ function updateSelectedColor(colorId: string) {
 </template>
 
 <style scoped lang="scss">
+
 .container {
   display: block;
   position: relative;
