@@ -30,7 +30,8 @@ const pathGenerator = (path: string, extension?: ImageExtension): string => {
 
   localPath = isLocal
     ? new URL(localPath, import.meta.url).toString()
-    : `${appConfig.staticFileServer}/size:${width}*${height}/${localPath}`
+    : // `${appConfig.staticFileServer}/size:${width}*${height}/${localPath}`
+      `${appConfig.staticFileServer}${path}`
 
   return localPath
 }
@@ -41,7 +42,7 @@ const filteredImageTypes = computed(() =>
 </script>
 
 <template>
-  <picture ref="picture">
+  <picture v-if="props.src" ref="picture">
     <source
       v-for="source in filteredImageTypes"
       :key="source.type"
@@ -56,4 +57,6 @@ const filteredImageTypes = computed(() =>
       :height="props.height"
     />
   </picture>
+
+  <v-icon v-else icon="hide_image" />
 </template>

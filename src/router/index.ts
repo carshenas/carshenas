@@ -4,46 +4,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/search',
-      name: 'SearchPage',
-      component: () => import('../views/search/IndexPage.vue')
-    },
-    {
-      path: '/product/list',
-      name: 'ProductsPage',
-      component: () => import('../views/product/ListPage.vue')
-    },
-    {
-      path: '/profile',
-      name: 'userProfile',
-      component: () => import('../views/profile/IndexPage.vue')
-    },
-    {
-      path: '/profile/info',
-      name: 'userProfileInfo',
-      component: () => import('../views/profile/InfoPage.vue')
-    },
-    {
-      path: '/profile/addresses',
-      name: 'userProfileAddresses',
-      component: () => import('../views/profile/AddressesPage.vue')
-    },
-    {
-      path: '/profile/orders',
-      name: 'userProfileOrders',
-      component: () => import('../views/profile/OrdersPage.vue')
-    },
-    {
-      path: '/profile/car-support',
-      name: 'userProfileSupport',
-      component: () => import('../views/profile/SupportPage.vue')
-    },
-    {
-      path: '/profile/notifications',
-      name: 'userNotifications',
-      component: () => import('../views/profile/NotifPage.vue')
-    },
-    {
       path: '/',
       name: 'HomePage',
       component: () => import('@/views/home/IndexPage.vue')
@@ -51,12 +11,7 @@ const router = createRouter({
     {
       path: '/search',
       name: 'SearchPage',
-      component: () => import('@/views/search/IndexPage.vue')
-    },
-    {
-      path: '/auth',
-      name: 'AuthPage',
-      component: () => import('@/views/profile/AuthPage.vue')
+      component: () => import('../views/search/IndexPage.vue')
     },
     {
       path: '/product',
@@ -67,6 +22,41 @@ const router = createRouter({
       path: '/product/:id(\\d+)',
       name: 'ProductDetailPage',
       component: () => import('@/views/product/DetailPage.vue')
+    },
+    {
+      path: '/user/authentication',
+      name: 'AuthPage',
+      component: () => import('@/views/user/auth/IndexPage.vue')
+    },
+    {
+      path: '/user',
+      name: 'UserProfile',
+      component: () => import('../views/user/IndexPage.vue')
+    },
+    {
+      path: '/user/info',
+      name: 'UserProfileInfo',
+      component: () => import('../views/user/InfoPage.vue')
+    },
+    {
+      path: '/user/addresses',
+      name: 'UserProfileAddresses',
+      component: () => import('../views/user/AddressesPage.vue')
+    },
+    {
+      path: '/user/orders',
+      name: 'UserProfileOrders',
+      component: () => import('../views/user/OrdersPage.vue')
+    },
+    {
+      path: '/user/car-support',
+      name: 'UserProfileSupport',
+      component: () => import('../views/user/SupportPage.vue')
+    },
+    {
+      path: '/user/notifications',
+      name: 'UserNotifications',
+      component: () => import('../views/user/NotifPage.vue')
     }
   ]
 })

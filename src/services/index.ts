@@ -1,14 +1,22 @@
-//@ts-nocheck
+import { camelCaseObjectToSnakeCase } from '@/helpers/general'
 import fetcher from '@/lib/fetcher'
-import type { FetchOptions } from '@/lib/fetcher/types'
+import type { FetcherOptions } from '@/lib/fetcher/types'
 
-const scheme = import.meta.env.VITE_SSL_ENABLED === true ? 'https' : 'http'
+//@ts-ignore
+const scheme = import.meta.env.VITE_SSL_ENABLED === 'true' ? 'https' : 'http'
 
-const carShenasOptions = {
+const carshenasOptions = {
+  //@ts-ignore
   baseURL: `${scheme}://${import.meta.env.VITE_API_SERVER}`
 }
 
 export default {
-  get: <D>(url: string, options?: FetchOptions) =>
-    fetcher.get<D>(url, { ...options, ...carShenasOptions })
+  get: <R, D>(url: string, options?: FetcherOptions<D>) =>
+    fetcher.get<R, D>(url, { ...options, ...carshenasOptions }),
+  post: <R, D>(url: string, options?: FetcherOptions<D>) =>
+    fetcher.post<R, D>(url, {
+      ...options,
+      body: camelCaseObjectToSnakeCase(options?.body as Record<string, string>) as D | undefined,
+      ...carshenasOptions
+    })
 }
