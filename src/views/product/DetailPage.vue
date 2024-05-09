@@ -2,6 +2,7 @@
 import ImageLoader from '@/components/ImageLoader.vue'
 import ColorSelector from './components/detail/ColorSelector.vue'
 import CurrencyDisplay from '@/components/CurrencyDisplay.vue'
+import type CommentSection from './components/detail/CommentSection.vue'
 
 const product = {
   images: ['@/assets/images/logo.svg', '@/assets/images/logo.svg'],
@@ -42,7 +43,13 @@ const product = {
 </script>
 
 <template>
-  <v-carousel show-arrows="hover" hide-delimiter-background>
+  <v-tabs bg-color="white" fixed-tabs class="position-sticky tab-pdp">
+    <v-tab href="#product">{{ $t('productDetail.product') }}</v-tab>
+    <v-tab href="#spec">{{ $t('productDetail.details') }}</v-tab>
+    <v-tab href="#comments">{{ $t('productDetail.comments') }}</v-tab>
+  </v-tabs>
+
+  <v-carousel id="product" show-arrows="hover" hide-delimiter-background>
     <v-carousel-item v-for="(image, index) in product.images" :key="index">
       <ImageLoader :src="image" height="100%" width="100%" :alt="`${product.title} ${index + 1}`" />
     </v-carousel-item>
@@ -73,7 +80,7 @@ const product = {
 
   <ColorSelector :items="product.colors" />
 
-  <div class="d-flex flex-column t-4 px-4 ga-8">
+  <div id="spec" class="d-flex flex-column t-4 px-4 ga-8">
     <div class="d-flex align-center">
       <h4 role="heading">{{ $t('productDetail.warranty') }}</h4>
       <div class="w-100 border h-0 mx-2"></div>
@@ -125,32 +132,7 @@ const product = {
     </div>
   </div>
 
-  <div class="d-flex flex-column pa-4 ga-8">
-    <div class="d-flex align-center">
-      <h4 role="heading" class="text-no-wrap">{{ $t('productDetail.details') }}</h4>
-      <div class="w-100 border h-0 mx-2"></div>
-    </div>
-    <div
-      class="d-flex flex-column border rounded-lg pa-2 ga-4"
-      v-for="(comment, id) in product.comments"
-      :key="id"
-    >
-      <div class="d-flex align-center">
-        <v-avatar size="54">
-          <v-icon icon="account_circle" size="48"></v-icon>
-        </v-avatar>
-        <div class="d-flex flex-column w-100">
-          <div class="d-flex justify-space-between">
-            <span>{{ comment.author }}</span>
-
-            <span>{{ comment.date }}</span>
-          </div>
-          <v-rating color="orange-lighten-1" density="compact" v-model="comment.rating"></v-rating>
-        </div>
-      </div>
-      <p>{{ comment.text }}</p>
-    </div>
-  </div>
+  <CommentSection :comments="product.comments" id="comments" />
 
   <div
     class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white"
@@ -186,5 +168,9 @@ const product = {
 }
 .bottom-0 {
   bottom: 0;
+}
+.tab-pdp {
+  top: 3.9rem;
+  z-index: 10;
 }
 </style>
