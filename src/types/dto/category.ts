@@ -2,8 +2,9 @@ export interface Category {
   id: number
   image: string
   name: string
+  children?: Category[]
 }
 
-export interface CategoryFilter {
+export interface CategoryFilter extends URLSearchParams {
   title: string
 }
