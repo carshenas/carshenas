@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import TheLayout from '@/layouts/TheLayout.vue'
 import { RouterView } from 'vue-router'
+import { useUserStore } from './stores/user'
 </script>
 
 <template>

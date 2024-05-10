@@ -33,19 +33,13 @@ import blogPost from './components/PostsList.vue'
         {{ $t('home.popularModels') }}
       </h2>
 
-      <!-- <PopularModels /> -->
+      <PopularModels />
     </section>
 
     <section class="my-12">
-      <div class="d-flex justify-space-between align-center">
-        <h2 class="title-sm">
-          {{ $t('home.popularCatagories') }}
-        </h2>
-
-        <v-btn variant="text">
-          {{ $t('shared.viewAll') }}
-        </v-btn>
-      </div>
+      <h2 class="title-sm">
+        {{ $t('home.popularCatagories') }}
+      </h2>
 
       <CategoryList class="mt-4" />
     </section>

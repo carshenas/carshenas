@@ -24,39 +24,39 @@ const router = createRouter({
       component: () => import('@/views/product/DetailPage.vue')
     },
     {
-      path: '/auth',
+      path: '/user/authentication',
       name: 'AuthPage',
-      component: () => import('@/views/profile/AuthPage.vue')
+      component: () => import('@/views/user/auth/IndexPage.vue')
     },
     {
-      path: '/profile',
-      name: 'userProfile',
-      component: () => import('../views/profile/IndexPage.vue')
+      path: '/user',
+      name: 'UserProfile',
+      component: () => import('../views/user/IndexPage.vue')
     },
     {
-      path: '/profile/info',
-      name: 'userProfileInfo',
-      component: () => import('../views/profile/InfoPage.vue')
+      path: '/user/info',
+      name: 'UserProfileInfo',
+      component: () => import('../views/user/InfoPage.vue')
     },
     {
-      path: '/profile/addresses',
-      name: 'userProfileAddresses',
-      component: () => import('../views/profile/AddressesPage.vue')
+      path: '/user/addresses',
+      name: 'UserProfileAddresses',
+      component: () => import('../views/user/AddressesPage.vue')
     },
     {
-      path: '/profile/orders',
-      name: 'userProfileOrders',
-      component: () => import('../views/profile/OrdersPage.vue')
+      path: '/user/orders',
+      name: 'UserProfileOrders',
+      component: () => import('../views/user/OrdersPage.vue')
     },
     {
-      path: '/profile/car-support',
-      name: 'userProfileSupport',
-      component: () => import('../views/profile/SupportPage.vue')
+      path: '/user/car-support',
+      name: 'UserProfileSupport',
+      component: () => import('../views/user/SupportPage.vue')
     },
     {
-      path: '/profile/notifications',
-      name: 'userNotifications',
-      component: () => import('../views/profile/NotifPage.vue')
+      path: '/user/notifications',
+      name: 'UserNotifications',
+      component: () => import('../views/user/NotifPage.vue')
     }
   ]
 })
