@@ -6,6 +6,9 @@ body {
 }
 #app {
   height: 100dvh;
+
+  scroll-behavior: smooth;
+
 }
 .headline-sm {
   font-size: 1.5rem;
