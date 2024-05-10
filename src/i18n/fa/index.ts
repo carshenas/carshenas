@@ -6,7 +6,7 @@ import home from './home'
 import profile from './profile'
 import productList from './productList'
 import auth from './auth'
-import productDetail from './productDetail'
+import productDetail from './product-detail'
 export default {
   app,
   currency,

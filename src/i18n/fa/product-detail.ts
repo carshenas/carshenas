@@ -1,7 +1,7 @@
 export default {
   products: 'محصولات',
   product:'محصول',
-  scoreText: '  از  {count} امتیاز ثبت شده',
+  scoretext: '  از  {count} امتیاز ثبت شده',
   color: 'رنگ:   ',
   warranty: 'گارانتی',
   summery: 'معرفی اجمالی',
