@@ -2,7 +2,7 @@
 import ImageLoader from '@/components/ImageLoader.vue'
 import ColorSelector from './components/detail/ColorSelector.vue'
 import CurrencyDisplay from '@/components/CurrencyDisplay.vue'
-import type CommentSection from './components/detail/CommentSection.vue'
+import CommentSection from './components/detail/CommentSection.vue'
 
 const product = {
   images: ['@/assets/images/logo.svg', '@/assets/images/logo.svg'],
@@ -36,8 +36,8 @@ const product = {
     'باتری پراید بصورت فابریک یک باتری ۵۰ آمپر است. ولتاژ باطری پراید مانند تمام خودروهای سبک با پلتفرم مشابه نظیر تیبا، ساینا و کوئیک ۱۲ ولت است. ضمنا فضایی که در داخل کاپوت پراید برای باتری آن در نظر گرفته شده است ۲۵*۱۸*۲۳ سانتی متر است.',
 
   comments: [
-    { id: 1, author: 'فرزاد', rating: '4', date: '1398/02/03', text: 'عالیییییییییییییی' },
-    { id: 2, author: 'فرهاد', rating: '2', date: '1398/02/03', text: 'شت' }
+    { id: 1, author: 'فرزاد', rating: 4, date: '1398/02/03', text: 'عالیییییییییییییی' },
+    { id: 2, author: 'فرهاد', rating: 2, date: '1398/02/03', text: 'شت' }
   ]
 }
 </script>
