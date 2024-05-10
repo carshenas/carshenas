@@ -1,15 +1,23 @@
-
-
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref } from 'vue'
 import type Brands from '@/types/dto/brands'
 import CarBrandsList from './CarBrandsList.vue'
 import SelectedBrandModels from './SelectedBrandModels.vue'
 
 const sheet = ref(false)
 const carBrands = ref<Brands[]>([
-  { id: 1, icon: "../../../../public/icons/battery.svg", name: "سایپا", models: ["کوییک", "ساینا", "پراید"] },
-  { id: 2, icon: "../../../../public/icons/battery.svg", name: "ایرانخودرو", models: ["تارا", "سمند", "دنا"] },
+  {
+    id: 1,
+    icon: '../../../../public/icons/battery.svg',
+    name: 'سایپا',
+    models: ['کوییک', 'ساینا', 'پراید']
+  },
+  {
+    id: 2,
+    icon: '../../../../public/icons/battery.svg',
+    name: 'ایرانخودرو',
+    models: ['تارا', 'سمند', 'دنا']
+  }
 ])
 const selectedBrand = ref<Brands | null>(null)
 
@@ -21,34 +29,49 @@ const goBack = () => {
   selectedBrand.value = null
 }
 
-
-const emit = defineEmits(['modelSelected']);
+const emit = defineEmits(['modelSelected'])
 
 const handleModelSelected = (modelName: string) => {
-  emit('modelSelected', modelName);
-};
+  emit('modelSelected', modelName)
+}
 </script>
-    
 
 <template>
   <v-bottom-sheet v-model="sheet">
-
     <template v-slot:activator="{ props }">
       <div class="fabBtnContainer">
-        <v-btn v-bind="props" color="white" rounded="pill" size="x-large" class="fabBtn-text pr-8" variant="text"
-          key="showText">
+        <v-btn
+          v-bind="props"
+          color="white"
+          rounded="pill"
+          size="x-large"
+          class="fabBtn-text pr-8"
+          variant="text"
+          key="showText"
+        >
           {{ $t('shared.carFilter') }}
           <template v-slot:prepend>
             <v-icon icon="directions_car" />
           </template>
         </v-btn>
-        <v-btn v-bind="props" size="large" class="fabBtn-icon" icon="directions_car" color="primary" rounded="pill" />
+        <v-btn
+          v-bind="props"
+          size="large"
+          class="fabBtn-icon"
+          icon="directions_car"
+          color="primary"
+          rounded="pill"
+        />
       </div>
     </template>
 
     <CarBrandsList v-if="!selectedBrand" :carBrands="carBrands" @selectBrand="selectBrand" />
-    <SelectedBrandModels v-if="selectedBrand" :selectedBrand="selectedBrand" @goBack="goBack"
-      @modelSelected="handleModelSelected" />
+    <SelectedBrandModels
+      v-if="selectedBrand"
+      :selectedBrand="selectedBrand"
+      @goBack="goBack"
+      @modelSelected="handleModelSelected"
+    />
   </v-bottom-sheet>
 </template>
 
@@ -72,7 +95,7 @@ const handleModelSelected = (modelName: string) => {
   width: 10rem;
   z-index: 1000;
   animation-name: changeWidth;
-  animation-duration: .5s;
+  animation-duration: 0.5s;
   animation-delay: 5s;
   animation-fill-mode: forwards;
   background-color: #fb4847;
