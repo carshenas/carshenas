@@ -5,6 +5,9 @@ import { ref, onMounted } from 'vue'
 // Services
 import { getCategoryListService } from '@/services/carshenas/category'
 
+// Global components
+import ImageLoader from './ImageLoader.vue'
+
 const props = defineProps<{
   items?: Category[]
 }>()
@@ -38,7 +41,7 @@ onMounted(() => {
         :to="{ name: 'ProductsPage', query: { categoryId: category.id } }"
       >
         <div class="icon w-100 bg-primary rounded-circle d-flex justify-center align-center">
-          <ImageLoader :src="category.icon" :alt="category.name" width="32" />
+          <ImageLoader :src="category.image" :alt="category.name" width="32" />
         </div>
 
         <span class="title mt-2 text-text">{{ category.name }}</span>

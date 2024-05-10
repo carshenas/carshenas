@@ -1,28 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type users from '@/types/dto/users'
+import type { User } from '@/types/dto/user'
 
-const user = ref<users[]>([
-  {
-    id: 1,
-    firstName: 'فرزاد',
-    lastName: 'جام‌بر',
-    phone: '09012529729'
-  }
-])
+const user = ref<Partial<User>>({
+  id: '1',
+  fullName: 'فرزاد',
+  phoneNumber: '09012529729'
+})
 </script>
 
 <template>
   <section class="pa-4 d-flex flex-column ga-8">
     <div class="d-flex justify-space-between w-100">
       <div class="d-flex">
-        <span> {{ user[0].firstName }} {{ user[0].lastName }} </span>
+        <span> {{ user.fullName }} </span>
         <v-btn variant="text" class="pa-0" size="x-small" color="primary" to="/profile/info">
           <v-icon icon="edit" />
         </v-btn>
       </div>
       <span class="title-sm">
-        {{ user[0].phone }}
+        {{ user.phoneNumber }}
       </span>
     </div>
 
