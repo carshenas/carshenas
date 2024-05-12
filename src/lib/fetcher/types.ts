@@ -3,12 +3,12 @@ export type FetchPath = string | Array<string> | URL
 export interface FetcherOptions<D = BodyInit> extends Omit<RequestInit, 'body'> {
   baseURL?: string
   body?: D
-  parameters?: URLSearchParams
+  parameters?: Record<string, string>
 }
 
-export interface CreateURLOptions<P = URLSearchParams> {
+export interface CreateURLOptions {
   baseURL?: string | URL
-  parameters?: P
+  parameters?: Record<string, string>
 }
 
 export interface FetchResponse<R = unknown> {

@@ -11,9 +11,9 @@ const carshenasOptions = {
 }
 
 export default {
-  get: <R, D>(url: string, options?: FetcherOptions<D>) =>
+  get: <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) =>
     fetcher.get<R, D>(url, { ...options, ...carshenasOptions }),
-  post: <R, D>(url: string, options?: FetcherOptions<D>) =>
+  post: <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) =>
     fetcher.post<R, D>(url, {
       ...options,
       body: camelCaseObjectToSnakeCase(options?.body as Record<string, string>) as D | undefined,

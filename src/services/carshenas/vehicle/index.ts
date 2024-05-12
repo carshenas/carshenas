@@ -1,3 +1,4 @@
+import type PopularModel from '@/types/dto/popular-model'
 import carshenasService from '@/services'
 
-export const getPopularModelsService = () => carshenasService.get('/vehicle')
+export const getPopularModelsService = () => carshenasService.get<PopularModel[]>('/vehicle')

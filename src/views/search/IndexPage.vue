@@ -19,7 +19,7 @@ const products = ref<Category[]>()
 const getCategories = async () => {
   try {
     const response = await getCategoryListService({ title: search.value || '' })
-    categories.value = response
+    categories.value = response.data
   } catch (e) {
     console.error(e)
   }

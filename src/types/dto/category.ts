@@ -5,6 +5,6 @@ export interface Category {
   children?: Category[]
 }
 
-export interface CategoryFilter extends URLSearchParams {
+export interface CategoryFilter extends Record<string, string> {
   title: string
 }
