@@ -1,22 +1,33 @@
-<script lang="ts" setup>
-import ImageLoader from '@/components/ImageLoader.vue'
+<!-- MenuFirstLevel.vue -->
+
+<script setup lang="ts">
 import { useCategoryStore } from '@/stores/category'
-import { onMounted } from 'vue'
+import { ref } from 'vue'
 
 const categoriesStore = useCategoryStore()
+const selectedCategoryId = ref<number | null>(null)
+const emit = defineEmits(['categorySelected'])
 
-onMounted(() => categoriesStore.getCategories())
+const handleCategoryClick = (categoryId: number) => {
+  selectedCategoryId.value = categoryId
+  emit('categorySelected', categoryId)
+}
 </script>
 
 <template>
-  <v-list-item
-    v-for="category in categoriesStore.categories"
-    :key="category.id"
-    :title="category.name"
-    append-icon="navigate_before"
-  >
-    <template #prepend>
-      <!-- <ImageLoader :width="32" class="ml-2" /> -->
-    </template>
-  </v-list-item>
+  <v-list>
+    <v-list-item
+
+      v-for="category in categoriesStore.categories"
+      :key="category.id"
+      append-icon="navigate_before"
+      @click="handleCategoryClick(category.id)"
+      :title="category.name"
+    >
+      <template v-slot:prepend >
+        <v-img :aspect-ratio="1" class="bg-white ml-4" :src="category.image" width="24" cover></v-img>
+      </template>
+
+    </v-list-item>
+  </v-list>
 </template>
