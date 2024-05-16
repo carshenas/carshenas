@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import useAppConfig from '@/composables/app-config'
-import { computed, onMounted, ref, watch, watchEffect } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import IMAGES_TYPES from '@/constants/supported-image-types'
 import type { ImageExtension } from '@/types/image.ts'
 import type { NullableString } from '@/types/global'
