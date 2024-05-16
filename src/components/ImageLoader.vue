@@ -1,61 +1,57 @@
 <script setup lang="ts">
 import useAppConfig from '@/composables/app-config'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch, watchEffect } from 'vue'
 import IMAGES_TYPES from '@/constants/supported-image-types'
 import type { ImageExtension } from '@/types/image.ts'
+import type { NullableString } from '@/types/global'
+import { getAssetUrl } from '@/helpers/files'
 
 const appConfig = useAppConfig()
 const props = defineProps<{
-  src: string
+  src: NullableString
   width?: string
   height?: string
   alt: string
   types?: ImageExtension[]
 }>()
 const picture = ref<HTMLPictureElement>()
+const images = ref<any[]>([])
+const defaultImage = ref<string | undefined>()
 
-const pathGenerator = (path: string, extension?: ImageExtension): string => {
-  let isLocal = path.startsWith('@')
-  let localPath = isLocal ? path.replace('@', '/src') : path
+const filteredImageTypes = computed(() =>
+  props.types?.length ? IMAGES_TYPES.filter((item) => props.types!.includes(item.extension)) : []
+)
+
+const generateSrc = async (path: string): Promise<string> => {
+  if (path.startsWith('@')) return await getAssetUrl(path)
 
   const width = props.width?.includes('%') ? picture.value?.offsetWidth : props.width
   const height = props.width?.includes('%') ? picture.value?.offsetWidth : props.width
 
-  // Replace path extension with new extension
-  if (extension) {
-    const urlPath = localPath.split('.')
-    urlPath[urlPath.length - 1] = extension
-    localPath = urlPath.join('.')
-  }
-
-  localPath = isLocal
-    ? new URL(localPath, import.meta.url).toString()
-    : // `${appConfig.staticFileServer}/size:${width}*${height}/${localPath}`
-      `${appConfig.staticFileServer}${path}`
-
-  return localPath
+  return `${appConfig.staticFileServer}/size:${width}*${height}/${path}`
 }
 
-const filteredImageTypes = computed(() =>
-  props.types?.length ? IMAGES_TYPES.filter((item) => props.types!.includes(item.extension)) : []
+const generateImagesUrl = async () => {
+  images.value = []
+  filteredImageTypes.value.forEach(async (type) =>
+    props.src ? images.value?.push({ src: await generateSrc(props.src), ...type }) : undefined
+  )
+  defaultImage.value = props.src ? await generateSrc(props.src) : undefined
+}
+
+onMounted(() => generateImagesUrl())
+
+watch(
+  () => props.src,
+  () => generateImagesUrl()
 )
 </script>
 
 <template>
   <picture v-if="props.src" ref="picture">
-    <source
-      v-for="source in filteredImageTypes"
-      :key="source.type"
-      :srcset="pathGenerator(props.src, source.extension)"
-      :type="source.type"
-    />
+    <source v-for="image in images" :key="image.type" :srcset="image.src" :type="image.type" />
 
-    <img
-      :src="pathGenerator(props.src)"
-      :alt="props.alt"
-      :width="props.width"
-      :height="props.height"
-    />
+    <img :src="defaultImage" :alt="props.alt" :width="props.width" :height="props.height" />
   </picture>
 
   <v-icon v-else icon="hide_image" />
