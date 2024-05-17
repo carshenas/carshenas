@@ -30,7 +30,19 @@ export const useCategoryStore = defineStore('category', () => {
         {
           id: 11,
           image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-          name: 'Subcategory 1.1'
+          name: 'Subcategory 1.1',
+          children: [
+            {
+              id: 111,
+              image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
+              name: '"sub 1.1.1'
+            },
+            {
+              id: 112,
+              image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
+              name: '"sub 1.1.2'
+            }
+          ]
         },
         {
           id: 12,
