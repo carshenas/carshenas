@@ -3,6 +3,7 @@ import ImageLoader from '@/components/ImageLoader.vue'
 import ColorSelector from './components/detail/ColorSelector.vue'
 import CurrencyDisplay from '@/components/CurrencyDisplay.vue'
 import CommentSection from './components/detail/CommentSection.vue'
+import { ref, computed } from 'vue'
 
 const product = {
   images: ['@/assets/images/logo.svg', '@/assets/images/logo.svg'],
@@ -21,9 +22,27 @@ const product = {
     { id: 2, code: '#00ff00', title: 'سبز' },
     { id: 3, code: '#0000ff', title: 'آبی' }
   ],
-  warranty: [
-    { id: 1, icon: '', title: 'ایران خودرو' },
-    { id: 2, icon: '', title: 'سایپا' }
+  brands: [
+    {
+      id: 1,
+      icon: '',
+      title: 'ایران خودرو',
+      warranties: [
+        { name: 'گارانتی 1', price: 400000 },
+        { name: 'گارانتی 2', price: 650000 },
+        { name: 'گارانتی 3', price: 900000 }
+      ]
+    },
+    {
+      id: 2,
+      icon: '',
+      title: 'سایپا',
+      warranties: [
+        { name: 'گارانتی سگ 1', price: 400000 },
+        { name: 'گارانتی سگ2', price: 450000 },
+        { name: 'گارانتی سگ 3', price: 500000 }
+      ]
+    }
   ],
   specs: [
     { id: 1, title: '10kg', desc: 'وزن' },
@@ -40,16 +59,45 @@ const product = {
     { id: 2, author: 'فرهاد', rating: 2, date: '1398/02/03', text: 'شت' }
   ]
 }
+
+const selectedBrandId = ref<number | null>(null)
+const showBottomSheet = ref(false)
+const selectedWarrantyName = ref<string | null>(null)
+const selectedBrand = computed(() => {
+  return product.brands.find((brand) => brand.id === selectedBrandId.value) || null
+})
+
+const selectedBrandTitle = computed(() => {
+  return selectedBrand.value ? selectedBrand.value.title : ''
+})
+
+const selectedBrandWarranties = computed(() => {
+  return selectedBrand.value ? selectedBrand.value.warranties : []
+})
+
+function showWarrantyList() {
+  if (selectedBrandId.value !== null) {
+    showBottomSheet.value = true
+  }
+}
+function confirmWarrantySelection() {
+  if (selectedWarrantyName.value) {
+    const selectedWarranty = selectedBrandWarranties.value.find(
+      (warranty) => warranty.name === selectedWarrantyName.value
+    )
+    if (selectedWarranty) {
+      console.log(
+        `Selected Warranty: ${selectedWarranty.name}, Price: ${selectedWarranty.price} تومان`
+      )
+      // Add your confirmation logic here
+      showBottomSheet.value = false
+    }
+  }
+}
 </script>
 
 <template>
-  <v-tabs bg-color="white" fixed-tabs class="position-sticky tab-pdp">
-    <v-tab href="#product">{{ $t('productDetail.product') }}</v-tab>
-    <v-tab href="#spec">{{ $t('productDetail.details') }}</v-tab>
-    <v-tab href="#comments">{{ $t('productDetail.comments') }}</v-tab>
-  </v-tabs>
-
-  <v-carousel id="product" show-arrows="hover" hide-delimiter-background>
+  <v-carousel show-arrows="hover" hide-delimiter-background>
     <v-carousel-item v-for="(image, index) in product.images" :key="index">
       <ImageLoader :src="image" height="100%" width="100%" :alt="`${product.title} ${index + 1}`" />
     </v-carousel-item>
@@ -62,6 +110,12 @@ const product = {
   </v-breadcrumbs>
 
   <h1 class="px-4 title-md">{{ product.title }}</h1>
+
+  <v-tabs bg-color="white" fixed-tabs class="position-sticky tab-pdp">
+    <v-tab href="#summery">{{ $t('productDetail.summery') }}</v-tab>
+    <v-tab href="#spec">{{ $t('productDetail.details') }}</v-tab>
+    <v-tab href="#comments">{{ $t('productDetail.comments') }}</v-tab>
+  </v-tabs>
 
   <div class="d-flex flex-column t-4 px-4 ga-8">
     <p>
@@ -80,23 +134,55 @@ const product = {
 
   <ColorSelector :items="product.colors" />
 
-  <div id="spec" class="d-flex flex-column t-4 px-4 ga-8">
+  <div class="d-flex flex-column t-4 px-4 ga-8">
     <div class="d-flex align-center">
-      <h4 role="heading">{{ $t('productDetail.warranty') }}</h4>
+      <h4 role="heading">{{ $t('productDetail.brands') }}</h4>
       <div class="w-100 border h-0 mx-2"></div>
     </div>
-    <v-radio-group dir="ltr">
-      <v-radio
-        class="d-flex w-100 justify-space-between"
-        v-for="warranty in product.warranty"
-        :key="warranty.id"
-        :label="warranty.title"
-        :value="warranty.id"
-        color="primary"
-      />
-    </v-radio-group>
-  </div>
+    <v-container>
+      <v-radio-group v-model="selectedBrandId" @change="showWarrantyList" dir="ltr">
+        <v-radio
+          class="d-flex w-100 justify-space-between"
+          v-for="brand in product.brands"
+          :key="brand.id"
+          :label="brand.title"
+          :value="brand.id"
+          color="primary"
+        />
+      </v-radio-group>
 
+      <v-bottom-sheet v-model="showBottomSheet">
+        <v-card>
+          <v-card-title>{{ selectedBrandTitle }}</v-card-title>
+          <v-card-text>
+            <v-radio-group v-model="selectedWarrantyName" dir="rtl">
+              <v-radio
+                class="d-flex justify-space-between warranty-radio"
+                v-for="warranty in selectedBrandWarranties"
+                :key="warranty.name"
+                :value="warranty.name"
+                color="primary"
+              >
+                <template v-slot:label>
+                  <div class="d-flex justify-space-between w-100" dir="rtl">
+                    <span>{{ warranty.name }}</span>
+                    <CurrencyDisplay
+                      :value="warranty.price"
+                      value-class="text-primary font-weight-bold "
+                    />
+                  </div>
+                </template>
+              </v-radio>
+            </v-radio-group>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn variant="flat" size="large" block @click="confirmWarrantySelection">تایید</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-bottom-sheet>
+    </v-container>
+  </div>
+  <div id="summery" class="gap-maker"></div>
   <div class="d-flex flex-column t-4 px-4 ga-8">
     <div class="d-flex align-center">
       <h4 role="heading" class="text-no-wrap">{{ $t('productDetail.summery') }}</h4>
@@ -107,7 +193,7 @@ const product = {
       <v-img :width="400" aspect-ratio="16/9" cover :src="product.summeryImages"></v-img>
     </v-container>
   </div>
-
+  <div id="spec" class="gap-maker"></div>
   <div class="d-flex flex-column t-4 px-4 ga-8">
     <div class="d-flex align-center">
       <h4 role="heading" class="text-no-wrap">{{ $t('productDetail.details') }}</h4>
@@ -133,14 +219,13 @@ const product = {
   </div>
 
   <CommentSection :comments="product.comments" id="comments" />
-
   <div
     class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white"
   >
     <v-btn prepend-icon="add" size="large"> {{ $t('productDetail.addToCart') }}</v-btn>
     <CurrencyDisplay
       :value="product.price"
-      value-class="text-primary font-weight-bold w"
+      value-class="text-primary font-weight-bold "
       class="d-flex justify-end"
     />
   </div>
@@ -172,5 +257,16 @@ const product = {
 .tab-pdp {
   top: 3.9rem;
   z-index: 10;
+  margin: 1rem 0;
+}
+
+.warranty-radio label {
+  flex-grow: 1;
+}
+
+#summery,
+#spec,
+#comments {
+  scroll-margin-top: 8rem;
 }
 </style>
