@@ -1,34 +1,27 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type addresses from "@/types/dto/addresses";
-import newAddressInfo from "./components/NewAddressInfo.vue";
-import newAddressMap from "./components/NewAddressMap.vue";
+import { ref } from 'vue'
+import type addresses from '@/types/dto/addresses'
+import newAddressInfo from './components/NewAddressInfo.vue'
 
-const showInfo = ref(false);
-const toggleShowInfo = () => {
-  showInfo.value = !showInfo.value;
-};
 const address = ref<addresses[]>([
   {
     id: 1,
-    receiver: "فرزاد جام بر",
-    address: "تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی",
-    phone: "09012529729",
-    postalCode: "1458886878"
+    receiver: 'فرزاد جام بر',
+    address: 'تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی',
+    phone: '09012529729',
+    postalCode: '1458886878'
   },
   {
     id: 1,
-    receiver: "فرزاد جام بر",
-    address: "تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی",
-    phone: "09012529729",
-    postalCode: "1458886878"
+    receiver: 'فرزاد جام بر',
+    address: 'تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی',
+    phone: '09012529729',
+    postalCode: '1458886878'
   }
 ])
-
 </script>
 <template>
-
-  <section class="pa-4 d-flex flex-column ga-8 h-100">
+  <section class="pa-4 d-flex flex-column ga-4 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
       <h1>{{ $t('profile.addresses') }}</h1>
@@ -36,17 +29,22 @@ const address = ref<addresses[]>([
     </div>
     <div class="d-flex flex-column ga-4">
       <v-bottom-sheet>
-
         <template v-slot:activator="{ props }">
-          <v-btn block v-bind="props" class="justify-space-between" rounded="lg" color="primary" size="x-large"
-            append-icon="add">
+          <v-btn
+            block
+            v-bind="props"
+            class="justify-space-between"
+            rounded="lg"
+            color="primary"
+            size="x-large"
+            append-icon="add"
+          >
             {{ $t('profile.newAddress') }}
           </v-btn>
         </template>
         <v-card class="d-flex flex-column ga-4" :title="$t('profile.newAddress')">
-          <v-btn v-if="showInfo" icon="arrow_forward_ios" variant="text" @click="toggleShowInfo" size="x-small" />
-          <newAddressMap v-if="!showInfo" @showInfo="showInfo = true" />
-          <newAddressInfo v-if="showInfo" />
+          <v-btn icon="arrow_forward_ios" variant="text" size="x-small" />
+          <newAddressInfo />
         </v-card>
       </v-bottom-sheet>
 
@@ -69,5 +67,4 @@ const address = ref<addresses[]>([
       </v-card>
     </div>
   </section>
-
 </template>
