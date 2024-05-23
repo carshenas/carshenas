@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps<{ items: { id: number; code: string; title: string }[] }>()
 
 const selectedColorId = defineModel<number>()
 

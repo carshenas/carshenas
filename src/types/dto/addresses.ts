@@ -1,7 +1,11 @@
-export default interface addresses {
+export default interface Address {
   id: number
-  receiver: string
   address: string
-  phone: string
   postalCode: string
+  unit: number
+  plaque: number
+  position: {
+    lat: number
+    lng: number
+  } | null
 }

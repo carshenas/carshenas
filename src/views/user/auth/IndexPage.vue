@@ -14,6 +14,7 @@ import { snakeCaseObjectToCamelCase } from '@/helpers/general'
 
 const step = ref<0 | 1>(0)
 const form = ref<VForm>()
+
 const props = reactive<{
   phoneNumber: NullableString
   otpExpireTime: NullableNumber
