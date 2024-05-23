@@ -14,7 +14,6 @@
                 <v-text-field :label="$t('profile.lastName')" variant="outlined"></v-text-field>
                 <v-text-field :label="$t('profile.phoneNumber')" variant="outlined"></v-text-field>
                 <v-text-field :label="$t('profile.nationalCode')" variant="outlined"></v-text-field>
-                <v-text-field :label="$t('profile.email')" variant="outlined"></v-text-field>
             </div>
 
             <div>

@@ -43,7 +43,6 @@ const address = ref<addresses[]>([
           </v-btn>
         </template>
         <v-card class="d-flex flex-column ga-4" :title="$t('profile.newAddress')">
-          <v-btn icon="arrow_forward_ios" variant="text" size="x-small" />
           <newAddressInfo />
         </v-card>
       </v-bottom-sheet>
