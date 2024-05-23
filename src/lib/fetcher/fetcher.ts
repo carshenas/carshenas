@@ -1,7 +1,7 @@
 import type { FetcherOptions, FetchPath, FetchResponse } from './types'
 import { generateURL, mergeOptions } from './helpers'
 
-const useFetch = async <R = unknown, D = unknown>(
+const useFetch = async <R, D>(
   path: FetchPath,
   options?: FetcherOptions<D>
 ): Promise<FetchResponse<R>> => {

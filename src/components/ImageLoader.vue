@@ -13,6 +13,7 @@ const props = defineProps<{
   height?: string
   alt: string
   types?: ImageExtension[]
+  aspectRatio?: string
 }>()
 const picture = ref<HTMLPictureElement>()
 const images = ref<any[]>([])
@@ -24,6 +25,7 @@ const filteredImageTypes = computed(() =>
 
 const generateSrc = async (path: string): Promise<string> => {
   if (path.startsWith('@')) return await getAssetUrl(path)
+  if (path.startsWith('http')) return (defaultImage.value = props.src!)
 
   const width = props.width?.includes('%') ? picture.value?.offsetWidth : props.width
   const height = props.width?.includes('%') ? picture.value?.offsetWidth : props.width
@@ -32,6 +34,7 @@ const generateSrc = async (path: string): Promise<string> => {
 }
 
 const generateImagesUrl = async () => {
+  if (!props.src) return
   images.value = []
   filteredImageTypes.value.forEach(async (type) =>
     props.src ? images.value?.push({ src: await generateSrc(props.src), ...type }) : undefined
@@ -51,7 +54,13 @@ watch(
   <picture v-if="props.src" ref="picture">
     <source v-for="image in images" :key="image.type" :srcset="image.src" :type="image.type" />
 
-    <img :src="defaultImage" :alt="props.alt" :width="props.width" :height="props.height" />
+    <img
+      :src="defaultImage"
+      :alt="props.alt"
+      :width="props.width"
+      :height="props.height"
+      :style="`aspect-ratio: ${props.aspectRatio};`"
+    />
   </picture>
 
   <v-icon v-else icon="hide_image" />

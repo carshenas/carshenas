@@ -7,6 +7,7 @@ import profile from './profile'
 import productList from './productList'
 import auth from './auth'
 import validation from './validation'
+import cart from './cart'
 
 export default {
   app,
@@ -17,5 +18,6 @@ export default {
   productList,
   auth,
   profile,
-  validation
+  validation,
+  cart
 }
