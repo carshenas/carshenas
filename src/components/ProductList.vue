@@ -8,6 +8,7 @@ import { getProductListService } from '@/services/carshenas/product'
 // Global components
 import CurrencyDisplay from './CurrencyDisplay.vue'
 import ImageLoader from './ImageLoader.vue'
+import ItemCounter from '@/components/ItemCounter.vue'
 
 const props = defineProps<{
   items?: Product[]
@@ -36,38 +37,42 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="d-flex flex-column ga-4">
-    <div v-for="product in products" :key="product.id" class="product-card pa-3">
-      <v-row no-gutters>
-        <v-col cols="4">
-          <ImageLoader
-            :src="product.image"
-            :alt="product.title"
-            aspect-ratio="1"
-            width="100%"
-            class="rounded"
-            style="aspect-ratio: 1"
-          />
-        </v-col>
+  <div>
+    <v-row class="product" v-for="product in products" :key="product.id">
+      <v-col cols="4">
+        <ImageLoader :src="product.image" :alt="product.title" width="100%" aspectRatio="1" />
+      </v-col>
 
-        <v-col cols="8" class="pr-2 d-flex flex-column justify-space-between">
-          <span role="heading" class="body-lg">
-            {{ product.title }}
-          </span>
+      <v-col cols="8">
+        <div class="d-flex justify-space-between">
+          <h2 class="title-sm">{{ product.title }}</h2>
 
+          <v-btn density="compact" icon="delete" variant="plain" class="px-0" />
+        </div>
+
+        <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
+
+        <div class="mt-4 d-flex justify-space-between align-center">
           <CurrencyDisplay
-            :value="product.price"
+            :value="product.price * product.quantity"
             value-class="text-primary font-weight-bold"
-            class="d-flex justify-end"
+            unit-class="body-sm text-outline"
+            class="d-flex justify-end body-md"
           />
-        </v-col>
-      </v-row>
-    </div>
+
+          <ItemCounter v-model="product.quantity" :max="product.stock" />
+        </div>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.product-card {
-  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.15) !important;
+.product {
+  border-bottom: 1px solid rgb(238, 238, 238);
+}
+
+.product:nth-child(2n) {
+  background-color: rgba(238, 238, 238, 0.384);
 }
 </style>

@@ -87,9 +87,3 @@ onBeforeRouteLeave((_, _2, next) => {
     </v-form>
   </v-container>
 </template>
-
-<style scoped>
-.counter {
-  height: var(--v-btn-height);
-}
-</style>

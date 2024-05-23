@@ -39,7 +39,7 @@ onMounted(() => getPosts())
         gradient=" rgba(12,6,52,.6), rgba(12,6,52,.6)"
       >
         <div class="d-flex justify-end">
-          <v-btn density="compact" icon="more_vert" variant="text"> </v-btn>
+          <v-btn density="compact" icon="more_vert" variant="text" />
         </div>
         <h3 class="mt-7 title-sm">
           {{ post.title }}
