@@ -97,7 +97,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <v-container class="h-100 d-flex flex-column bar-padding">
+  <div class="h-100 d-flex flex-column bar-padding">
     <div class="fixed-bar pa-4">
       <v-text-field
         v-model="search"
@@ -112,10 +112,10 @@ onBeforeRouteLeave(async (to, from, next) => {
       />
     </div>
 
-    <SearchSuggestions :title="search" @select="search = $event" />
+    <SearchSuggestions class="px-4" :title="search" @select="search = $event" />
 
     <template v-if="search">
-      <h2 class="title-sm mt-6">
+      <h2 class="title-sm mt-6 px-4">
         {{
           $t('search.searchInCategory', {
             item: search
@@ -123,9 +123,9 @@ onBeforeRouteLeave(async (to, from, next) => {
         }}
       </h2>
 
-      <CategoryList :items="categories" class="mt-6" />
+      <CategoryList :items="categories" class="mt-6 px-4" />
 
-      <div class="mt-6 w-100 d-flex">
+      <div class="mt-6 w-100 d-flex px-4">
         <h2 class="title-sm">
           {{
             $t('search.searchInProducts', {
@@ -147,7 +147,7 @@ onBeforeRouteLeave(async (to, from, next) => {
     <div v-else class="flex-grow-1 d-flex align-center">
       <span class="w-100 text-center"> {{ $t('search.whatProductAreYouLookingFor') }} </span>
     </div>
-  </v-container>
+  </div>
 </template>
 
 <style scoped lang="scss">

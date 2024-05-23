@@ -7,10 +7,10 @@ const cartStore = useCartStore()
 </script>
 
 <template>
-  <v-container>
-    <ProductList :items="cartStore.items" />
+  <div style="padding-bottom: 120px">
+    <ProductList :items="cartStore.items" has-counter />
 
-    <v-card class="bottom-bar pa-4">
+    <div class="bottom-bar pa-4">
       <div class="d-flex justify-space-between">
         <p>{{ $t('cart.payable') }} :</p>
 
@@ -22,13 +22,14 @@ const cartStore = useCartStore()
         />
       </div>
 
-      <v-btn class="primary mt-4" block :text="$t('cart.pay')" :to="{ name: 'CartPage' }" />>
-    </v-card>
-  </v-container>
+      <v-btn class="primary mt-4" block :text="$t('cart.pay')" :to="{ name: 'CartPage' }" />
+    </div>
+  </div>
 </template>
 
 <style scoped>
 .bottom-bar {
+  background-color: white;
   position: fixed;
   left: 0;
   right: 0;
