@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { ref } from 'vue'
 import CategoryList from '@/components/CategoryList.vue'
 import { RouterLink } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
@@ -10,16 +10,57 @@ import { generateNumericId } from '@/helpers/general'
 import type { Category } from '@/types/dto/category'
 import { getCategoryListService } from '@/services/carshenas/category'
 import { debounce } from 'lodash'
+import type { Product } from '@/types/dto/product'
 
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
 const search = ref<string>()
 
 const categories = ref<Category[]>()
-const products = ref<Category[]>()
+const products = ref<Product[]>([
+  {
+    id: 1,
+    image: 'https://contentinfo.autozone.com/znetcs/product-info/en/US/exi/H5-EFB/image/8/',
+    title: 'باتری بیست هشتت سیمی',
+    description: 'این توضیحات تکمیلی این محصول است و نهایتا می تواند 70 گارکتر داشته باشد',
+    quantity: 1,
+    stock: 10,
+    price: 2000000
+  },
+  {
+    id: 2,
+    image:
+      'https://png.pngtree.com/thumb_back/fh260/background/20210727/pngtree-cute-watercolor-fruit-mobile-wallpaper-image_752110.jpg',
+    title: 'string',
+    description: 'description',
+    quantity: 1,
+    stock: 12,
+    price: 2000000
+  },
+  {
+    id: 3,
+    image:
+      'https://static.vecteezy.com/system/resources/thumbnails/025/067/762/small_2x/4k-beautiful-colorful-abstract-wallpaper-photo.jpg',
+    title: 'string',
+    description: 'description',
+    quantity: 1,
+    stock: 1,
+    price: 2000000
+  },
+  {
+    id: 4,
+    image: 'string',
+    title: 'string',
+    description: 'description',
+    quantity: 1,
+    stock: 2,
+    price: 2000000
+  }
+])
 const getCategories = async () => {
+  const filters = new URLSearchParams({ title: search.value || '' })
   try {
-    const response = await getCategoryListService({ title: search.value || '' })
-    categories.value = response
+    const response = await getCategoryListService(filters)
+    categories.value = response.data
   } catch (e) {
     console.error(e)
   }
@@ -79,7 +120,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 
     <SearchSuggestions :title="search" @select="search = $event" />
 
-    <h2 class="title-sm mt-6">
+    <h2 v-if="search" class="title-sm mt-6">
       {{
         $t('search.searchInCategory', {
           item: search
@@ -89,7 +130,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 
     <CategoryList :items="categories" class="mt-4" />
 
-    <div class="mt-6 w-100 d-flex">
+    <div v-if="search" class="mt-6 w-100 d-flex">
       <h2 class="title-sm">
         {{
           $t('search.searchInProducts', {

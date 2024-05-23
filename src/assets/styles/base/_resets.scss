@@ -8,7 +8,7 @@ body {
 }
 
 #app {
-  overflow: hidden;
+  overflow-x: hidden;
   width: 100%;
   max-width: 480px;
 }
@@ -50,4 +50,8 @@ a {
 
 .v-navigation-drawer {
   height: 100%;
+}
+
+picture {
+  line-height: 0;
 }

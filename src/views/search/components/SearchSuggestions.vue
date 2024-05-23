@@ -40,11 +40,12 @@ onMounted(() => getSuggestions())
 </script>
 
 <template>
-  <v-chip-group column class="mt-4">
+  <v-chip-group column class="pa-0">
     <v-chip
       v-for="suggestion in filteredSuggestions"
       :key="suggestion.id"
       variant="outlined"
+      class="mt-4"
       rounded
       @click="emits('select', suggestion.title)"
     >

@@ -11,7 +11,7 @@ const getPosts = async () => {
 
   try {
     const response = await getPostsListService()
-    posts.value = response
+    posts.value = response.data
   } catch (e) {
     console.error(e)
   } finally {
