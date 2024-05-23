@@ -11,7 +11,10 @@ const router = createRouter({
     {
       path: '/search',
       name: 'SearchPage',
-      component: () => import('../views/search/IndexPage.vue')
+      component: () => import('../views/search/IndexPage.vue'),
+      meta: {
+        contentOnly: true
+      }
     },
     {
       path: '/product',
@@ -22,6 +25,11 @@ const router = createRouter({
       path: '/product/:id(\\d+)',
       name: 'ProductDetailPage',
       component: () => import('@/views/product/DetailPage.vue')
+    },
+    {
+      name: 'CartPage',
+      path: '/cart',
+      component: () => import('@/views/cart/IndexPage.vue')
     },
     {
       path: '/user/authentication',

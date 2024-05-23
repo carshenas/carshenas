@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CategoryList from '@/components/CategoryList.vue'
 import PopularModels from './components/PopularModels.vue'
-import blogPost from './components/PostsList.vue'
+import BlogPost from './components/PostsList.vue'
 </script>
 
 <template>
@@ -11,15 +11,18 @@ import blogPost from './components/PostsList.vue'
         {{ $t('home.headline') }}
       </h1>
 
+      <p class="mt-4 body-md">
+        {{ $t('home.description') }}
+      </p>
+
       <v-btn
         block
         rounded="pill"
         color="outline"
-        size="x-large"
+        size="large"
         variant="outlined"
         to="/search"
         class="d-flex justify-space-between mt-6 mb-12"
-        hide-details
       >
         {{ $t('shared.search') }}
         <template v-slot:append>
@@ -55,7 +58,7 @@ import blogPost from './components/PostsList.vue'
         </v-btn>
       </div>
 
-      <!-- <blogPost /> -->
+      <BlogPost />
     </section>
   </div>
 </template>

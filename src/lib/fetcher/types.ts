@@ -1,17 +1,17 @@
 export type FetchPath = string | Array<string> | URL
 
-export interface FetcherOptions<D = BodyInit> extends Omit<RequestInit, 'body'> {
+export interface FetcherOptions<D> extends Omit<RequestInit, 'body'> {
   baseURL?: string
   body?: D
   parameters?: URLSearchParams
 }
 
-export interface CreateURLOptions<P = URLSearchParams> {
+export interface CreateURLOptions {
   baseURL?: string | URL
-  parameters?: P
+  parameters?: URLSearchParams
 }
 
-export interface FetchResponse<R = unknown> {
+export interface FetchResponse<R> {
   data: R
   status: number
   statusText: string

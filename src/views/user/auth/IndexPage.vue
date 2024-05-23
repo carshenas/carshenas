@@ -9,11 +9,17 @@ import { onBeforeRouteLeave } from 'vue-router'
 
 // Services
 import { getOTPService } from '@/services/carshenas/auth'
+import type { NullableNumber, NullableString } from '@/types/global'
+import { snakeCaseObjectToCamelCase } from '@/helpers/general'
 
 const step = ref<0 | 1>(0)
 const form = ref<VForm>()
-const props = reactive({
-  number: '09393557744'
+const props = reactive<{
+  phoneNumber: NullableString
+  otpExpireTime: NullableNumber
+}>({
+  phoneNumber: null,
+  otpExpireTime: null
 })
 
 const loading = ref<boolean>(false)
@@ -29,14 +35,32 @@ const activeComponent = ref()
 const getOTP = async () => {
   loading.value = true
   try {
-    const response = await getOTPService(activeComponent.value.getModel())
+    const phoneNumber = activeComponent.value.getModel()
+    const response = await getOTPService(phoneNumber)
+
     console.log(response)
+
+    props.phoneNumber = phoneNumber
+    props.otpExpireTime = response.data.otpExp
+    step.value++
   } catch (e) {
     console.error(e)
   } finally {
     loading.value = false
   }
 }
+
+let test = snakeCaseObjectToCamelCase<{
+  hello_world: string
+  hello_world1: string
+  hello_world2: string
+}>({
+  hello_world: 'check',
+  hello_world1: 'check',
+  hello_world2: 'check'
+})
+
+console.log(test)
 
 const sendOTP = () => ''
 

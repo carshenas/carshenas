@@ -1,7 +1,7 @@
 <!-- MenuSecondLevel.vue -->
 <script setup lang="ts">
 import { useCategoryStore } from '@/stores/category'
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{ selectedCategoryId: number | null }>()
 const categoriesStore = useCategoryStore()

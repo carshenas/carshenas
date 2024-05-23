@@ -10,12 +10,13 @@ import ImageLoader from './ImageLoader.vue'
 
 const props = defineProps<{
   items?: Category[]
+  loading?: boolean
 }>()
-const loading = ref<boolean>(false)
+const _loading = ref<boolean>(false)
 const categories = ref<Category[]>(props.items || [])
 
 const getCategories = async () => {
-  loading.value = true
+  _loading.value = true
 
   try {
     const response = await getCategoryListService()
@@ -24,7 +25,7 @@ const getCategories = async () => {
   } catch (e) {
     console.error(e)
   } finally {
-    loading.value = false
+    _loading.value = false
   }
 }
 
@@ -34,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-row no-gutters>
+  <v-row v-if="!_loading && !props.loading" no-gutters>
     <v-col v-for="category in categories" :key="category.id" cols="3" class="pa-2">
       <router-link
         class="category w-100 d-flex flex-column justify-center align-center"
@@ -46,6 +47,12 @@ onMounted(() => {
 
         <span class="title mt-2 text-text">{{ category.name }}</span>
       </router-link>
+    </v-col>
+  </v-row>
+
+  <v-row v-else>
+    <v-col v-for="n in 8" :key="n" cols="3" class="pa-2">
+      <v-skeleton-loader type="avatar"></v-skeleton-loader>
     </v-col>
   </v-row>
 </template>

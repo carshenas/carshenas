@@ -11,7 +11,7 @@ const getModels = async () => {
 
   try {
     const response = await getPopularModelsService()
-    models.value = response
+    models.value = response.data
   } catch (e) {
     console.error(e)
   } finally {
