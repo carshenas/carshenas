@@ -5,6 +5,7 @@ import type { LatLng } from '@/types/dto/the-map'
 import type { VForm } from 'vuetify/components'
 
 const props = defineProps<{ position: LatLng | null }>()
+
 const emit = defineEmits<{
   (
     e: 'submit',
@@ -18,30 +19,45 @@ const emit = defineEmits<{
     }
   ): void
 }>()
+const formRef = ref<VForm | null>(null)
 
 const address = ref('')
 const plaque = ref('')
 const unit = ref('')
 const postalCode = ref('')
+const requiredRule = (value: string) => !!value || 'لطفا آدرس خود را بنویسد'
+const positiveInteger = (value: string) => {
+  const intValue = parseInt(value)
+  return (Number.isInteger(intValue) && intValue >= 0) || ''
+}
 
-const handleSubmit = () => {
-  const plaqueNumber = parseInt(plaque.value)
-  const unitNumber = parseInt(unit.value)
-  const formData = {
-    id: Date.now(),
-    address: address.value,
-    plaque: isNaN(plaqueNumber) ? 0 : plaqueNumber,
-    unit: isNaN(unitNumber) ? 0 : unitNumber,
-    postalCode: postalCode.value,
-    position: props.position
+const postalCodeValidation = (value: string) => {
+  return /^\d{10}$/.test(value) || 'کد پستی درست وارد کنید'
+}
+
+const handleSubmit = async () => {
+  const { valid: isValid } = await formRef.value!.validate()
+
+  if (isValid) {
+    const plaqueNumber = parseInt(plaque.value)
+    const unitNumber = parseInt(unit.value)
+    const formData = {
+      id: Date.now(),
+      address: address.value,
+      plaque: isNaN(plaqueNumber) ? 0 : plaqueNumber,
+      unit: isNaN(unitNumber) ? 0 : unitNumber,
+      postalCode: postalCode.value,
+      position: props.position
+    }
+    emit('submit', formData)
   }
-  emit('submit', formData)
 }
 </script>
 
 <template>
   <v-container>
     <v-form
+      ref="formRef"
       class="flex-grow-1 d-flex flex-column justify-space-between"
       @submit.prevent="handleSubmit"
     >
@@ -53,6 +69,7 @@ const handleSubmit = () => {
               class="pa-1 mt-4"
               :label="$t('profile.address')"
               variant="outlined"
+              :rules="[requiredRule]"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -65,6 +82,7 @@ const handleSubmit = () => {
               class="pa-1"
               :label="$t('profile.plaque')"
               variant="outlined"
+              :rules="[positiveInteger]"
             ></v-text-field>
           </v-col>
 
@@ -75,16 +93,19 @@ const handleSubmit = () => {
               class="pa-1"
               :label="$t('profile.unit')"
               variant="outlined"
+              :rules="[positiveInteger]"
             ></v-text-field>
           </v-col>
 
           <v-col>
             <v-text-field
-              type="tel"
               v-model="postalCode"
+              type="tel"
               class="pa-1"
               :label="$t('profile.postalCode')"
               variant="outlined"
+              :rules="[postalCodeValidation]"
+              maxlength="10"
             ></v-text-field>
           </v-col>
         </v-row>

@@ -1,7 +1,20 @@
-
-export interface LatLng {
+export interface LatLng extends URLSearchParams {
   lat: number
   lng: number
+}
+
+export interface LeafletMouseEvent {
+  originalEvent: MouseEvent
+  containerPoint: { x: number; y: number }
+  layerPoint: { x: number; y: number }
+  latlng: LatLng
+  type: string
+  target: any
+  sourceTarget: any
+}
+
+export interface LatLngString {
+  desc: string
 }
 
 export interface IconOptions {
@@ -33,7 +46,6 @@ export class Icon {
     this.shadowAnchor = options.shadowAnchor
   }
 
-  // Define createIcon method
   createIcon() {
     const img = document.createElement('img')
     img.src = this.iconUrl
