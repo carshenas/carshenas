@@ -97,18 +97,20 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <v-container>
-    <v-text-field
-      v-model="search"
-      :placeholder="$t('shared.search')"
-      variant="outlined"
-      rounded
-      hide-details
-      prepend-inner-icon="arrow_forward_ios"
-      append-inner-icon="search"
-      @input="onInput"
-      @click:prepend-inner="router.back()"
-    />
+  <v-container class="h-100 d-flex flex-column">
+    <div class="position-sticky">
+      <v-text-field
+        v-model="search"
+        :placeholder="$t('shared.search')"
+        variant="outlined"
+        rounded
+        hide-details
+        prepend-inner-icon="arrow_forward_ios"
+        append-inner-icon="search"
+        @input="onInput"
+        @click:prepend-inner="router.back()"
+      />
+    </div>
 
     <SearchSuggestions :title="search" @select="search = $event" />
 
@@ -121,7 +123,7 @@ onBeforeRouteLeave(async (to, from, next) => {
         }}
       </h2>
 
-      <CategoryList :items="categories" class="mt-4" />
+      <CategoryList :items="categories" class="mt-6" />
 
       <div class="mt-6 w-100 d-flex">
         <h2 class="title-sm">
@@ -139,7 +141,11 @@ onBeforeRouteLeave(async (to, from, next) => {
         </RouterLink>
       </div>
 
-      <ProductList :items="products" class="mt-4" />
+      <ProductList :items="products" class="mt-6" />
     </template>
+
+    <div v-else class="flex-grow-1 d-flex align-center">
+      <span class="w-100 text-center"> {{ $t('search.whatProductAreYouLookingFor') }} </span>
+    </div>
   </v-container>
 </template>
