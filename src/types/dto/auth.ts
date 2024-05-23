@@ -1,7 +1,7 @@
 import type { NullableString } from '../global'
 
 export interface GetOTPBody {
-  phoneNumber: string
+  phoneNumber: NullableString
 }
 
 export interface GetOTPResponse {}

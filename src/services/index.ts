@@ -18,7 +18,7 @@ export default {
 
     return {
       ...result,
-      data: snakeCaseObjectToCamelCase(result.data as any)
+      data: snakeCaseObjectToCamelCase(result.data as any) as any
     }
   },
   post: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
@@ -30,7 +30,7 @@ export default {
 
     return {
       ...result,
-      data: snakeCaseObjectToCamelCase(result.data as any)
+      data: snakeCaseObjectToCamelCase(result.data as any) as any
     }
   }
 }

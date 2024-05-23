@@ -57,8 +57,9 @@ const products = ref<Product[]>([
   }
 ])
 const getCategories = async () => {
+  const filters = new URLSearchParams({ title: search.value || '' })
   try {
-    const response = await getCategoryListService({ title: search.value || '' })
+    const response = await getCategoryListService(filters)
     categories.value = response.data
   } catch (e) {
     console.error(e)
