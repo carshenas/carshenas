@@ -97,8 +97,8 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <v-container class="h-100 d-flex flex-column">
-    <div class="position-sticky">
+  <v-container class="h-100 d-flex flex-column bar-padding">
+    <div class="fixed-bar pa-4">
       <v-text-field
         v-model="search"
         :placeholder="$t('shared.search')"
@@ -149,3 +149,18 @@ onBeforeRouteLeave(async (to, from, next) => {
     </div>
   </v-container>
 </template>
+
+<style scoped lang="scss">
+.bar-padding {
+  padding-top: 80px - 16px;
+}
+
+.fixed-bar {
+  position: fixed;
+  background-color: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+</style>

@@ -1,4 +1,4 @@
-@use 'vuetify/settings' with (
+@forward 'vuetify/settings' with (
   // Input
   $field-input-padding-top: 12px,
   $field-input-padding-bottom: 12px,
