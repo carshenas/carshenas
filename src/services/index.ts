@@ -4,8 +4,12 @@ import type { FetcherOptions } from '@/lib/fetcher/types'
 
 const scheme = import.meta.env.VITE_SSL_ENABLED === 'true' ? 'https' : 'http'
 
+const headers = new Headers()
+headers.append('Authorization', JSON.parse(localStorage.user).token)
+
 const carshenasOptions = {
-  baseURL: `${scheme}://${import.meta.env.VITE_API_SERVER}`
+  baseURL: `${scheme}://${import.meta.env.VITE_API_SERVER}`,
+  headers
 }
 
 export default {
@@ -24,7 +28,10 @@ export default {
   post: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
     const result = await fetcher.post<R, D>(url, {
       ...options,
-      body: camelCaseObjectToSnakeCase(options?.body as any) as any,
+      body:
+        options?.body instanceof FormData
+          ? options?.body
+          : (camelCaseObjectToSnakeCase(options?.body as any) as any),
       ...carshenasOptions
     })
 

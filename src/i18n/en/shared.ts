@@ -4,4 +4,5 @@ export default {
   carFilter: 'Car Filter',
   phone: 'Phone number',
   submit: 'Submit',
+  more: 'More'
 }

@@ -1,4 +1,3 @@
-import { defaultHeaders } from './constants'
 import type { FetchPath, CreateURLOptions, FetcherOptions } from './types'
 
 export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => {
@@ -33,7 +32,7 @@ export const mergeOptions = <D = unknown>(options?: FetcherOptions<D>): RequestI
 }
 
 const generateHeaders = (headers?: HeadersInit | undefined) => {
-  const mergedHeaders = new Headers({ ...defaultHeaders, ...headers })
+  const mergedHeaders = new Headers(headers)
 
   return mergedHeaders
 }

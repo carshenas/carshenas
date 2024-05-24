@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import CategoryList from '@/components/CategoryList.vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
 import SearchSuggestions from './components/SearchSuggestions.vue'
 import { useDatabaseStore } from '@/stores/database'
@@ -12,6 +12,7 @@ import { getCategoryListService } from '@/services/carshenas/category'
 import { debounce } from 'lodash'
 import type { Product } from '@/types/dto/product'
 
+const router = useRouter()
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
 const search = ref<string>()
 
@@ -96,56 +97,70 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <v-container>
-    <v-text-field
-      v-model="search"
-      :placeholder="$t('shared.search')"
-      variant="outlined"
-      rounded
-      hide-details
-      @input="onInput"
-    >
-      <template v-slot:prepend-inner>
-        <v-btn variant="text" class="pa-0" size="x-small" color="text">
-          <v-icon icon="arrow_forward_ios" />
-        </v-btn>
-      </template>
+  <div class="h-100 d-flex flex-column bar-padding">
+    <div class="fixed-bar pa-4">
+      <v-text-field
+        v-model="search"
+        :placeholder="$t('shared.search')"
+        variant="outlined"
+        rounded
+        hide-details
+        prepend-inner-icon="arrow_forward_ios"
+        append-inner-icon="search"
+        @input="onInput"
+        @click:prepend-inner="router.back()"
+      />
+    </div>
 
-      <template v-slot:append-inner>
-        <v-btn variant="text" class="pa-0" size="x-small" color="text">
-          <v-icon icon="search" />
-        </v-btn>
-      </template>
-    </v-text-field>
+    <SearchSuggestions class="px-4" :title="search" @select="search = $event" />
 
-    <SearchSuggestions :title="search" @select="search = $event" />
-
-    <h2 v-if="search" class="title-sm mt-6">
-      {{
-        $t('search.searchInCategory', {
-          item: search
-        })
-      }}
-    </h2>
-
-    <CategoryList :items="categories" class="mt-4" />
-
-    <div v-if="search" class="mt-6 w-100 d-flex">
-      <h2 class="title-sm">
+    <template v-if="search">
+      <h2 class="title-sm mt-6 px-4">
         {{
-          $t('search.searchInProducts', {
+          $t('search.searchInCategory', {
             item: search
           })
         }}
       </h2>
 
-      <v-spacer />
+      <CategoryList :items="categories" class="mt-6 px-4" />
 
-      <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
-        {{ $t('search.viewAll') }}
-      </RouterLink>
+      <div class="mt-6 w-100 d-flex px-4">
+        <h2 class="title-sm">
+          {{
+            $t('search.searchInProducts', {
+              item: search
+            })
+          }}
+        </h2>
+
+        <v-spacer />
+
+        <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
+          {{ $t('search.viewAll') }}
+        </RouterLink>
+      </div>
+
+      <ProductList :items="products" class="mt-6" />
+    </template>
+
+    <div v-else class="flex-grow-1 d-flex align-center">
+      <span class="w-100 text-center"> {{ $t('search.whatProductAreYouLookingFor') }} </span>
     </div>
-
-    <ProductList :items="products" class="mt-4" />
-  </v-container>
+  </div>
 </template>
+
+<style scoped lang="scss">
+.bar-padding {
+  padding-top: 80px - 16px;
+}
+
+.fixed-bar {
+  position: fixed;
+  background-color: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+</style>
