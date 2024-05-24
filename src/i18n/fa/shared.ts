@@ -4,4 +4,5 @@ export default {
   carFilter: 'فیلتر خودرو',
   phone: 'شماره تماس',
   submit: 'ثبت',
+  more: 'بیشتر'
 }

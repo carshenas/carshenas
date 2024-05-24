@@ -19,10 +19,8 @@ export const useUserStore = defineStore('user', () => {
   const storedUserData = localStorage.user ? JSON.parse(localStorage.user) : userInit
   const user = ref<User>(storedUserData)
 
-  const storeUserData = (_user: User): void => {
-    user.value = _user
-
-    localStorage.user = JSON.stringify(_user)
+  const updateStoredData = (): void => {
+    localStorage.user = JSON.stringify(user.value)
   }
 
   const wipeUserData = () => {
@@ -30,5 +28,5 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('user')
   }
 
-  return { user, storeUserData, wipeUserData }
+  return { user, updateStoredData, wipeUserData }
 })
