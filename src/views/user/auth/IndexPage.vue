@@ -67,11 +67,10 @@ const sendOTP = async () => {
 
     userStore.user.token = response.data.access
     userStore.user.phoneNumber = props.phoneNumber
-    console.log(userStore.user)
 
     userStore.updateStoredData()
 
-    router.replace({ name: 'HomePage' })
+    router.push('/')
   } catch (e) {
     console.error(e)
   } finally {
