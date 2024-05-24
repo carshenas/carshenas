@@ -51,7 +51,7 @@ export default {
   },
 
   del: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
-    const result = await fetcher.del<R, D>(url, {
+    await fetcher.del<R, D>(url, {
       ...options,
       parameters: camelCaseObjectToSnakeCase(options?.parameters as any) as URLSearchParams,
       ...carshenasOptions
