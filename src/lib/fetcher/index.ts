@@ -9,7 +9,7 @@ const patch = async <R, D>(path: string, options?: FetcherOptions<D>) =>
   await useFetch<R, D>(path, { ...options, method: 'PATCH' })
 const put = async <R, D>(path: string, options?: FetcherOptions<D>) =>
   await useFetch<R, D>(path, { ...options, method: 'PUT' })
-const delete_ = async <R, D>(path: string, options?: FetcherOptions<D>) =>
+const del = async <R, D>(path: string, options?: FetcherOptions<D>) =>
   await useFetch<R, D>(path, { ...options, method: 'DELETE' })
 
 export default {
@@ -17,5 +17,5 @@ export default {
   post,
   patch,
   put,
-  delete: delete_
+  del
 }

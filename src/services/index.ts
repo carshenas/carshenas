@@ -30,6 +30,7 @@ export default {
       data: snakeCaseObjectToCamelCase(result.data as any) as any
     }
   },
+
   post: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
     if (!(options?.body instanceof FormData)) {
       carshenasOptions.headers.delete('content-type')
@@ -47,5 +48,13 @@ export default {
       ...result,
       data: snakeCaseObjectToCamelCase(result.data as any) as any
     }
+  },
+
+  del: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
+    const result = await fetcher.del<R, D>(url, {
+      ...options,
+      parameters: camelCaseObjectToSnakeCase(options?.parameters as any) as URLSearchParams,
+      ...carshenasOptions
+    })
   }
 }

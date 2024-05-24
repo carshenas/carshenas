@@ -22,3 +22,5 @@ export const sendAddressService = (body: SendAddress) =>
   })
 
 export const getAddressList = () => carshenasService.get<Address, never>(`user/location/`)
+
+export const delAddress = (id: number) => carshenasService.del<any, any>(`user/location/${id}/`)

@@ -2,7 +2,7 @@ export interface Address {
   id: number
   name: string
   address: string
-  postalCode: string
+  postal_code: string
   latitude: number
   longitude: number
   is_default: boolean
