@@ -1,11 +1,18 @@
-export default interface Address {
+export interface Address {
   id: number
+  name: string
   address: string
   postalCode: string
-  unit: number
-  plaque: number
-  position: {
-    lat: number
-    lng: number
-  } | null
+  latitude: number
+  longitude: number
+  is_default: boolean
+}
+
+export interface SendAddress extends FormData {
+  name: string
+  address: string
+  postalCode: string
+  latitude: number
+  longitude: number
+  is_default: boolean
 }

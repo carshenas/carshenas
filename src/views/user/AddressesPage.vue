@@ -1,43 +1,56 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type Address from '@/types/dto/addresses'
+import type { Address, SendAddress } from '@/types/dto/addresses'
 import type { LatLng } from '@/types/dto/the-map'
 import NewAddressInfo from './components/NewAddressInfo.vue'
 import NewAddressMap from './components/NewAddressMap.vue'
+import { sendAddressService, getAddressList } from '@/services/carshenas/address'
+
 const showInfo = ref(false)
 const bottomSheetVisible = ref(false)
-const selectedPosition = ref<LatLng | null>(null)
-
+const selectedPosition = ref<LatLng>({ lat: 0, lng: 0 })
+const selectedAddress = ref<string | null>(null)
 const addressList = ref<Address[]>([
   {
     id: 1,
+    name: 'خانه',
     address: 'تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی',
     postalCode: '1458886878',
-    plaque: 41,
-    unit: 12,
-    position: { lat: 35.6, lng: 51.3 }
+    latitude: 14,
+    longitude: 10,
+    is_default: false
   },
   {
     id: 2,
+    name: 'خانه',
     address: 'تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی',
     postalCode: '1458886878',
-    plaque: 1,
-    unit: 2,
-    position: { lat: 35.7, lng: 51.4 }
+    latitude: 14,
+    longitude: 10,
+    is_default: false
   }
 ])
-
 const handleMapPositionUpdate = (newPosition: LatLng) => {
   selectedPosition.value = newPosition
 }
 const handleShowInfoUpdate = (value: boolean) => {
   showInfo.value = value
 }
-const handleAddressSubmit = (newAddress: Address) => {
-  console.log(newAddress)
-  addressList.value.push(newAddress)
-  showInfo.value = false
-  bottomSheetVisible.value = false
+
+const handleAddressSubmit = async (newAddress: Address) => {
+  try {
+    await sendAddressService(newAddress as SendAddress)
+    showInfo.value = false
+    bottomSheetVisible.value = false
+    console.log('Address submitted successfully:', newAddress)
+  } catch (error) {
+    console.error('Error submitting address:', error)
+  }
+}
+
+const handleLatLngStringUpdate = (latLngString: string) => {
+  selectedAddress.value = latLngString
+  console.log(selectedAddress)
 }
 </script>
 
@@ -68,9 +81,11 @@ const handleAddressSubmit = (newAddress: Address) => {
             :showInfo="showInfo"
             @update:position="handleMapPositionUpdate"
             @update:showInfo="handleShowInfoUpdate"
+            @update:latLngString="handleLatLngStringUpdate"
           />
           <NewAddressInfo
             v-if="showInfo"
+            :latLngString="selectedAddress"
             :position="selectedPosition"
             @submit="handleAddressSubmit"
           />

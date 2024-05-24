@@ -1,4 +1,4 @@
-export interface LatLng extends URLSearchParams {
+export interface LatLng {
   lat: number
   lng: number
 }

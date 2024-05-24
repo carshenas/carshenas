@@ -1,27 +1,29 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref, defineProps, defineEmits, computed } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import type { LatLng } from '@/types/dto/the-map'
 import type { VForm } from 'vuetify/components'
 
-const props = defineProps<{ position: LatLng | null }>()
-
+const props = defineProps<{
+  position: LatLng
+  latLngString: string | null
+}>()
 const emit = defineEmits<{
   (
     e: 'submit',
     address: {
-      id: number
+      name: string
       address: string
-      plaque: number
-      unit: number
+      latitude: number
+      longitude: number
       postalCode: string
-      position: LatLng | null
+      is_default: boolean
     }
   ): void
 }>()
 const formRef = ref<VForm | null>(null)
 
-const address = ref('')
+const address = ref(props.latLngString || '')
 const plaque = ref('')
 const unit = ref('')
 const postalCode = ref('')
@@ -32,24 +34,27 @@ const positiveInteger = (value: string) => {
 }
 
 const postalCodeValidation = (value: string) => {
-  return /^\d{10}$/.test(value) || 'کد پستی درست وارد کنید'
+  const regex = /^[13-9]{4}[1346-9][013-9]{5}$/
+  return regex.test(value) || 'کد پستی درست وارد کنید'
 }
+
+const concatenatedAddress = computed(() => {
+  return `${address.value} پلاک: ${plaque.value} واحد: ${unit.value}`
+})
 
 const handleSubmit = async () => {
   const { valid: isValid } = await formRef.value!.validate()
 
   if (isValid) {
-    const plaqueNumber = parseInt(plaque.value)
-    const unitNumber = parseInt(unit.value)
-    const formData = {
-      id: Date.now(),
-      address: address.value,
-      plaque: isNaN(plaqueNumber) ? 0 : plaqueNumber,
-      unit: isNaN(unitNumber) ? 0 : unitNumber,
+    const FormData = {
+      name: 'test',
+      address: concatenatedAddress.value,
+      latitude: props.position.lat,
+      longitude: props.position.lng,
       postalCode: postalCode.value,
-      position: props.position
+      is_default: false
     }
-    emit('submit', formData)
+    emit('submit', FormData)
   }
 }
 </script>
@@ -70,6 +75,7 @@ const handleSubmit = async () => {
               :label="$t('profile.address')"
               variant="outlined"
               :rules="[requiredRule]"
+              :placeholder="latLngString"
             ></v-text-field>
           </v-col>
         </v-row>
