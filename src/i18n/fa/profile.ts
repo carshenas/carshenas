@@ -3,7 +3,6 @@ export default {
   name: 'نام',
   lastName: 'نام خانوادگی',
   phoneNumber: 'شماره تماس',
-  email: 'ایمیل',
   nationalCode: 'کد ملی',
   addresses: 'آدرس ها',
   address: 'آدرس',
