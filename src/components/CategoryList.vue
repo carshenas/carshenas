@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Category } from '@/types/dto/category'
+import type { Category, CategoryFilter } from '@/types/dto/category'
 import { ref, onMounted } from 'vue'
 
 // Services
@@ -11,15 +11,17 @@ import ImageLoader from './ImageLoader.vue'
 const props = defineProps<{
   items?: Category[]
   loading?: boolean
+  filter?: CategoryFilter
+  manual?: boolean
 }>()
 const _loading = ref<boolean>(false)
-const categories = ref<Category[]>(props.items || [])
+const categories = ref<Category[]>()
 
 const getCategories = async () => {
   _loading.value = true
 
   try {
-    const response = await getCategoryListService()
+    const response = await getCategoryListService(props.filter)
 
     categories.value = response.data
   } catch (e) {
@@ -30,13 +32,18 @@ const getCategories = async () => {
 }
 
 onMounted(() => {
-  !categories.value?.length ? getCategories() : undefined
+  !props.manual ? getCategories() : undefined
 })
 </script>
 
 <template>
   <v-row v-if="!_loading && !props.loading" no-gutters>
-    <v-col v-for="category in categories" :key="category.id" cols="3" class="pa-2">
+    <v-col
+      v-for="category in categories || props.items"
+      :key="category.id"
+      cols="3"
+      class="pa-2 d-flex justify-center"
+    >
       <router-link
         class="category w-100 d-flex flex-column justify-center align-center"
         :to="{ name: 'ProductsPage', query: { categoryId: category.id } }"
@@ -60,6 +67,8 @@ onMounted(() => {
 <style lang="scss" scoped>
 .category {
   text-decoration: none;
+  max-width: 64px;
+
   .icon {
     aspect-ratio: 1;
   }

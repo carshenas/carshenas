@@ -25,12 +25,13 @@ const filteredImageTypes = computed(() =>
 
 const generateSrc = async (path: string): Promise<string> => {
   if (path.startsWith('@')) return await getAssetUrl(path)
-  if (path.startsWith('http')) return (defaultImage.value = props.src!)
+  if (path.startsWith('http') && !path.startsWith(appConfig.staticFileServer))
+    return (defaultImage.value = props.src!)
 
   const width = props.width?.includes('%') ? picture.value?.offsetWidth : props.width
   const height = props.width?.includes('%') ? picture.value?.offsetWidth : props.width
 
-  return `${appConfig.staticFileServer}/size:${width}*${height}/${path}`
+  return path.replace('%7BWIDTH%7D', String(width)).replace('%7BHEIGHT%7D', String(height))
 }
 
 const generateImagesUrl = async () => {
