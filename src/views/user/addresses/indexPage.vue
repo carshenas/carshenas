@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue'
 import type { Address, SendAddress } from '@/types/dto/addresses'
 import type { LatLng } from '@/types/dto/the-map'
-import NewAddressInfo from './components/NewAddressInfo.vue'
-import NewAddressMap from './components/NewAddressMap.vue'
+import NewAddressInfo from '../components/NewAddressInfo.vue'
+import NewAddressMap from '../components/NewAddressMap.vue'
 import { sendAddressService, getAddressList, delAddress } from '@/services/carshenas/address'
 
 const showInfo = ref(false)
