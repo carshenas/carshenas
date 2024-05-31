@@ -49,22 +49,22 @@ const router = createRouter({
     {
       path: '/user/addresses',
       name: 'UserProfileAddresses',
-      component: () => import('../views/user/addresses/indexPage.vue')
+      component: () => import('../views/user/addresses/IndexPage.vue')
     },
     {
       path: '/user/orders',
       name: 'UserProfileOrders',
-      component: () => import('../views/user/orders/indexPage.vue')
+      component: () => import('../views/user/orders/IndexPage.vue')
     },
     {
       path: '/user/car-support',
       name: 'UserProfileSupport',
-      component: () => import('../views/user/support/indexPage.vue')
+      component: () => import('../views/user/support/IndexPage.vue')
     },
     {
       path: '/user/notifications',
       name: 'UserNotifications',
-      component: () => import('../views/user/notif/indexPage.vue')
+      component: () => import('../views/user/notif/IndexPage.vue')
     }
   ]
 })
