@@ -2,9 +2,9 @@
 import { ref } from 'vue';
 import type Ticket from "@/types/dto/tickets"
 import { useRouter } from 'vue-router';
-import TicketList from '../components/TicketList.vue';
-import TicketDetails from '../components/TicketDetails.vue';
-import TicketForm from "../components/TicketForm.vue";
+import TicketList from './components/TicketList.vue';
+import TicketDetails from './components/TicketDetails.vue';
+import TicketForm from "./components/TicketForm.vue";
 
 const router = useRouter();
 

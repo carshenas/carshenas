@@ -8,6 +8,7 @@ const props = defineProps<{
   position: LatLng
   latLngString: string | null
 }>()
+
 const emit = defineEmits<{
   (
     e: 'submit',

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type Order from "@/types/dto/order";
-import OrderCards from "../components/OrderCards.vue";
-import OrderItemCards from '../components/OrderItemCards.vue';
+import OrderCards from "./components/OrderCards.vue";
+import OrderItemCards from './components/OrderItemCards.vue';
 
 const Orders = ref<Order[]>([
   {
