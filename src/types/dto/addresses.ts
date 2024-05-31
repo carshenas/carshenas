@@ -8,11 +8,11 @@ export interface Address {
   is_default: boolean
 }
 
-export interface SendAddress extends FormData {
+export interface SendAddress   {
   name: string
   address: string
-  postalCode: string
   latitude: number
   longitude: number
+  postalCode: string
   is_default: boolean
 }

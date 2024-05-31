@@ -4,5 +4,6 @@ export default {
   carFilter: 'فیلتر خودرو',
   phone: 'شماره تماس',
   submit: 'ثبت',
-  more: 'بیشتر'
+  more: 'بیشتر',
+  successMessage: 'ثبت موفقیت آمیز بود'
 }

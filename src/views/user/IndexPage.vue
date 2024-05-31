@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import type { User } from '@/types/dto/user'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
-const user = ref<Partial<User>>({
-  id: '1',
-  fullName: 'فرزاد',
-  phoneNumber: '09012529729'
-})
+const userStore = useUserStore()
+const { user } = storeToRefs(userStore)
 </script>
 
 <template>
   <section class="pa-4 d-flex flex-column ga-8">
     <div class="d-flex justify-space-between w-100">
       <div class="d-flex">
-        <span> {{ user.fullName }} </span>
+        <span> {{ user.firstName }} </span>
         <v-btn variant="text" class="pa-0" size="x-small" color="primary" to="/user/info">
           <v-icon icon="edit" />
         </v-btn>

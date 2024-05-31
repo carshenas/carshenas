@@ -64,7 +64,7 @@ const router = createRouter({
     {
       path: '/user/notifications',
       name: 'UserNotifications',
-      component: () => import('../views/user/notif/IndexPage.vue')
+      component: () => import('../views/user/notification/IndexPage.vue')
     }
   ]
 })
