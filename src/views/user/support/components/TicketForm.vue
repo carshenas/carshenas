@@ -12,27 +12,27 @@ const files = ref<File[]>([])
 const message = ref('')
 
 const handleSubmit = async () => {
-  const { valid: isValid } = await formRef.value!.validate()
-  if (isValid) {
-    const formData = new FormData() // Create a new FormData object
-    formData.append('message', message.value)
-    if (files.value.length > 0) {
-      for (const file of files.value) {
-        formData.append('files[]', file) // Append each file with key 'files[]'
-      }
-    }
-    try {
-      isLoading.value = true
-      console.log('Form data to be submitted:', formData)
-      await createTicket(formData)
-    } catch (error) {
-      console.error('Form submission failed:', error)
-    } finally {
-      isLoading.value = false
-    }
-  } else {
-    console.log('Form validation failed')
-  }
+  // const { valid: isValid } = await formRef.value!.validate()
+  // if (isValid) {
+  //   const formData = new FormData() // Create a new FormData object
+  //   formData.append('message', message.value)
+  //   if (files.value.length > 0) {
+  //     for (const file of files.value) {
+  //       formData.append('files[]', file) // Append each file with key 'files[]'
+  //     }
+  //   }
+  //   try {
+  //     isLoading.value = true
+  //     console.log('Form data to be submitted:', formData)
+  //     await createTicket(formData)
+  //   } catch (error) {
+  //     console.error('Form submission failed:', error)
+  //   } finally {
+  //     isLoading.value = false
+  //   }
+  // } else {
+  //   console.log('Form validation failed')
+  // }
 }
 
 const props = defineProps<{

@@ -49,11 +49,11 @@ const getStateData = (status: string) => {
       </span>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />
     </div>
-    <v-card-text>{{ ticket.last_message.message }}</v-card-text>
+    <v-card-text>{{ ticket.lastMessage.message }}</v-card-text>
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <span>{{ ticket.date_created }}</span>
+        <span>{{ ticket.dateCreated }}</span>
       </div>
     </div>
   </v-card>

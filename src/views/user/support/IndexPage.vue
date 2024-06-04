@@ -74,7 +74,7 @@ const goBack = () => {
           @ticketSelected="handleTicketSelected"
         />
       </div>
-      <TicketDetails :selectedTicket="selectedTicket" />
+      <!-- <TicketDetails :selectedTicket="selectedTicket" /> -->
 
       <TicketForm :showForm="showForm" />
     </div>

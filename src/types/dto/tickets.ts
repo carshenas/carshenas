@@ -2,9 +2,9 @@ export interface Ticket {
   id: number
   user: string
   supportEmployee: string
-  date_created: string
+  dateCreated: string
   status: 'approved' | 'rejected' | 'Pending'
-  last_message: Message
+  lastMessage: Message
 }
 
 export interface Message {
