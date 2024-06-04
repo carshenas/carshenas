@@ -1,14 +1,18 @@
-export default interface Ticket {
+export interface Ticket {
   id: number
   user: string
   supportEmployee: string
-  state: 'approved' | 'rejected' | 'doing'
-  messages: Message[]
+  date_created: string
+  status: 'approved' | 'rejected' | 'Pending'
+  last_message: Message
 }
 
-interface Message {
-  text: string
-  sender: 'user' | 'employee'
-  time: string
-  date: string
+export interface Message {
+  message: string
+  is_answer: boolean
+  file?: Blob | null
+}
+export interface SendMessage extends FormData {
+  message: string
+  file?: Blob | null
 }

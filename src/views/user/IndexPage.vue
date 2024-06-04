@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useUserStore } from '@/stores/user'
 import { storeToRefs } from 'pinia'
-
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 </script>
@@ -10,7 +9,7 @@ const { user } = storeToRefs(userStore)
   <section class="pa-4 d-flex flex-column ga-8">
     <div class="d-flex justify-space-between w-100">
       <div class="d-flex">
-        <span> {{ user.firstName }} </span>
+        <span> {{ user.firstName }} {{ user.lastName }} </span>
         <v-btn variant="text" class="pa-0" size="x-small" color="primary" to="/user/info">
           <v-icon icon="edit" />
         </v-btn>

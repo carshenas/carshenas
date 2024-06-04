@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type Ticket from '@/types/dto/tickets'
+import type { Ticket } from '@/types/dto/tickets'
 
 const props = defineProps<{
   ticket: Ticket
@@ -11,15 +11,15 @@ const handleMoreClick = () => {
   emit('ticketSelected', props.ticket)
 }
 
-const getStateData = (state: string) => {
-  switch (state) {
+const getStateData = (status: string) => {
+  switch (status) {
     case 'approved':
       return {
         class: 'text-green-darken-4',
         text: 'پاسخ داده شد',
         icon: 'done'
       }
-    case 'doing':
+    case 'Pending':
       return {
         class: 'text-orange',
         text: 'درجریان',
@@ -43,17 +43,17 @@ const getStateData = (state: string) => {
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(ticket.state).class"
-        >{{ getStateData(ticket.state).text }}
-        <v-icon :icon="getStateData(ticket.state).icon" size="x-small" />
+      <span :class="getStateData(ticket.status).class"
+        >{{ getStateData(ticket.status).text }}
+        <v-icon :icon="getStateData(ticket.status).icon" size="x-small" />
       </span>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />
     </div>
-    <v-card-text>{{ ticket.messages[0].text }}</v-card-text>
+    <v-card-text>{{ ticket.last_message.message }}</v-card-text>
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <span>{{ ticket.messages[0].date }}</span>
+        <span>{{ ticket.date_created }}</span>
       </div>
     </div>
   </v-card>
