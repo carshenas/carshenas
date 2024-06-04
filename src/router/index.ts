@@ -44,27 +44,27 @@ const router = createRouter({
     {
       path: '/user/info',
       name: 'UserProfileInfo',
-      component: () => import('../views/user/InfoPage.vue')
+      component: () => import('../views/user/info/indexPage.vue')
     },
     {
       path: '/user/addresses',
       name: 'UserProfileAddresses',
-      component: () => import('../views/user/AddressesPage.vue')
+      component: () => import('../views/user/addresses/IndexPage.vue')
     },
     {
       path: '/user/orders',
       name: 'UserProfileOrders',
-      component: () => import('../views/user/OrdersPage.vue')
+      component: () => import('../views/user/orders/IndexPage.vue')
     },
     {
       path: '/user/car-support',
       name: 'UserProfileSupport',
-      component: () => import('../views/user/SupportPage.vue')
+      component: () => import('../views/user/support/IndexPage.vue')
     },
     {
       path: '/user/notifications',
       name: 'UserNotifications',
-      component: () => import('../views/user/NotifPage.vue')
+      component: () => import('../views/user/notification/IndexPage.vue')
     }
   ]
 })

@@ -28,9 +28,9 @@ const handleShowInfoUpdate = (value: boolean) => {
   showInfo.value = value
 }
 
-const handleAddressSubmit = async (newAddress: Address) => {
+const handleAddressSubmit = async (newAddress: SendAddress) => {
   try {
-    await sendAddressService(newAddress as SendAddress)
+    await sendAddressService(newAddress)
     showInfo.value = false
     bottomSheetVisible.value = false
     const updatedList = await getAddressList()
@@ -83,6 +83,7 @@ const handleLatLngStringUpdate = (latLngString: string) => {
             @update:showInfo="handleShowInfoUpdate"
             @update:latLngString="handleLatLngStringUpdate"
           />
+          
           <NewAddressInfo
             v-if="showInfo"
             :latLngString="selectedAddress"

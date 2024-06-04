@@ -56,5 +56,24 @@ export default {
       parameters: camelCaseObjectToSnakeCase(options?.parameters as any) as URLSearchParams,
       ...carshenasOptions
     })
+  },
+
+  put: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
+    if (!(options?.body instanceof FormData)) {
+      carshenasOptions.headers.delete('content-type')
+      carshenasOptions.headers.append('content-type', 'application/json')
+    }
+    const result = await fetcher.put<R, D>(url, {
+      ...options,
+      body:
+        options?.body instanceof FormData
+          ? options?.body
+          : (camelCaseObjectToSnakeCase(options?.body as any) as any),
+      ...carshenasOptions
+    })
+    return {
+      ...result,
+      data: snakeCaseObjectToCamelCase(result.data as any) as any
+    }
   }
 }

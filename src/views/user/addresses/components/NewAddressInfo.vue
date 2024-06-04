@@ -8,6 +8,7 @@ const props = defineProps<{
   position: LatLng
   latLngString: string | null
 }>()
+
 const emit = defineEmits<{
   (
     e: 'submit',
@@ -27,7 +28,9 @@ const address = ref(props.latLngString || '')
 const plaque = ref('')
 const unit = ref('')
 const postalCode = ref('')
+
 const requiredRule = (value: string) => !!value || 'لطفا آدرس خود را بنویسد'
+
 const positiveInteger = (value: string) => {
   const intValue = parseInt(value)
   return (Number.isInteger(intValue) && intValue >= 0) || ''
