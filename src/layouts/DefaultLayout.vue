@@ -34,13 +34,15 @@ const openMenu = () => {
       </v-app-bar-title>
 
       <template #append>
-        <v-btn icon :to="{ name: 'CartPage' }">
-          <v-icon icon="local_mall" />
-        </v-btn>
+        <v-btn icon="local_mall" density="comfortable" :to="{ name: 'CartPage' }" />
 
-        <v-btn variant="text" class="text-primary title-md" :to="{ name: 'AuthPage' }">
-          {{ $t('auth.login') }}
-        </v-btn>
+        <v-btn
+          :to="{ name: 'AuthPage' }"
+          :text="$t('auth.login')"
+          variant="text"
+          density="comfortable"
+          class="text-primary title-md"
+        />
       </template>
     </v-app-bar>
 

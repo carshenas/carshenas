@@ -2,9 +2,13 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-defineProps<{ number: string; loading: boolean }>()
+const props = defineProps<{ phoneNumber: string; otpExpireTime: number; loading: boolean }>()
+const emit = defineEmits<{ (event: 'resend'): void }>()
+
 const router = useRouter()
-const counterInitiateValue = 5
+
+const otp = ref<number>()
+const counterInitiateValue = props.otpExpireTime
 const counter = ref(counterInitiateValue)
 let refreshIntervalId: NodeJS.Timeout
 
@@ -15,6 +19,7 @@ const startTimer = () =>
   }, 1000))
 
 const receiveCodeAgain = () => {
+  emit('resend')
   clearInterval(refreshIntervalId)
   counter.value = counterInitiateValue
   startTimer()
@@ -25,6 +30,10 @@ const timer = computed(() => new Date(counter.value * 1000).toISOString().substr
 onMounted(() => {
   startTimer()
 })
+
+const getOTP = () => otp.value
+
+defineExpose({ getOTP })
 </script>
 
 <template>
@@ -33,12 +42,12 @@ onMounted(() => {
       <h1 class="title-lg">{{ $t('auth.verificationCode') }}</h1>
 
       <p class="body-md mt-4">
-        {{ $t('auth.enterTheVerificationCodeSent', { number }) }}
+        {{ $t('auth.enterTheVerificationCodeSent', { number: props.phoneNumber }) }}
       </p>
 
       <v-btn :text="$t('auth.editPhone')" variant="plain" @click="router.back()" />
 
-      <v-otp-input dir="ltr" class="mt-8" autofocus :length="5" />
+      <v-otp-input v-model.number="otp" dir="ltr" class="mt-8" autofocus :length="4" />
 
       <div class="counter mt-4 d-flex justify-center align-center">
         <p v-if="counter">
@@ -54,6 +63,6 @@ onMounted(() => {
       </div>
     </div>
 
-    <v-btn :loading="loading">{{ $t('auth.login') }}</v-btn>
+    <v-btn :loading="props.loading" type="submit">{{ $t('auth.login') }}</v-btn>
   </div>
 </template>

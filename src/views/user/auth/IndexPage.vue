@@ -5,15 +5,19 @@ import { reactive, ref } from 'vue'
 import FirstStep from './components/FirstStep.vue'
 import SecondStep from './components/SecondStep.vue'
 import type { VForm } from 'vuetify/components'
-import { onBeforeRouteLeave } from 'vue-router'
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
 
 // Services
-import { getOTPService } from '@/services/carshenas/auth'
+import { getOTPService, validateOTPService } from '@/services/carshenas/auth'
 import type { NullableNumber, NullableString } from '@/types/global'
-import { snakeCaseObjectToCamelCase } from '@/helpers/general'
+import type { GetOTPBody, ValidateOTPBody } from '@/types/dto/auth'
+import { useUserStore } from '@/stores/user'
 
+const router = useRouter()
+const userStore = useUserStore()
 const step = ref<0 | 1>(0)
 const form = ref<VForm>()
+
 const props = reactive<{
   phoneNumber: NullableString
   otpExpireTime: NullableNumber
@@ -35,10 +39,11 @@ const activeComponent = ref()
 const getOTP = async () => {
   loading.value = true
   try {
-    const phoneNumber = activeComponent.value.getModel()
-    const response = await getOTPService(phoneNumber)
+    const phoneNumber = props.phoneNumber || activeComponent.value.getPhoneNumber()
+    const body = new FormData()
 
-    console.log(response)
+    body.append('phone_number', phoneNumber)
+    const response = await getOTPService(body as GetOTPBody)
 
     props.phoneNumber = phoneNumber
     props.otpExpireTime = response.data.otpExp
@@ -50,19 +55,29 @@ const getOTP = async () => {
   }
 }
 
-let test = snakeCaseObjectToCamelCase<{
-  hello_world: string
-  hello_world1: string
-  hello_world2: string
-}>({
-  hello_world: 'check',
-  hello_world1: 'check',
-  hello_world2: 'check'
-})
+const sendOTP = async () => {
+  loading.value = true
+  try {
+    const otp = activeComponent.value.getOTP()
 
-console.log(test)
+    const body = new FormData()
 
-const sendOTP = () => ''
+    body.append('phone_number', props.phoneNumber || '')
+    body.append('otp', otp)
+    const response = await validateOTPService(body as ValidateOTPBody)
+
+    userStore.user.token = response.data.access
+    userStore.user.phoneNumber = props.phoneNumber
+    console.log(userStore.user)
+    userStore.updateStoredData()
+
+    router.replace({ name: 'HomePage' })
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
+}
 
 onBeforeRouteLeave((_, _2, next) => {
   if (!step.value) next()
@@ -82,14 +97,9 @@ onBeforeRouteLeave((_, _2, next) => {
           v-bind="props"
           :is="step ? SecondStep : FirstStep"
           :loading="loading"
+          @resend="getOTP"
         />
       </KeepAlive>
     </v-form>
   </v-container>
 </template>
-
-<style scoped>
-.counter {
-  height: var(--v-btn-height);
-}
-</style>

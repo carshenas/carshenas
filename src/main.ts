@@ -12,8 +12,8 @@ import '@/assets/styles/main.scss'
 const app = createApp(App)
 
 app.use(createPinia())
-app.use(router)
 app.use(vuetify)
 app.use(i18n)
+app.use(router)
 
 app.mount('#app')

@@ -4,21 +4,20 @@ import vFocus from '@/directives/v-focus'
 import { mobile, required } from '@/helpers/validation'
 import i18n from '@/plugins/i18n'
 import type { ValidationParam, ValidationResult } from '@/types/validation'
-import type { GetOTPBody } from '@/types/dto/auth'
 import { ref } from 'vue'
 
 defineProps<{
   loading: boolean
 }>()
 const { t } = i18n.global
-const model = ref<GetOTPBody>({ phoneNumber: null })
+const phoneNumber = ref<string>()
 const rules = [
   (v: ValidationParam): ValidationResult => required(v, t('shared.phone')),
   (v: ValidationParam): ValidationResult => mobile(v, t('shared.phone'))
 ]
 
-const getModel = () => model.value
-defineExpose({ getModel })
+const getPhoneNumber = () => phoneNumber.value
+defineExpose({ getPhoneNumber })
 </script>
 
 <template>
@@ -31,7 +30,7 @@ defineExpose({ getModel })
       <v-text-field
         v-focus
         v-mobile-input
-        v-model="model.phoneNumber"
+        v-model="phoneNumber"
         :label="$t('shared.phone')"
         class="mt-8"
         :rules="rules"

@@ -16,19 +16,16 @@ import BlogPost from './components/PostsList.vue'
       </p>
 
       <v-btn
-        block
-        rounded="pill"
-        color="outline"
-        size="large"
+        :text="$t('shared.search')"
         variant="outlined"
-        to="/search"
+        color="outline"
+        rounded="pill"
+        size="large"
         class="d-flex justify-space-between mt-6 mb-12"
-      >
-        {{ $t('shared.search') }}
-        <template v-slot:append>
-          <v-icon color="text" icon="search" />
-        </template>
-      </v-btn>
+        append-icon="search"
+        to="/search"
+        block
+      />
     </header>
 
     <section class="my-12">

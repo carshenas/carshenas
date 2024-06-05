@@ -16,7 +16,9 @@ export const camelCaseObjectToSnakeCase = <D extends object>(object: D) => {
   const snakeCaseObj: Result = {}
 
   for (const item in object)
-    snakeCaseObj[snakeToCamelCase(item) as keyof SnakeCaseKeys<D>] = object[item as keyof D] as any
+    snakeCaseObj[camelCaseToSnakeCase(item) as keyof SnakeCaseKeys<D>] = object[
+      item as keyof D
+    ] as any
 
   return snakeCaseObj as object
 }

@@ -1,0 +1,9 @@
+@forward 'vuetify/settings' with (
+  // Input
+  $field-input-padding-top: 12px,
+  $field-input-padding-bottom: 12px,
+  $field-input-min-height: 24px,
+
+  // Buttons
+  $button-height: 40px
+);

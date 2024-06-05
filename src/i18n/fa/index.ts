@@ -4,18 +4,19 @@ import search from './search'
 import shared from './shared'
 import home from './home'
 import profile from './profile'
-import productList from './productList'
 import auth from './auth'
 import validation from './validation'
 import cart from './cart'
 import productDetail from './productDetail'
+import product from './product'
+
 export default {
   app,
   currency,
   search,
   shared,
   home,
-  productList,
+  product,
   auth,
   profile,
   validation,
