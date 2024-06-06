@@ -1,5 +1,14 @@
 <script lang="ts" setup>
 import FabBtn from '@/components/FabBtn.vue'
+import { ref } from 'vue'
+import CarBrands from './CarBrands.vue'
+import CarModels from './CarModels.vue'
+
+const selectedBrandId = ref<number>()
+
+const submit = (e: number) => {
+  selectedBrandId.value = e
+}
 </script>
 
 <template>
@@ -15,9 +24,6 @@ import FabBtn from '@/components/FabBtn.vue'
       />
     </template>
 
-    <v-card
-      title="Bottom Sheet"
-      text="Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ut, eos? Nulla aspernatur odio rem, culpa voluptatibus eius debitis dolorem perspiciatis asperiores sed consectetur praesentium! Delectus et iure maxime eaque exercitationem!"
-    ></v-card>
+    <component :is="!selectedBrandId ? CarBrands : CarModels" @submit="submit" />
   </v-bottom-sheet>
 </template>

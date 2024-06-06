@@ -1,6 +1,12 @@
-export default interface Brands {
+export interface Vehicle {
   id: number
-  icon: string
   name: string
-  models: string[];
+  image: string
+}
+
+export interface Brand {
+  id: number
+  image: string
+  name: string
+  vehicles: Vehicle[]
 }

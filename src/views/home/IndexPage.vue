@@ -13,8 +13,6 @@ const getMostViewedCategories = async () => {
   try {
     const response = await getMostViewedCategoriesService()
 
-    console.log(response.data)
-
     items.value = response.data
   } catch (e) {
     console.log(e)
