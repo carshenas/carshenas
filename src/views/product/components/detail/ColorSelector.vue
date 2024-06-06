@@ -17,18 +17,13 @@ function updateSelectedColor(colorId: number) {
 <template>
   <div class="d-flex flex-column ga-4 pa-4">
     <div class="d-flex">
-      <h4 role="heading">{{ $t('productDetail.color') }} </h4>
+      <h4 role="heading">{{ $t('productDetail.color') }}</h4>
       <span> {{ selectedColorTitle }}</span>
     </div>
     <div class="d-flex ga-4">
       <div v-for="color in props.items" :key="color.id" class="d-flex ga-2">
         <label class="container">
-          <input
-            type="radio"
-            ref="radio"
-            name="radio"
-            @change="updateSelectedColor(color.id)"
-          />
+          <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.id)" />
           <span class="checkmark" :style="{ backgroundColor: color.code }"
             ><v-icon class="d-none" icon="done" size="x-small"></v-icon
           ></span>
@@ -40,7 +35,6 @@ function updateSelectedColor(colorId: number) {
 </template>
 
 <style scoped lang="scss">
-
 .container {
   display: block;
   position: relative;

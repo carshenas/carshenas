@@ -17,5 +17,5 @@ export default {
   post,
   patch,
   put,
-  delete: delete_
+  delete_
 }

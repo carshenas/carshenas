@@ -17,6 +17,7 @@ const router = useRouter()
 const userStore = useUserStore()
 const step = ref<0 | 1>(0)
 const form = ref<VForm>()
+
 const props = reactive<{
   phoneNumber: NullableString
   otpExpireTime: NullableNumber
@@ -70,7 +71,7 @@ const sendOTP = async () => {
 
     userStore.updateStoredData()
 
-    router.push('/')
+    router.replace({ name: 'HomePage' })
   } catch (e) {
     console.error(e)
   } finally {

@@ -1,29 +1,26 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-// types
 import type { User } from '@/types/dto/user'
 
 export const useUserStore = defineStore('user', () => {
-  const userInit = {
+  const userInit: User = {
     id: null,
-    fullName: null,
-    image: null,
+    firstName: null,
+    lastName: null,
     phoneNumber: null,
-    email: null,
-    nationalId: null,
+    nationalCode: null,
     token: null,
     refreshToken: null
   }
 
-  const storedUserData = localStorage.user ? JSON.parse(localStorage.user) : userInit
+  const storedUserData: User = localStorage.user ? JSON.parse(localStorage.user) : userInit
   const user = ref<User>(storedUserData)
 
   const updateStoredData = (): void => {
     localStorage.user = JSON.stringify(user.value)
   }
 
-  const wipeUserData = () => {
+  const wipeUserData = (): void => {
     user.value = userInit
     localStorage.removeItem('user')
   }

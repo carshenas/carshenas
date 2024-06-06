@@ -6,5 +6,6 @@ export default {
   submit: 'ثبت',
   more: 'بیشتر',
   brands: 'برند ها',
-  models: 'مدل ها'
+  models: 'مدل ها',
+  successMessage: 'ثبت موفقیت آمیز بود'
 }

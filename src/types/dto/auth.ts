@@ -7,6 +7,6 @@ export interface GetOTPBody extends FormData {
 export interface GetOTPResponse {}
 
 export interface ValidateOTPBody extends FormData {
-  otp: NullableString
+  otp: NullableNumber
   phoneNumber: NullableString
 }
