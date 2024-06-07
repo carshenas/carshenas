@@ -1,16 +1,32 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, defineProps, defineEmits } from 'vue'
+import type { Color, Variant } from '@/types/dto/product'
 
-const props = defineProps<{ items: { id: number; code: string; title: string }[] }>()
+const props = defineProps<{ variants: Variant[] }>()
+const emit = defineEmits(['selectColor'])
 
-const selectedColorId = defineModel<number>()
+const colors = computed<Color[]>(() => {
+  const seen = new Set()
+  return (
+    props.variants.reduce((acc: any[], variant: Variant) => {
+      if (!seen.has(variant.color.code)) {
+        seen.add(variant.color.code)
+        acc.push(variant.color)
+      }
+      return acc
+    }, []) || []
+  )
+})
+
+const selectedColor = ref<string>('')
 
 const selectedColorTitle = computed(() => {
-  const selectedColor = props.items.find((item) => item.id === selectedColorId.value)
-  return selectedColor?.title || '' // Return an empty string if selectedColor is undefined
+  const color = colors.value.find((color) => color.code === selectedColor.value)
+  return color ? color.name : ''
 })
-function updateSelectedColor(colorId: number) {
-  selectedColorId.value = colorId
+function updateSelectedColor(colorCode: string) {
+  selectedColor.value = colorCode
+  emit('selectColor', colorCode)
 }
 </script>
 
@@ -21,14 +37,14 @@ function updateSelectedColor(colorId: number) {
       <span> {{ selectedColorTitle }}</span>
     </div>
     <div class="d-flex ga-4">
-      <div v-for="color in props.items" :key="color.id" class="d-flex ga-2">
+      <div v-for="color in colors" :key="color.code" class="d-flex ga-2">
         <label class="container">
-          <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.id)" />
+          <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.code)" />
           <span class="checkmark" :style="{ backgroundColor: color.code }"
             ><v-icon class="d-none" icon="done" size="x-small"></v-icon
           ></span>
         </label>
-        <span>{{ color.title }}</span>
+        <span>{{ color.name }}</span>
       </div>
     </div>
   </div>
