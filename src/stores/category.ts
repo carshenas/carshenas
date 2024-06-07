@@ -18,9 +18,26 @@ export const useCategoryStore = defineStore('category', () => {
 
       categories.value = data
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   }
 
-  return { categories, getCategories }
+  const filteredCategories = (categories: Category[], searchTerm: string): Category[] => {
+    const results: Category[] = []
+
+    categories.forEach((category) => {
+      if (category.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        results.push(category)
+      }
+
+      if (category.children) {
+        const childResults = filteredCategories(category.children, searchTerm)
+        results.push(...childResults)
+      }
+    })
+
+    return results
+  }
+
+  return { categories, getCategories, filteredCategories }
 })

@@ -14,7 +14,7 @@ const getVehicles = async () => {
     const response = await getVehicleService()
     brands.value = response.data
   } catch (error) {
-    console.log(error)
+    console.error(error)
   } finally {
     loading.value = false
   }

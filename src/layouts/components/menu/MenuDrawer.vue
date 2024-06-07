@@ -10,10 +10,13 @@ const categoryStore = useCategoryStore()
 
 const isOpen = defineModel<boolean>()
 const selectedFirstLevel = ref<Nullable<number>>(null)
+const search = ref<Nullable<string>>(null)
 
 const component = computed(() => (selectedFirstLevel.value ? MenuSecondLevel : MenuFirstLevel))
 
 const items = computed((): Category[] => {
+  if (search.value && search.value.length < 2)
+    return categoryStore.filteredCategories(categoryStore.categories, search.value)
   if (!selectedFirstLevel.value) return categoryStore.categories
   else {
     const target = categoryStore.categories.find(
@@ -35,7 +38,7 @@ onMounted(() => categoryStore.getCategories())
 <template>
   <v-navigation-drawer
     v-model="isOpen"
-    :width="320"
+    :width="340"
     location="start"
     name="menu"
     mobile-breakpoint="xxl"
@@ -43,6 +46,32 @@ onMounted(() => categoryStore.getCategories())
     disable-route-watcher
     absolute
   >
-    <component :is="component" :items @select="onClick" />
+    <div class="fixed-bar pa-4">
+      <v-text-field
+        v-model="search"
+        :placeholder="$t('shared.search')"
+        variant="outlined"
+        rounded
+        hide-details
+        append-inner-icon="search"
+      />
+    </div>
+
+    <component class="custom-margin" :is="component" :items @select="onClick" />
   </v-navigation-drawer>
 </template>
+
+<style scoped>
+.fixed-bar {
+  position: fixed;
+  background-color: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+
+.custom-margin {
+  margin-top: 80px;
+}
+</style>

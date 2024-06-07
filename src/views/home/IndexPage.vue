@@ -15,7 +15,7 @@ const getMostViewedCategories = async () => {
 
     items.value = response.data
   } catch (e) {
-    console.log(e)
+    console.error(e)
   } finally {
     loading.value = false
   }
