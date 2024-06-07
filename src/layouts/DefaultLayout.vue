@@ -2,7 +2,9 @@
 import ImageLoader from '@/components/ImageLoader.vue'
 import MenuDrawer from './components/menu/MenuDrawer.vue'
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
 
+const userStore = useUserStore()
 const isMenuOpen = ref<boolean>(false)
 const isBasketOpen = ref<boolean>(false)
 
@@ -37,12 +39,15 @@ const openMenu = () => {
         <v-btn icon="local_mall" density="comfortable" :to="{ name: 'CartPage' }" />
 
         <v-btn
+          v-if="!userStore.isLoggedIn"
           :to="{ name: 'AuthPage' }"
           :text="$t('auth.login')"
           variant="text"
           density="compact"
           class="text-primary title-md"
         />
+
+        <v-btn v-else :to="{ name: 'UserProfile' }" density="comfortable" icon="account_circle" />
       </template>
     </v-app-bar>
 
