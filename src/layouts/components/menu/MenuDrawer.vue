@@ -1,16 +1,15 @@
-<!-- ParentComponent.vue -->
-
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import MenuFirstLevel from './MenuFirstLevel.vue'
 import MenuSecondLevel from './MenuSecondLevel.vue'
 import { useCategoryStore } from '@/stores/category'
 import type { Category } from '@/types/dto/category'
+import type { Nullable } from '@/types/utilities'
 
 const categoryStore = useCategoryStore()
 
 const isOpen = defineModel<boolean>()
-const selectedFirstLevel = ref<number>()
+const selectedFirstLevel = ref<Nullable<number>>(null)
 
 const component = computed(() => (selectedFirstLevel.value ? MenuSecondLevel : MenuFirstLevel))
 
@@ -27,6 +26,8 @@ const items = computed((): Category[] => {
 const onClick = (...args: unknown[]): void => {
   selectedFirstLevel.value = args[0] as number
 }
+
+watch(isOpen, () => (selectedFirstLevel.value = null))
 
 onMounted(() => categoryStore.getCategories())
 </script>
