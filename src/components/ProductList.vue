@@ -15,6 +15,7 @@ const props = defineProps<{
   loading?: boolean
   filter?: ProductFilter
   hasCounter?: boolean
+  manual?: boolean
 }>()
 const _loading = ref<boolean>(false)
 const products = ref<Product[]>(props.items || [])
@@ -25,7 +26,7 @@ const getProducts = async () => {
   try {
     const response = await getProductListService(props.filter)
 
-    products.value = response.data.result
+    products.value = response.data
   } catch (e) {
     console.error(e)
   } finally {
@@ -34,7 +35,7 @@ const getProducts = async () => {
 }
 
 onMounted(() => {
-  !products.value?.length ? getProducts() : undefined
+  !props.manual ? getProducts() : undefined
 })
 </script>
 

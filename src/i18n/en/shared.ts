@@ -6,5 +6,6 @@ export default {
   submit: 'Submit',
   more: 'More',
   brands: 'Brands',
-  models: 'Models'
+  models: 'Models',
+  nothingFound: 'Nothing found'
 }

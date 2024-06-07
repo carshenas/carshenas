@@ -7,5 +7,6 @@ export default {
   more: 'بیشتر',
   brands: 'برند ها',
   models: 'مدل ها',
-  successMessage: 'ثبت موفقیت آمیز بود'
+  successMessage: 'ثبت موفقیت آمیز بود',
+  nothingFound: 'موردی یافت نشد'
 }
