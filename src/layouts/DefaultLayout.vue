@@ -40,7 +40,7 @@ const openMenu = () => {
           :to="{ name: 'AuthPage' }"
           :text="$t('auth.login')"
           variant="text"
-          density="comfortable"
+          density="compact"
           class="text-primary title-md"
         />
       </template>
@@ -49,3 +49,9 @@ const openMenu = () => {
     <MenuDrawer v-model="isMenuOpen" />
   </div>
 </template>
+
+<style lang="scss" scoped>
+.app-bar {
+  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.1) !important;
+}
+</style>

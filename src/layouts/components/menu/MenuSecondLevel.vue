@@ -1,32 +1,57 @@
-<!-- MenuSecondLevel.vue -->
 <script setup lang="ts">
-import { useCategoryStore } from '@/stores/category'
-import { computed } from 'vue'
+import ImageLoader from '@/components/ImageLoader.vue'
+import type { Category } from '@/types/dto/category'
 
-const props = defineProps<{ selectedCategoryId: number | null }>()
-const categoriesStore = useCategoryStore()
+defineProps<{ items: Category[] }>()
+const emit = defineEmits<{ (e: 'select', payload: number): void }>()
 
-const subcategories = computed(() => {
-  const selectedCategory = categoriesStore.categories.find(
-    (category) => category.id === props.selectedCategoryId
-  )
-  return selectedCategory ? selectedCategory.children || [] : []
-})
+const onClick = (categoryId: number) => {
+  emit('select', categoryId)
+}
 </script>
 
 <template>
-  <v-list v-if="props.selectedCategoryId">
-    <v-list-item v-for="subcategory in subcategories" :key="subcategory.id">
-      <template v-slot:prepend>
-        <v-img
-          :aspect-ratio="1"
-          class="bg-white ml-4"
-          :src="subcategory.image"
-          width="24"
-          cover
-        ></v-img>
-      </template>
-      {{ subcategory.name }}
-    </v-list-item>
+  <v-list>
+    <template v-for="category in items" :key="category.id">
+      <v-list-group v-if="category.children" :value="category.name">
+        <template v-slot:activator="{ props }">
+          <v-list-item v-bind="props" :title="category.name">
+            <template v-slot:prepend>
+              <ImageLoader
+                :src="category.image"
+                :alt="category.name"
+                width="24"
+                aspect-ratio="1"
+                class="ml-2"
+              />
+            </template>
+          </v-list-item>
+        </template>
+
+        <v-list-item
+          v-for="subCategory in category.children"
+          :key="subCategory.id"
+          :title="subCategory.name"
+        />
+      </v-list-group>
+
+      <v-list-item v-else :title="category.name">
+        <template v-slot:prepend>
+          <ImageLoader
+            :src="category.image"
+            :alt="category.name"
+            width="24"
+            aspect-ratio="1"
+            class="ml-2"
+          />
+        </template>
+      </v-list-item>
+    </template>
   </v-list>
 </template>
+
+<style scoped>
+:deep(.v-list-item__prepend) {
+  width: 32px;
+}
+</style>

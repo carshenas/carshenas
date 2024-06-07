@@ -31,7 +31,7 @@ onMounted(() => getMostViewedCategories())
         {{ $t('home.headline') }}
       </h1>
 
-      <p class="mt-4 body-md">
+      <p class="mt-2 body-md">
         {{ $t('home.description') }}
       </p>
 
