@@ -5,5 +5,9 @@ export default {
   phone: 'شماره تماس',
   submit: 'ثبت',
   more: 'بیشتر',
-  successMessage: 'ثبت موفقیت آمیز بود'
+  brands: 'برند ها',
+  models: 'مدل ها',
+  successMessage: 'ثبت موفقیت آمیز بود',
+  nothingFound: 'موردی یافت نشد',
+  noName: 'بدون نام'
 }

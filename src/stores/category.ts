@@ -15,54 +15,29 @@ export const useCategoryStore = defineStore('category', () => {
 
     try {
       const { data } = await getCategoryListService()
+
       categories.value = data
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   }
-  const addTestCategories = () => {
-    // Sample categories
-    const category1: Category = {
-      id: 1,
-      image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-      name: 'Category 1',
-      children: [
-        {
-          id: 11,
-          image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-          name: 'Subcategory 1.1'
-        },
-        {
-          id: 12,
-          image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-          name: 'Subcategory 1.2'
-        }
-      ]
-    }
 
-    const category2: Category = {
-      id: 2,
-      image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-      name: 'Category 2',
-      children: [
-        {
-          id: 21,
-          image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-          name: 'Subcategory 2.1'
-        },
-        {
-          id: 22,
-          image: 'https://cdn-icons-png.flaticon.com/512/12124/12124149.png',
-          name: 'Subcategory 2.2'
-        }
-      ]
-    }
+  const filteredCategories = (categories: Category[], searchTerm: string): Category[] => {
+    const results: Category[] = []
 
-    // Push categories to the categories array
-    categories.value.push(category1, category2)
+    categories.forEach((category) => {
+      if (category.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        results.push(category)
+      }
+
+      if (category.children) {
+        const childResults = filteredCategories(category.children, searchTerm)
+        results.push(...childResults)
+      }
+    })
+
+    return results
   }
 
-  // Initially load test categories when the store is created
-  addTestCategories()
-  return { categories, getCategories }
+  return { categories, getCategories, filteredCategories }
 })

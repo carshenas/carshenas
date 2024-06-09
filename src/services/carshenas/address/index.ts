@@ -3,7 +3,7 @@ import type { LatLngString } from '@/types/dto/the-map'
 import type { SendAddress, Address } from '@/types/dto/addresses'
 
 export const getAddressService = (lat: number, lng: number) =>
-  carshenasService.get<LatLngString, never>(`user/location/${lat}/${lng}/`)
+  carshenasService.get<LatLngString>(`user/location/${lat}/${lng}/`)
 
 export const sendAddressService = (body: SendAddress) =>
   carshenasService.post<
@@ -21,6 +21,6 @@ export const sendAddressService = (body: SendAddress) =>
     body
   })
 
-export const getAddressList = () => carshenasService.get<Address, never>(`user/location/`)
+export const getAddressList = () => carshenasService.get<Address>(`user/location/`)
 
-export const delAddress = (id: number) => carshenasService.del<any, any>(`user/location/${id}/`)
+export const delAddress = (id: number) => carshenasService.delete(`user/location/${id}/`)

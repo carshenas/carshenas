@@ -7,7 +7,7 @@ const emit = defineEmits<{ (event: 'resend'): void }>()
 
 const router = useRouter()
 
-const otp = ref<number>()
+const otp = ref<string>('')
 const counterInitiateValue = props.otpExpireTime
 const counter = ref(counterInitiateValue)
 let refreshIntervalId: NodeJS.Timeout
@@ -47,7 +47,7 @@ defineExpose({ getOTP })
 
       <v-btn :text="$t('auth.editPhone')" variant="plain" @click="router.back()" />
 
-      <v-otp-input v-model.number="otp" dir="ltr" class="mt-8" autofocus :length="4" />
+      <v-otp-input v-model="otp" dir="ltr" class="mt-8" autofocus :length="4" />
 
       <div class="counter mt-4 d-flex justify-center align-center">
         <p v-if="counter">

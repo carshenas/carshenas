@@ -8,6 +8,6 @@ export interface Product {
   stock: number
 }
 
-export interface ProductFilter extends URLSearchParams {
-  title: string
+export interface ProductFilter {
+  title?: string
 }

@@ -1,17 +1,17 @@
-import type { NullableString } from '../global'
+import type { Nullable } from '@/types/utilities'
 
 export interface User {
   id: number | null
-  firstName: NullableString
-  lastName: NullableString
-  phoneNumber: NullableString
-  nationalCode: number | null
-  token: NullableString
-  refreshToken: NullableString
+  firstName: Nullable<string>
+  lastName: Nullable<string>
+  phoneNumber: Nullable<string>
+  nationalCode: Nullable<string>
+  token: Nullable<string>
+  refreshToken: Nullable<string>
 }
 
 export interface UserUpdate {
-  firstName?: NullableString
-  lastName?: NullableString
-  nationalCode?: number | null
+  firstName?: Nullable<string>
+  lastName?: Nullable<string>
+  nationalCode?: Nullable<string>
 }

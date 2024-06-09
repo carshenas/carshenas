@@ -1,33 +1,40 @@
-<!-- MenuFirstLevel.vue -->
-
 <script setup lang="ts">
-import { useCategoryStore } from '@/stores/category'
-import { ref } from 'vue'
+import ImageLoader from '@/components/ImageLoader.vue'
+import type { Category } from '@/types/dto/category'
 
-const categoriesStore = useCategoryStore()
-const selectedCategoryId = ref<number | null>(null)
-const emit = defineEmits(['categorySelected'])
+defineProps<{ items: Category[] }>()
+const emit = defineEmits<{ (e: 'select', payload: number): void }>()
 
-const handleCategoryClick = (categoryId: number) => {
-  selectedCategoryId.value = categoryId
-  emit('categorySelected', categoryId)
+const onClick = (categoryId: number) => {
+  emit('select', categoryId)
 }
 </script>
 
 <template>
   <v-list>
     <v-list-item
-
-      v-for="category in categoriesStore.categories"
+      v-for="category in items"
       :key="category.id"
-      append-icon="navigate_before"
-      @click="handleCategoryClick(category.id)"
       :title="category.name"
+      class="pa-4"
+      append-icon="navigate_before"
+      @click="onClick(category.id)"
     >
-      <template v-slot:prepend >
-        <v-img :aspect-ratio="1" class="bg-white ml-4" :src="category.image" width="24" cover></v-img>
+      <template v-slot:prepend>
+        <ImageLoader
+          :src="category.image"
+          :alt="category.name"
+          width="24"
+          aspect-ratio="1"
+          class="ml-2"
+        />
       </template>
-
     </v-list-item>
   </v-list>
 </template>
+
+<style scoped>
+:deep(.v-list-item__prepend) {
+  width: 32px;
+}
+</style>

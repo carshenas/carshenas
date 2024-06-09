@@ -1,79 +1,106 @@
-import { camelCaseObjectToSnakeCase, snakeCaseObjectToCamelCase } from '@/helpers/general'
+import { camelize, decamelize } from '@/helpers/general'
 import fetcher from '@/lib/fetcher'
 import type { FetcherOptions } from '@/lib/fetcher/types'
+import { useUserStore } from '@/stores/user'
+import type { DecamelizeObjectKeys } from '@/types/utilities'
+import isObject from 'lodash/isObject'
+import snakeCase from 'lodash/snakeCase'
 
-const scheme = import.meta.env.VITE_SSL_ENABLED === 'true' ? 'https' : 'http'
+const isHttps = import.meta.env.VITE_SSL_ENABLED === 'true'
+const scheme = isHttps ? 'https' : 'http'
+const baseURL = `${scheme}://${import.meta.env.VITE_API_SERVER}`
 
 const headers = new Headers()
 
-if (localStorage.user) {
-  const user = JSON.parse(localStorage.user)
-  const token = user.token
-  headers.append('Authorization', `Bearer ${token}`)
-}
-
-const carshenasOptions = {
-  baseURL: `${scheme}://${import.meta.env.VITE_API_SERVER}`,
+const carshenasFetchOptions = {
+  baseURL,
   headers
 }
 
-export default {
-  get: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
-    const result = await fetcher.get<R, D>(url, {
-      ...options,
-      parameters: camelCaseObjectToSnakeCase(options?.parameters as any) as URLSearchParams,
-      ...carshenasOptions
-    })
+const handleParameters = (parameters?: FetcherOptions['parameters']) =>
+  parameters
+    ? isObject(parameters)
+      ? (decamelize(parameters) as URLSearchParams)
+      : (snakeCase(parameters) as unknown as URLSearchParams)
+    : undefined
 
-    return {
-      ...result,
-      data: snakeCaseObjectToCamelCase(result.data as any) as any
-    }
-  },
+const handleBody = (body?: FetcherOptions['body']) =>
+  body && !(body instanceof FormData) ? decamelize(body) : body
 
-  post: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
-    if (!(options?.body instanceof FormData)) {
-      carshenasOptions.headers.delete('content-type')
-      carshenasOptions.headers.append('content-type', 'application/json')
-    }
-    const result = await fetcher.post<R, D>(url, {
-      ...options,
-      body:
-        options?.body instanceof FormData
-          ? options?.body
-          : (camelCaseObjectToSnakeCase(options?.body as any) as any),
-      ...carshenasOptions
-    })
-    return {
-      ...result,
-      data: snakeCaseObjectToCamelCase(result.data as any) as any
-    }
-  },
+const handleResponse = <R>(response: { data: DecamelizeObjectKeys<R> }) => ({
+  ...response,
+  data: camelize(response.data) as R
+})
 
-  del: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
-    await fetcher.del<R, D>(url, {
-      ...options,
-      parameters: camelCaseObjectToSnakeCase(options?.parameters as any) as URLSearchParams,
-      ...carshenasOptions
-    })
-  },
-
-  put: async <R = unknown, D = unknown>(url: string, options?: FetcherOptions<D>) => {
-    if (!(options?.body instanceof FormData)) {
-      carshenasOptions.headers.delete('content-type')
-      carshenasOptions.headers.append('content-type', 'application/json')
-    }
-    const result = await fetcher.put<R, D>(url, {
-      ...options,
-      body:
-        options?.body instanceof FormData
-          ? options?.body
-          : (camelCaseObjectToSnakeCase(options?.body as any) as any),
-      ...carshenasOptions
-    })
-    return {
-      ...result,
-      data: snakeCaseObjectToCamelCase(result.data as any) as any
-    }
+const addAuthorizationHeader = () => {
+  const { user } = useUserStore()
+  if (user.token) {
+    headers.append('Authorization', user.token)
   }
 }
+
+const carshenasService = {
+  get: async <R>(url: string, options?: FetcherOptions) => {
+    addAuthorizationHeader()
+    const parameters = handleParameters(options?.parameters)
+    const result = await fetcher.get<DecamelizeObjectKeys<R>>(url, {
+      ...options,
+      parameters,
+      ...carshenasFetchOptions
+    })
+
+    return handleResponse(result)
+  },
+  post: async <R>(url: string, options?: FetcherOptions) => {
+    addAuthorizationHeader()
+    const parameters = handleParameters(options?.parameters)
+    const body = handleBody(options?.body)
+    const result = await fetcher.post<DecamelizeObjectKeys<R>>(url, {
+      ...options,
+      parameters,
+      body,
+      ...carshenasFetchOptions
+    })
+
+    return handleResponse(result)
+  },
+  put: async <R>(url: string, options?: FetcherOptions) => {
+    addAuthorizationHeader()
+    const parameters = handleParameters(options?.parameters)
+    const body = handleBody(options?.body)
+    const result = await fetcher.put<DecamelizeObjectKeys<R>>(url, {
+      ...options,
+      parameters,
+      body,
+      ...carshenasFetchOptions
+    })
+
+    return handleResponse(result)
+  },
+  patch: async <R>(url: string, options?: FetcherOptions) => {
+    addAuthorizationHeader()
+    const parameters = handleParameters(options?.parameters)
+    const body = handleBody(options?.body)
+    const result = await fetcher.patch<DecamelizeObjectKeys<R>>(url, {
+      ...options,
+      parameters,
+      body,
+      ...carshenasFetchOptions
+    })
+
+    return handleResponse(result)
+  },
+  delete: async <R>(url: string, options?: FetcherOptions) => {
+    addAuthorizationHeader()
+    const parameters = handleParameters(options?.parameters)
+    const result = await fetcher.delete<DecamelizeObjectKeys<R>>(url, {
+      ...options,
+      parameters,
+      ...carshenasFetchOptions
+    })
+
+    return handleResponse(result)
+  }
+}
+
+export default carshenasService

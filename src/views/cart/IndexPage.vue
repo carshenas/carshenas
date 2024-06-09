@@ -8,7 +8,7 @@ const cartStore = useCartStore()
 
 <template>
   <div style="padding-bottom: 120px">
-    <ProductList :items="cartStore.items" has-counter />
+    <ProductList :items="cartStore.items" has-counter manual />
 
     <div class="bottom-bar pa-4">
       <div class="d-flex justify-space-between">

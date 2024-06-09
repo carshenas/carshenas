@@ -1,9 +1,8 @@
 export type FetchPath = string | Array<string> | URL
 
-export interface FetcherOptions<D> extends Omit<RequestInit, 'body'> {
+export interface FetcherOptions extends RequestInit {
   baseURL?: string
-  body?: D
-  parameters?: URLSearchParams
+  parameters?: any
 }
 
 export interface CreateURLOptions {
