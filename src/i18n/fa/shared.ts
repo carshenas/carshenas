@@ -8,5 +8,6 @@ export default {
   brands: 'برند ها',
   models: 'مدل ها',
   successMessage: 'ثبت موفقیت آمیز بود',
-  nothingFound: 'موردی یافت نشد'
+  nothingFound: 'موردی یافت نشد',
+  noName: 'بدون نام'
 }

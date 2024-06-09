@@ -3,7 +3,7 @@ import currency from './currency'
 import search from './search'
 import shared from './shared'
 import home from './home'
-import profile from './profile'
+import user from './user'
 import auth from './auth'
 import validation from './validation'
 import cart from './cart'
@@ -17,7 +17,7 @@ export default {
   home,
   product,
   auth,
-  profile,
+  user,
   validation,
   cart
 }

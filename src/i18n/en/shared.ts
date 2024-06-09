@@ -7,5 +7,6 @@ export default {
   more: 'More',
   brands: 'Brands',
   models: 'Models',
-  nothingFound: 'Nothing found'
+  nothingFound: 'Nothing found',
+  noName: 'No name'
 }

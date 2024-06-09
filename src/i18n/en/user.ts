@@ -1,14 +1,14 @@
 export default {
   userInfo: 'User info',
-  name: 'Fame',
+  firstName: 'Fame',
   lastName: 'Last name',
   phoneNumber: 'phone number',
   email: 'Email',
-  nationalCode: 'کد ملی',
+  nationalCode: 'National code',
   addresses: 'Addresses',
   orders: 'Orders',
   support: 'Support',
   notification: 'Notification',
-  logout: 'Logout',
-  newTicket: 'New ticket',
+  logout: 'Logout user',
+  newTicket: 'New ticket'
 }

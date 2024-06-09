@@ -5,14 +5,15 @@ import CarBrands from './CarBrands.vue'
 import CarModels from './CarModels.vue'
 
 const selectedBrandId = ref<number>()
+const isOpen = ref<boolean>()
 
-const submit = (e: number) => {
-  selectedBrandId.value = e
+const selectBrand = (...args: unknown[]): void => {
+  selectedBrandId.value = args[0] as number
 }
 </script>
 
 <template>
-  <v-bottom-sheet>
+  <v-bottom-sheet v-model="isOpen">
     <template v-slot:activator="{ props }">
       <FabBtn
         v-bind="props"
@@ -24,6 +25,12 @@ const submit = (e: number) => {
       />
     </template>
 
-    <component :is="!selectedBrandId ? CarBrands : CarModels" @submit="submit" />
+    <v-card>
+      <component
+        :is="!selectedBrandId ? CarBrands : CarModels"
+        @select="selectBrand"
+        @close="isOpen = false"
+      />
+    </v-card>
   </v-bottom-sheet>
 </template>

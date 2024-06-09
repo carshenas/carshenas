@@ -38,33 +38,33 @@ const router = createRouter({
     },
     {
       path: '/user',
-      name: 'UserProfile',
-      component: () => import('../views/user/IndexPage.vue')
+      name: 'UserProfilePage',
+      component: () => import('@/views/user/profile/IndexPage.vue')
     },
     {
       path: '/user/info',
       name: 'UserProfileInfo',
-      component: () => import('../views/user/info/indexPage.vue')
+      component: () => import('@/views/user/info/indexPage.vue')
     },
     {
       path: '/user/addresses',
-      name: 'UserProfileAddresses',
-      component: () => import('../views/user/addresses/IndexPage.vue')
+      name: 'UserAddressPage',
+      component: () => import('@/views/user/addresses/IndexPage.vue')
     },
     {
       path: '/user/orders',
-      name: 'UserProfileOrders',
-      component: () => import('../views/user/orders/IndexPage.vue')
+      name: 'UserOrderPage',
+      component: () => import('@/views/user/orders/IndexPage.vue')
     },
     {
       path: '/user/car-support',
-      name: 'UserProfileSupport',
-      component: () => import('../views/user/support/IndexPage.vue')
+      name: 'UserSupportPage',
+      component: () => import('@/views/user/support/IndexPage.vue')
     },
     {
       path: '/user/notifications',
-      name: 'UserNotifications',
-      component: () => import('../views/user/notification/IndexPage.vue')
+      name: 'UserNotificationPage',
+      component: () => import('@/views/user/notification/IndexPage.vue')
     }
   ]
 })
