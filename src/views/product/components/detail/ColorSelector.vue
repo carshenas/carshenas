@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from 'vue'
-import type { Color, Variant } from '@/types/dto/product'
+import { ref, computed, watch } from 'vue'
+import type { Color, Variant, Warranty } from '@/types/dto/product'
 
-const props = defineProps<{ variants: Variant[] }>()
+const props = defineProps<{
+  variants: Variant[]
+  selectedWarranty?: Warranty[] | null
+}>()
 const emit = defineEmits(['selectColor'])
 
 const colors = computed<Color[]>(() => {
@@ -24,10 +27,40 @@ const selectedColorTitle = computed(() => {
   const color = colors.value.find((color) => color.code === selectedColor.value)
   return color ? color.name : ''
 })
+
 function updateSelectedColor(colorCode: string) {
   selectedColor.value = colorCode
   emit('selectColor', colorCode)
 }
+
+function isColorInWarranty(colorCode: string): boolean {
+  return (
+    props.selectedWarranty !== undefined &&
+    props.selectedWarranty !== null &&
+    props.selectedWarranty.some((warranty) =>
+      warranty.color.some((color) => color.code === colorCode)
+    )
+  )
+}
+
+watch(
+  () => props.selectedWarranty,
+  (selectedWarranty) => {
+    if (selectedWarranty && selectedColor.value) {
+      const hasMatchingColor = selectedWarranty.some((warranty) =>
+        warranty.color.some((color) => color.code === selectedColor.value)
+      )
+      if (!hasMatchingColor) {
+        selectedColor.value = ''
+        emit('selectColor', '')
+        const radioButtons = document.getElementsByName('radio')
+        radioButtons.forEach((radio: any) => {
+          radio.checked = false
+        })
+      }
+    }
+  }
+)
 </script>
 
 <template>
@@ -37,7 +70,19 @@ function updateSelectedColor(colorCode: string) {
       <span> {{ selectedColorTitle }}</span>
     </div>
     <div class="d-flex ga-4">
-      <div v-for="color in colors" :key="color.code" class="d-flex ga-2">
+      <div
+        v-for="color in colors"
+        :key="color.code"
+        :style="{
+          opacity:
+            !props.selectedWarranty ||
+            props.selectedWarranty.length === 0 ||
+            isColorInWarranty(color.code)
+              ? 1
+              : 0.3
+        }"
+        class="d-flex ga-2"
+      >
         <label class="container">
           <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.code)" />
           <span class="checkmark" :style="{ backgroundColor: color.code }"

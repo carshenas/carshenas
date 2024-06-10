@@ -7,20 +7,23 @@ import BrandsWarranty from './components/detail/BrandsWarranty.vue'
 import ProductReview from './components/detail/ProductReview.vue'
 import { useRoute } from 'vue-router'
 import { getProductDetailsService } from '@/services/carshenas/product'
-import { ref, computed, onMounted, watch } from 'vue'
-import type { Brand, Color, Variant, Warranty } from '@/types/dto/product'
+import { ref, computed, onMounted } from 'vue'
+import type { Variant, Warranty } from '@/types/dto/product'
 const route = useRoute()
 const product = ref<Record<string, any>>({})
 const spec = ref<Record<string, any>>({})
 const variants = ref<Variant[]>([])
 const selectedWarrantyPrice = ref<number | null>(null)
 const selectedColorCode = ref<string | null>(null)
-const handleSelectedWarranty = (selectedWarranty: { warranty: Warranty; brand: Brand }) => {
-  const { warranty, brand } = selectedWarranty
-  const selectedWarrantyObj = brand.warranties.find((w) => w.name === warranty.name)
-  if (selectedWarrantyObj) {
-    const selectedPrice = selectedWarrantyObj.price
-    selectedWarrantyPrice.value = selectedPrice
+const selectedWarranty = ref<Warranty[] | null>()
+
+const handleSelectedWarranty = (selectedWarrantyData: Warranty) => {
+  if (selectedWarrantyData) {
+    selectedWarrantyPrice.value = selectedWarrantyData.price
+    selectedWarranty.value = [selectedWarrantyData]
+  } else {
+    selectedWarrantyPrice.value = null
+    selectedWarranty.value = null
   }
 }
 
@@ -32,6 +35,7 @@ onMounted(() => {
 const fetchProductDetails = async () => {
   try {
     const response = await getProductDetailsService(productId)
+    console.log(response.data)
     product.value = response.data
     spec.value = product.value.specification
     variants.value = product.value.variants
@@ -93,8 +97,11 @@ const displayPrice = computed<number>(() => {
     </p>
   </div>
 
-  <ColorSelector :variants="variants" @selectColor="handleSelectColor" key="variants" />
-
+  <ColorSelector
+    :variants="variants"
+    @selectColor="handleSelectColor"
+    :selectedWarranty="selectedWarranty"
+  />
   <BrandsWarranty
     :variants="variants"
     :selectedColorCode="selectedColorCode"

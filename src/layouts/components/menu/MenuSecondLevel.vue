@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCategoryStore } from '@/stores/category'
-import { defineProps, computed, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 // Define props
 const props = defineProps<{ selectedCategoryId: number | null }>()
