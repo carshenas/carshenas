@@ -16,7 +16,7 @@ const router = createRouter({
       name: 'SearchPage',
       component: () => import('../views/search/IndexPage.vue'),
       meta: {
-        contentOnly: true
+        layout: false
       }
     },
     {

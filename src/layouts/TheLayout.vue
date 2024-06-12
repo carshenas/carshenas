@@ -8,6 +8,7 @@ const route = useRoute()
 
 const component = computed(() => {
   if (route.meta && route.meta.layout === 'SimpleHeader') return SimpleHeader
+  if (route.meta && route.meta.layout === false) return undefined
   else return DefaultLayout
 })
 </script>
