@@ -1,5 +1,5 @@
 export default {
-  userInfo: 'User info',
+  title: 'User info',
   firstName: 'Fame',
   lastName: 'Last name',
   phoneNumber: 'phone number',
@@ -10,5 +10,6 @@ export default {
   support: 'Support',
   notification: 'Notification',
   logout: 'Logout user',
-  newTicket: 'New ticket'
+  newTicket: 'New ticket',
+  editPersonalInfo: 'Edit personal info'
 }

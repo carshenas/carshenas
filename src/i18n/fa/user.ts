@@ -1,5 +1,5 @@
 export default {
-  userInfo: 'اطلاعات کاربری',
+  title: 'اطلاعات کاربری',
   firstName: 'نام',
   lastName: 'نام خانوادگی',
   phoneNumber: 'شماره تماس',
@@ -16,5 +16,6 @@ export default {
   plaque: 'پلاک',
   unit: 'واحد',
   postalCode: 'کد پستی',
-  newTicket: 'تیکت جدید'
+  newTicket: 'تیکت جدید',
+  editPersonalInfo: 'ویرایش اطلاعات شخصی'
 }

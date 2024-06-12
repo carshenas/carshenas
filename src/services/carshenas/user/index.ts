@@ -3,14 +3,7 @@ import carshenasService from '@/services'
 
 export const getUser = () => carshenasService.get<User[]>('/user/profile/')
 
-export const updateUser = (body: UserUpdate) =>
-  carshenasService.put<
-    {
-      firstName: string
-      lastName: string
-      nationalCode: string
-    },
-    UserUpdate
-  >('/user/profile/', {
+export const updateUserService = (body: UserUpdate) =>
+  carshenasService.put<Pick<User, 'firstName' | 'lastName' | 'nationalCode'>>('/user/profile/', {
     body
   })

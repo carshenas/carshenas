@@ -16,7 +16,7 @@ const addressList = ref<Address[]>([])
 onMounted(async () => {
   try {
     const response = await getAddressList()
-    addressList.value = response.data
+    // addressList.value = response.data
   } catch (error) {
     console.error('Error fetching address list:', error)
   }
@@ -34,7 +34,7 @@ const handleAddressSubmit = async (newAddress: SendAddress) => {
     showInfo.value = false
     bottomSheetVisible.value = false
     const updatedList = await getAddressList()
-    addressList.value = updatedList.data
+    // addressList.value = updatedList.data
   } catch (error) {
     console.error('Error submitting address:', error)
   }
@@ -46,7 +46,7 @@ const handleDeleteAddress = async (id: number) => {
     console.error('Error deleting address:', error)
   } finally {
     const updatedList = await getAddressList()
-    addressList.value = updatedList.data
+    // addressList.value = updatedList.data
   }
 }
 const handleLatLngStringUpdate = (latLngString: string) => {
@@ -83,7 +83,7 @@ const handleLatLngStringUpdate = (latLngString: string) => {
             @update:showInfo="handleShowInfoUpdate"
             @update:latLngString="handleLatLngStringUpdate"
           />
-          
+
           <NewAddressInfo
             v-if="showInfo"
             :latLngString="selectedAddress"

@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import DefaultLayout from './DefaultLayout.vue'
+import SimpleHeader from './SimpleHeader.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 
 const route = useRoute()
 
-const component = computed(() => (route.meta && route.meta.contentOnly ? undefined : DefaultLayout))
+const component = computed(() => {
+  if (route.meta && route.meta.layout === 'SimpleHeader') return SimpleHeader
+  if (route.meta && route.meta.layout === false) return undefined
+  else return DefaultLayout
+})
 </script>
 
 <template>
