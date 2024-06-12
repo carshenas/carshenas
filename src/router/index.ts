@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import i18n from '@/plugins/i18n'
+
+const { t } = i18n.global
 
 const router = createRouter({
   history: createWebHistory(),
@@ -39,7 +42,8 @@ const router = createRouter({
     {
       path: '/user',
       name: 'UserProfilePage',
-      component: () => import('@/views/user/profile/IndexPage.vue')
+      component: () => import('@/views/user/profile/IndexPage.vue'),
+      meta: { layout: 'SimpleHeader', title: t('user.title') }
     },
     {
       path: '/user/info',
