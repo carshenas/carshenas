@@ -28,11 +28,12 @@ const brands = computed<Brand[]>(() => {
     if (!existingWarranty) {
       brand.warranties.push({
         name: variant.warranty,
-        price: variant.price,
+        price: [variant.price],
         color: [variant.color]
       })
     } else {
       existingWarranty.color.push(variant.color)
+      existingWarranty.price.push(variant.price) 
     }
   })
 
@@ -87,6 +88,7 @@ function emitWarranty(warranty: Warranty | null, brand: Brand | null) {
   emit('updateWarranty', warranty)
   emit('updateBrand', brand)
 }
+
 function selectBrand(name: string) {
   selectedBrandName.value = name
   selectedWarrantyName.value = null
@@ -161,7 +163,7 @@ watch(showBottomSheet, (newVal) => {
           @click="selectBrand(brand.name)"
           variant="tonal"
           :color="selectedBrandName === brand.name ? 'primary' : 'grey-darken-2'"
-          :style="{ opacity: hasSelectedColor(brand) ? 1 : .5 }"
+          :style="{ opacity: hasSelectedColor(brand) ? 1 : 0.5 }"
         >
           <v-card-text>
             <div class="font-weight-bold">{{ brand.name }}</div>
@@ -198,7 +200,7 @@ watch(showBottomSheet, (newVal) => {
                   <div class="d-flex justify-space-between w-100 warranty-child" dir="rtl">
                     <span>{{ warranty.name }}</span>
                     <CurrencyDisplay
-                      :value="warranty.price"
+                      :value="Math.min(...warranty.price)"
                       value-class="text-primary font-weight-bold"
                     />
                   </div>
@@ -233,7 +235,8 @@ watch(showBottomSheet, (newVal) => {
 .list-leave-active {
   transition: all 0.5s;
 }
-.list-enter, .list-leave-to /* .list-leave-active in <2.1.8 */ {
+.list-enter,
+.list-leave-to {
   opacity: 0;
   transform: translateY(30px);
 }

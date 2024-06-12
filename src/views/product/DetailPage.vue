@@ -8,23 +8,30 @@ import ProductReview from './components/detail/ProductReview.vue'
 import { useRoute } from 'vue-router'
 import { getProductDetailsService } from '@/services/carshenas/product'
 import { ref, computed, onMounted } from 'vue'
-import type { Variant, Warranty } from '@/types/dto/product'
+import type { Variant, Warranty, Brand } from '@/types/dto/product'
+
 const route = useRoute()
 const product = ref<Record<string, any>>({})
 const spec = ref<Record<string, any>>({})
 const variants = ref<Variant[]>([])
 const selectedWarrantyPrice = ref<number | null>(null)
 const selectedColorCode = ref<string | null>(null)
-const selectedWarranty = ref<Warranty[] | null>()
+const selectedWarranty = ref<Warranty[] | null>(null)
+const selectedBrand = ref<Brand | null>(null)
+const selectedTab = ref(0)
 
-const handleSelectedWarranty = (selectedWarrantyData: Warranty) => {
+const handleSelectedWarranty = (selectedWarrantyData: Warranty | null) => {
   if (selectedWarrantyData) {
-    selectedWarrantyPrice.value = selectedWarrantyData.price
+    selectedWarrantyPrice.value = Math.min(...selectedWarrantyData.price)
     selectedWarranty.value = [selectedWarrantyData]
   } else {
     selectedWarrantyPrice.value = null
     selectedWarranty.value = null
   }
+}
+
+const handleSelectedBrand = (selectedBrandData: Brand) => {
+  selectedBrand.value = selectedBrandData
 }
 
 const productId = Number(route.params.id)
@@ -35,7 +42,6 @@ onMounted(() => {
 const fetchProductDetails = async () => {
   try {
     const response = await getProductDetailsService(productId)
-    console.log(response.data)
     product.value = response.data
     spec.value = product.value.specification
     variants.value = product.value.variants
@@ -43,9 +49,17 @@ const fetchProductDetails = async () => {
     console.error('Failed to fetch product details:', error)
   }
 }
+
 const handleSelectColor = (colorCode: string) => {
   selectedColorCode.value = colorCode
 }
+
+const tabItems = ref([
+  { title: 'productDetail.summery', href: '#summery' },
+  { title: 'productDetail.details', href: '#spec' },
+  { title: 'productDetail.comments', href: '#comments' }
+])
+
 const minPrice = computed<number>(() => {
   let minPrice = Infinity
   product.value.variants?.forEach((variant: Variant) => {
@@ -56,8 +70,29 @@ const minPrice = computed<number>(() => {
   return minPrice !== Infinity ? minPrice : 0
 })
 
+const selectedVariant = computed<Variant | null>(() => {
+  const warranty = selectedWarranty.value && selectedWarranty.value[0]
+  if (selectedColorCode.value && selectedBrand.value && warranty) {
+    return (
+      variants.value.find(
+        (variant: Variant) =>
+          variant.color.code === selectedColorCode.value &&
+          variant.brand === selectedBrand.value?.name &&
+          variant.warranty === warranty.name
+      ) || null
+    )
+  }
+  return null
+})
+
 const displayPrice = computed<number>(() => {
-  return selectedWarrantyPrice.value !== null ? selectedWarrantyPrice.value : minPrice.value
+  if (selectedColorCode.value && selectedVariant.value) {
+    return selectedVariant.value.price
+  } else if (selectedWarrantyPrice.value !== null) {
+    return selectedWarrantyPrice.value
+  } else {
+    return minPrice.value
+  }
 })
 </script>
 
@@ -76,10 +111,23 @@ const displayPrice = computed<number>(() => {
 
   <h1 class="px-4 title-md">{{ product.name }}</h1>
 
-  <v-tabs bg-color="white" fixed-tabs class="position-sticky tab-pdp">
-    <v-tab href="#summery">{{ $t('productDetail.summery') }}</v-tab>
-    <v-tab href="#spec">{{ $t('productDetail.details') }}</v-tab>
-    <v-tab href="#comments">{{ $t('productDetail.comments') }}</v-tab>
+  <v-tabs
+    v-model="selectedTab"
+    bg-color="white"
+    align-tabs="center"
+    class="position-sticky tab-pdp"
+    slider-color="primary"
+    comfortable
+  >
+    <v-tab
+      v-for="(tab, index) in tabItems"
+      :key="index"
+      :href="tab.href"
+      rounded="5"
+      color="red-darken-3"
+    >
+      {{ $t(tab.title) }}
+    </v-tab>
   </v-tabs>
 
   <div class="d-flex flex-column t-4 px-4 ga-8">
@@ -106,6 +154,7 @@ const displayPrice = computed<number>(() => {
     :variants="variants"
     :selectedColorCode="selectedColorCode"
     @updateWarranty="handleSelectedWarranty"
+    @updateBrand="handleSelectedBrand"
   />
 
   <ProductReview :desc="product.description" />
@@ -175,10 +224,13 @@ const displayPrice = computed<number>(() => {
   top: 3.9rem;
   z-index: 10;
   margin: 1rem 0;
+  border-radius: 0 !important;
+}
+.tab-pdp .v-tab--selected {
+  color: #fb4f4e;
 }
 
-#summery,
-#spec,
+#summery #spec,
 #comments {
   scroll-margin-top: 8rem;
 }

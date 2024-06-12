@@ -9,16 +9,27 @@ const props = defineProps<{
 const emit = defineEmits(['selectColor'])
 
 const colors = computed<Color[]>(() => {
-  const seen = new Set()
-  return (
-    props.variants.reduce((acc: any[], variant: Variant) => {
-      if (!seen.has(variant.color.code)) {
-        seen.add(variant.color.code)
-        acc.push(variant.color)
-      }
-      return acc
-    }, []) || []
-  )
+  const seen = new Set<Color['code']>()
+  const allColors = props.variants.reduce((acc: Color[], variant: Variant) => {
+    if (!seen.has(variant.color.code)) {
+      seen.add(variant.color.code)
+      acc.push(variant.color)
+    }
+    return acc
+  }, [])
+
+  return allColors.sort((a, b) => {
+    const isAInWarranty = isColorInWarranty(a.code)
+    const isBInWarranty = isColorInWarranty(b.code)
+
+    if (isAInWarranty && !isBInWarranty) {
+      return -1
+    } else if (!isAInWarranty && isBInWarranty) {
+      return 1
+    } else {
+      return 0
+    }
+  })
 })
 
 const selectedColor = ref<string>('')
@@ -67,35 +78,56 @@ watch(
   <div class="d-flex flex-column ga-4 pa-4">
     <div class="d-flex">
       <h4 role="heading">{{ $t('productDetail.color') }}</h4>
-      <span> {{ selectedColorTitle }}</span>
+      <span>{{ selectedColorTitle }}</span>
     </div>
-    <div class="d-flex ga-4">
+    <transition-group name="list" tag="div" class="d-flex flex-wrap ga-4">
       <div
         v-for="color in colors"
         :key="color.code"
+        :class="{
+          'not-in-warranty':
+            !props.selectedWarranty ||
+            props.selectedWarranty.length === 0 ||
+            isColorInWarranty(color.code)
+        }"
         :style="{
           opacity:
             !props.selectedWarranty ||
             props.selectedWarranty.length === 0 ||
             isColorInWarranty(color.code)
               ? 1
-              : 0.3
+              : 0.7
         }"
-        class="d-flex ga-2"
+        class="d-flex ga-2 list-item"
       >
         <label class="container">
           <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.code)" />
-          <span class="checkmark" :style="{ backgroundColor: color.code }"
-            ><v-icon class="d-none" icon="done" size="x-small"></v-icon
-          ></span>
+          <span class="checkmark" :style="{ backgroundColor: color.code }">
+            <v-icon class="d-none" icon="done" size="x-small"></v-icon>
+          </span>
         </label>
-        <span>{{ color.name }}</span>
+        <p>{{ color.name }}</p>
       </div>
-    </div>
+    </transition-group>
   </div>
 </template>
 
 <style scoped lang="scss">
+.list-enter,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.list-move {
+  transition: transform 0.3s;
+}
+.not-in-warranty span {
+  transition: all ease 1s;
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.15);
+  scale: 1.2;
+  opacity: 1;
+}
+
 .container {
   display: block;
   position: relative;

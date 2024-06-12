@@ -31,7 +31,7 @@ export interface Color {
 
 export interface Warranty {
   name: string
-  price: number
+  price: number[]
   color: Color[]
 }
 
