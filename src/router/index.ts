@@ -46,11 +46,6 @@ const router = createRouter({
       meta: { layout: 'SimpleHeader', title: t('user.title') }
     },
     {
-      path: '/user/info',
-      name: 'UserProfileInfo',
-      component: () => import('@/views/user/info/indexPage.vue')
-    },
-    {
       path: '/user/addresses',
       name: 'UserAddressPage',
       component: () => import('@/views/user/addresses/IndexPage.vue')
