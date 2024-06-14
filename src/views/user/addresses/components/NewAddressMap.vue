@@ -8,7 +8,7 @@ import type { IconOptions, LatLng, LeafletMouseEvent } from '@/types/dto/the-map
 
 const zoom = ref(8)
 const center = ref<LatLng>({ lat: 35.6, lng: 51.3 })
-const selectedPosition = ref<LatLng >()
+const selectedPosition = ref<LatLng>()
 const mapKey = ref(0)
 const latLngString = ref<string>('')
 const isLoading = ref(false)
@@ -36,7 +36,7 @@ const handleMapClick = async (event: LeafletMouseEvent) => {
   try {
     isLoading.value = true
     const response = await getAddressService(lat, lng)
-    latLngString.value = response.data.address
+    // latLngString.value = response.data.address
     selectedPosition.value = { lat: event.latlng.lat, lng: event.latlng.lng }
     center.value = { lat: event.latlng.lat, lng: event.latlng.lng }
     emit('update:position', selectedPosition.value)

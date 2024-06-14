@@ -1,29 +1,23 @@
+export type Nullable<T> = T | null
+
 export type Camelize<T extends string> = T extends `${infer A}_${infer B}`
   ? `${A}${Capitalize<B>}`
   : T
 
-export type CamelizeKeys<T extends object> = {
-  [K in keyof T as K extends string ? Camelize<K> : K]: T[K]
-}
+export type CamelizeObjectKeys<T> =
+  T extends Record<string, any>
+    ? {
+        [K in keyof T as K extends string ? Camelize<K> : K]: CamelizeObjectKeys<T[K]>
+      }
+    : T
 
-// export type SnakeToCamelCaseNested<T> = T extends object
-//   ? {
-//       [K in keyof T as K extends string ? Camelize<K> : K]: SnakeToCamelCaseNested<T[K]>
-//     }
-//   : T
+export type Decamelize<S extends string> = S extends `${infer T}_${infer U}`
+  ? `${T}${Capitalize<Decamelize<U>>}`
+  : S
 
-type CamelToSnakeCase<S extends string> = S extends `${infer T}${infer U}`
-  ? T extends Capitalize<T>
-    ? `${Lowercase<T>}_${CamelToSnakeCase<U>}`
-    : Lowercase<S>
-  : ''
-
-export type SnakeCaseKeys<T extends object> = {
-  [K in keyof T as CamelToSnakeCase<string & K>]: T[K]
-}
-
-// export type camelToSnakeCaseNested<T> = T extends object
-//   ? {
-//       [K in keyof T as CamelToSnakeCase<string & K>]: camelToSnakeCaseNested<T[K]>
-//     }
-//   : T
+export type DecamelizeObjectKeys<T> =
+  T extends Record<string, any>
+    ? {
+        [K in keyof T as K extends string ? Decamelize<K> : K]: DecamelizeObjectKeys<T[K]>
+      }
+    : T

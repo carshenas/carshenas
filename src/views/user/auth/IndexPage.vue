@@ -5,13 +5,14 @@ import { reactive, ref } from 'vue'
 import FirstStep from './components/FirstStep.vue'
 import SecondStep from './components/SecondStep.vue'
 import type { VForm } from 'vuetify/components'
-import { onBeforeRouteLeave, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 // Services
 import { getOTPService, validateOTPService } from '@/services/carshenas/auth'
 import type { NullableNumber, NullableString } from '@/types/global'
 import type { GetOTPBody, ValidateOTPBody } from '@/types/dto/auth'
 import { useUserStore } from '@/stores/user'
+import useOnBack from '@/composables/on-back'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -68,9 +69,8 @@ const sendOTP = async () => {
 
     userStore.user.token = response.data.access
     userStore.user.phoneNumber = props.phoneNumber
-    console.log(userStore.user)
-    userStore.updateStoredData()
 
+    userStore.updateStoredData()
     router.replace({ name: 'HomePage' })
   } catch (e) {
     console.error(e)
@@ -79,7 +79,7 @@ const sendOTP = async () => {
   }
 }
 
-onBeforeRouteLeave((_, _2, next) => {
+useOnBack((_, _2, next) => {
   if (!step.value) next()
   else {
     next(false)

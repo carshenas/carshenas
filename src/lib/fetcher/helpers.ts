@@ -22,10 +22,10 @@ export const generateURL = (path: FetchPath, options: CreateURLOptions): URL => 
 const bodyNormalizer = <D>(body: D): BodyInit =>
   body instanceof FormData || body instanceof Blob ? body : JSON.stringify(body)
 
-export const mergeOptions = <D = unknown>(options?: FetcherOptions<D>): RequestInit => {
+export const mergeOptions = (options?: FetcherOptions): RequestInit => {
   const result = {
     ...options,
-    ...(options?.body ? { body: bodyNormalizer<D>(options?.body) } : {}),
+    ...(options?.body ? { body: bodyNormalizer(options?.body) } : {}),
     headers: generateHeaders(options?.headers)
   }
   return result as RequestInit

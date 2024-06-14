@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import DefaultLayout from './DefaultLayout.vue'
+import SimpleHeader from './SimpleHeader.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 
 const route = useRoute()
 
-const component = computed(() => (route.meta && route.meta.contentOnly ? undefined : DefaultLayout))
+const component = computed(() => {
+  if (route.meta && route.meta.layout === 'SimpleHeader') return SimpleHeader
+  if (route.meta && route.meta.layout === false) return undefined
+  else return DefaultLayout
+})
 </script>
 
 <template>
   <component :is="component" />
 </template>
-
-<style lang="scss" scoped>
-.app-bar {
-  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.1) !important;
-}
-</style>

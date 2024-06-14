@@ -2,6 +2,26 @@
 import CategoryList from '@/components/CategoryList.vue'
 import PopularModels from './components/PopularModels.vue'
 import BlogPost from './components/PostsList.vue'
+import { onMounted, ref } from 'vue'
+import { getMostViewedCategoriesService } from '@/services/carshenas/category'
+import type { Category } from '@/types/dto/category'
+
+const items = ref<Category[]>()
+const loading = ref<boolean>()
+const getMostViewedCategories = async () => {
+  loading.value = true
+  try {
+    const response = await getMostViewedCategoriesService()
+
+    items.value = response.data
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => getMostViewedCategories())
 </script>
 
 <template>
@@ -11,7 +31,7 @@ import BlogPost from './components/PostsList.vue'
         {{ $t('home.headline') }}
       </h1>
 
-      <p class="mt-4 body-md">
+      <p class="mt-2 body-md">
         {{ $t('home.description') }}
       </p>
 
@@ -41,7 +61,7 @@ import BlogPost from './components/PostsList.vue'
         {{ $t('home.popularCatagories') }}
       </h2>
 
-      <CategoryList class="mt-4" />
+      <CategoryList :items :loading manual class="mt-4" />
     </section>
 
     <section class="my-12">

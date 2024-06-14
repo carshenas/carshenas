@@ -1,33 +1,20 @@
-import type { SnakeCaseKeys, CamelizeKeys } from '@/types/utilities'
+import { isArray, camelCase, isObject, transform, snakeCase } from 'lodash'
 
 export const generateNumericId = (): number => {
   const timestamp = new Date().getTime().toString()
   return +timestamp + Math.floor(Math.random())
 }
 
-export const camelCaseToSnakeCase = (input: string): string =>
-  input.replace(/[A-Z]+(?![a-z])|[A-Z]/g, ($, ofs) => (ofs ? '_' : '') + $.toLowerCase())
+export const camelize = (obj: any): any =>
+  transform(obj, (acc, value, key, target) => {
+    const camelKey = isArray(target) ? key : camelCase(key.toString())
 
-export const snakeToCamelCase = (input: string): string =>
-  input.replace(/_(\w)/g, (m) => m[1].toUpperCase())
+    acc[camelKey] = isObject(value) ? camelize(value) : (value as any)
+  })
 
-export const camelCaseObjectToSnakeCase = <D extends object>(object: D) => {
-  type Result = Partial<SnakeCaseKeys<D>>
-  const snakeCaseObj: Result = {}
+export const decamelize = (obj: any): any =>
+  transform(obj, (acc, value, key, target) => {
+    const snakeKey = isArray(target) ? key : snakeCase(key.toString())
 
-  for (const item in object)
-    snakeCaseObj[camelCaseToSnakeCase(item) as keyof SnakeCaseKeys<D>] = object[
-      item as keyof D
-    ] as any
-
-  return snakeCaseObj as object
-}
-
-export const snakeCaseObjectToCamelCase = <D extends object>(object: D) => {
-  type Result = Partial<CamelizeKeys<D>>
-  const camelCaseObj: Result = {}
-  for (const item in object)
-    camelCaseObj[snakeToCamelCase(item) as keyof CamelizeKeys<D>] = object[item as keyof D] as any
-
-  return camelCaseObj as object
-}
+    acc[snakeKey] = isObject(value) ? decamelize(value) : (value as any)
+  })
