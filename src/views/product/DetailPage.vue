@@ -9,6 +9,7 @@ import { useRoute } from 'vue-router'
 import { getProductDetailsService } from '@/services/carshenas/product'
 import { ref, computed, onMounted } from 'vue'
 import type { Variant, Warranty, Brand } from '@/types/dto/product'
+import SpecSection from './components/detail/specSection.vue'
 
 const route = useRoute()
 const product = ref<Record<string, any>>({})
@@ -35,6 +36,7 @@ const handleSelectedBrand = (selectedBrandData: Brand) => {
 }
 
 const productId = Number(route.params.id)
+
 onMounted(() => {
   fetchProductDetails()
 })
@@ -94,6 +96,7 @@ const displayPrice = computed<number>(() => {
     return minPrice.value
   }
 })
+console.log()
 </script>
 
 <template>
@@ -159,31 +162,13 @@ const displayPrice = computed<number>(() => {
 
   <ProductReview :desc="product.description" />
 
-  <div id="spec" class="d-flex flex-column t-4 px-4 ga-8">
-    <div class="d-flex align-center">
-      <h4 role="heading" class="text-no-wrap">{{ $t('productDetail.details') }}</h4>
-      <div class="w-100 border h-0 mx-2"></div>
-    </div>
-    <div class="d-flex flex-column">
-      <div
-        v-for="(value, key, index) in spec"
-        :key="index"
-        :class="[
-          'd-flex',
-          'justify-space-between',
-          'rounded',
-          'px-2',
-          'py-4',
-          index % 2 === 0 ? 'spec-even-bg' : ''
-        ]"
-      >
-        <span>{{ key }}:</span>
-        <span>{{ value }}</span>
-      </div>
-    </div>
-  </div>
+  <SpecSection :spec="spec" v-if="Object.keys(spec).length" />
 
-  <CommentSection :comments="product.comments" id="comments" />
+  <CommentSection
+    :comments="product.feedbacks"
+    :id="product.id"
+    @feedbackSubmitted="fetchProductDetails"
+  />
 
   <div
     class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white"
@@ -214,9 +199,7 @@ const displayPrice = computed<number>(() => {
   line-height: 28px;
   width: 400;
 }
-.spec-even-bg {
-  background-color: rgba(38, 38, 38, 0.1);
-}
+
 .bottom-0 {
   bottom: 0;
 }
@@ -232,6 +215,6 @@ const displayPrice = computed<number>(() => {
 
 #summery #spec,
 #comments {
-  scroll-margin-top: 8rem;
+  scroll-margin-top: 20 rem;
 }
 </style>

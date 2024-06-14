@@ -96,14 +96,14 @@ watch(
             props.selectedWarranty.length === 0 ||
             isColorInWarranty(color.code)
               ? 1
-              : 0.7
+              : 0.6
         }"
         class="d-flex ga-2 list-item"
       >
         <label class="container">
           <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.code)" />
           <span class="checkmark" :style="{ backgroundColor: color.code }">
-            <v-icon class="d-none" icon="done" size="x-small"></v-icon>
+            <v-icon class="d-none red" icon="done" size="x-small"></v-icon>
           </span>
         </label>
         <p>{{ color.name }}</p>
@@ -113,19 +113,19 @@ watch(
 </template>
 
 <style scoped lang="scss">
+
 .list-enter,
 .list-leave-to {
   opacity: 0;
   transform: translateX(30px);
 }
 .list-move {
-  transition: transform 0.3s;
+  transition: transform 1s;
 }
-.not-in-warranty span {
+.not-in-warranty .checkmark {
   transition: all ease 1s;
-  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.15);
-  scale: 1.2;
-  opacity: 1;
+  box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
+  scale: 1.1;
 }
 
 .container {
@@ -150,6 +150,8 @@ watch(
 }
 
 .checkmark {
+  transition: all ease .8s;
+  scale: 1;
   position: absolute;
   top: 0;
   left: 0;
@@ -162,7 +164,7 @@ watch(
   background-color: #ccc;
 }
 .container input:checked ~ .checkmark {
-  border: 2px solid #262626;
+  border: 2px solid #000000;
 }
 
 .checkmark:after {
@@ -176,10 +178,12 @@ watch(
 }
 
 .container input:checked ~ .checkmark i {
+  color: black;
   display: block !important;
   font-size: 1.1rem;
   right: 2px;
   top: 1px;
   font-weight: bolder;
 }
+
 </style>
