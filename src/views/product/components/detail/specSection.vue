@@ -1,7 +1,7 @@
 <template>
   <div id="spec" class="d-flex flex-column t-4 px-4 ga-8">
     <div class="d-flex align-center">
-      <h4 role="heading" class="text-no-wrap">{{ $t('productDetail.details') }}</h4>
+      <h2 role="heading" class="text-no-wrap">{{ $t('productDetail.details') }}</h2>
       <div class="w-100 border h-0 mx-2"></div>
     </div>
     <div class="d-flex flex-column">

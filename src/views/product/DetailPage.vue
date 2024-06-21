@@ -96,7 +96,8 @@ const displayPrice = computed<number>(() => {
     return minPrice.value
   }
 })
-console.log()
+
+
 </script>
 
 <template>
