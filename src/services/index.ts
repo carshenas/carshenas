@@ -34,8 +34,8 @@ const handleResponse = <R>(response: { data: DecamelizeObjectKeys<R> }) => ({
 
 const addAuthorizationHeader = () => {
   const { user } = useUserStore()
-  if (user.token) {
-    headers.append('Authorization', user.token)
+  if (user.token && !headers.has('Authorization')) {
+    headers.append('Authorization', `Bearer ${user.token}`)
   }
 }
 
