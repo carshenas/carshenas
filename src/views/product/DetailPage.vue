@@ -97,7 +97,9 @@ const displayPrice = computed<number>(() => {
   }
 })
 
-
+const addToCart = () => {
+  console.log(selectedVariant.value)
+}
 </script>
 
 <template>
@@ -174,7 +176,9 @@ const displayPrice = computed<number>(() => {
   <div
     class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white"
   >
-    <v-btn prepend-icon="add" size="large">{{ $t('productDetail.addToCart') }}</v-btn>
+    <v-btn @click="addToCart" prepend-icon="add" size="large">{{
+      $t('productDetail.addToCart')
+    }}</v-btn>
     <CurrencyDisplay
       :value="displayPrice"
       value-class="text-primary font-weight-bold"

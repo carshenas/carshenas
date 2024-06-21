@@ -150,7 +150,7 @@ watch(showBottomSheet, (newVal) => {
 <template>
   <div class="d-flex flex-column t-4 px-4 ga-8">
     <div class="d-flex align-center">
-      <h2 role="heading">{{ $t('productDetail.brands') }}</h2>
+      <h2 class="title-md" role="heading">{{ $t('productDetail.brands') }}</h2>
       <div class="w-100 border h-0 mx-2"></div>
     </div>
 

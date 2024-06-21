@@ -8,7 +8,6 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['selectColor'])
 
-
 const colors = computed<Color[]>(() => {
   const seen = new Set<Color['code']>()
   const allColors = props.variants.reduce((acc: Color[], variant: Variant) => {
@@ -78,7 +77,7 @@ watch(
 <template>
   <div class="d-flex flex-column ga-4 pa-4">
     <div class="d-flex">
-      <h2 role="heading">{{ $t('productDetail.color') }}</h2>
+      <h2 class="title-md" role="heading">{{ $t('productDetail.color') }}</h2>
       <span>{{ selectedColorTitle }}</span>
     </div>
     <transition-group name="list" tag="div" class="d-flex flex-wrap ga-4">
@@ -114,7 +113,6 @@ watch(
 </template>
 
 <style scoped lang="scss">
-
 .list-enter,
 .list-leave-to {
   opacity: 0;
@@ -151,7 +149,7 @@ watch(
 }
 
 .checkmark {
-  transition: all ease .8s;
+  transition: all ease 0.8s;
   scale: 1;
   position: absolute;
   top: 0;
@@ -186,5 +184,4 @@ watch(
   top: 1px;
   font-weight: bolder;
 }
-
 </style>

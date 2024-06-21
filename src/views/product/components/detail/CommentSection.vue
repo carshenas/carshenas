@@ -89,7 +89,12 @@ const handleSubmit = async () => {
 
             <span>{{ comment.date }}</span>
           </div>
-          <v-rating color="orange-lighten-1" density="compact" v-model="comment.score"></v-rating>
+          <v-rating
+            disabled
+            color="orange-lighten-1"
+            density="compact"
+            v-model="comment.score"
+          ></v-rating>
         </div>
       </div>
       <p>{{ comment.comment }}</p>
