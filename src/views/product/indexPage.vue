@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import ImageLoader from '@/components/ImageLoader.vue'
-import ColorSelector from './components/detail/ColorSelector.vue'
+import ColorSelector from './components/ColorSelector.vue'
 import CurrencyDisplay from '@/components/CurrencyDisplay.vue'
-import CommentSection from './components/detail/CommentSection.vue'
-import BrandsWarranty from './components/detail/BrandsWarranty.vue'
-import ProductReview from './components/detail/ProductReview.vue'
+import CommentSection from './components/CommentSection.vue'
+import BrandsWarranty from './components/BrandsWarranty.vue'
+import ProductReview from './components/ProductReview.vue'
 import { useRoute } from 'vue-router'
 import { getProductDetailsService } from '@/services/carshenas/product'
 import { ref, computed, onMounted } from 'vue'
 import type { Variant, Warranty, Brand } from '@/types/dto/product'
-import SpecSection from './components/detail/specSection.vue'
+import SpecSection from './components/SpecSection.vue'
 
 const route = useRoute()
 const product = ref<Record<string, any>>({})
@@ -20,6 +20,7 @@ const selectedColorCode = ref<string | null>(null)
 const selectedWarranty = ref<Warranty[] | null>(null)
 const selectedBrand = ref<Brand | null>(null)
 const selectedTab = ref(0)
+const isLoading = ref(true)
 
 const handleSelectedWarranty = (selectedWarrantyData: Warranty | null) => {
   if (selectedWarrantyData) {
@@ -49,6 +50,8 @@ const fetchProductDetails = async () => {
     variants.value = product.value.variants
   } catch (error) {
     console.error('Failed to fetch product details:', error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -109,12 +112,6 @@ const addToCart = () => {
     </v-carousel-item>
   </v-carousel>
 
-  <!-- <v-breadcrumbs :items="product.parent">
-    <template v-slot:title="{ item }">
-      {{ item.title }}
-    </template>
-  </v-breadcrumbs> -->
-
   <h1 class="px-4 title-md">{{ product.name }}</h1>
 
   <v-tabs
@@ -140,7 +137,6 @@ const addToCart = () => {
     <p>
       <v-icon icon="mdi_star" />
       <span>{{ product.score }} </span>
-
       <span>
         {{
           $t('productDetail.scoreText', {
@@ -151,17 +147,35 @@ const addToCart = () => {
     </p>
   </div>
 
-  <ColorSelector
-    :variants="variants"
-    @selectColor="handleSelectColor"
-    :selectedWarranty="selectedWarranty"
-  />
-  <BrandsWarranty
-    :variants="variants"
-    :selectedColorCode="selectedColorCode"
-    @updateWarranty="handleSelectedWarranty"
-    @updateBrand="handleSelectedBrand"
-  />
+  <div>
+    <v-skeleton-loader
+      v-if="isLoading"
+      class="mx-auto"
+      max-width="300"
+      type="avatar"
+    ></v-skeleton-loader>
+    <ColorSelector
+      v-else
+      :variants="variants"
+      @selectColor="handleSelectColor"
+      :selectedWarranty="selectedWarranty"
+    />
+  </div>
+  <div>
+    <v-skeleton-loader
+      v-if="isLoading"
+      class="mx-auto"
+      max-width="300"
+      type="article"
+    ></v-skeleton-loader>
+    <BrandsWarranty
+      v-else
+      :variants="variants"
+      :selectedColorCode="selectedColorCode"
+      @updateWarranty="handleSelectedWarranty"
+      @updateBrand="handleSelectedBrand"
+    />
+  </div>
 
   <ProductReview :desc="product.description" />
 
