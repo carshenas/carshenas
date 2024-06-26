@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import { getAddressService } from '@/services/carshenas/address/'
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
-import { Icon } from '@/types/dto/the-map' // Adjust the import path accordingly
+import { Icon } from '@/types/dto/the-map' 
 import type { IconOptions, LatLng, LeafletMouseEvent } from '@/types/dto/the-map'
 
 const zoom = ref(8)

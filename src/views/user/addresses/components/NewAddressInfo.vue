@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, computed } from 'vue'
+import { ref, computed } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import type { LatLng } from '@/types/dto/the-map'
 import type { VForm } from 'vuetify/components'

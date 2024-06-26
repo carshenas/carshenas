@@ -4,6 +4,7 @@ export default {
   carFilter: 'فیلتر خودرو',
   phone: 'شماره تماس',
   submit: 'ثبت',
+  close: 'بستن',
   more: 'بیشتر',
   brands: 'برند ها',
   models: 'مدل ها',

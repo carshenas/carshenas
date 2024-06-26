@@ -7,6 +7,7 @@ import user from './user'
 import auth from './auth'
 import validation from './validation'
 import cart from './cart'
+import productDetail from './productDetail'
 import product from './product'
 
 export default {
@@ -19,5 +20,6 @@ export default {
   auth,
   user,
   validation,
-  cart
+  cart,
+  productDetail
 }
