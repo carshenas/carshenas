@@ -40,20 +40,21 @@ const getStateData = (status: string) => {
   }
 }
 </script>
+
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(ticket.status).class"
-        >{{ getStateData(ticket.status).text }}
+      <span :class="getStateData(ticket.status).class">
+        {{ getStateData(props.ticket.status).text }}
         <v-icon :icon="getStateData(ticket.status).icon" size="x-small" />
       </span>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />
     </div>
-    <v-card-text>{{ ticket.lastMessage.message }}</v-card-text>
+    <v-card-text>{{ props.ticket.lastMessage.message }}</v-card-text>
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <span>{{ ticket.dateCreated }}</span>
+        <span>{{ props.ticket.dateCreated }}</span>
       </div>
     </div>
   </v-card>

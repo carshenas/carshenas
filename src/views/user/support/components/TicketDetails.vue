@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import type { Ticket } from '@/types/dto/tickets'
 
-// const props = defineProps<{
-//   selectedTicket: Ticket | null
-// }>()
+const props = defineProps<{
+  selectedTicket: Ticket | null
+}>()
 
-// const sendMessage = async () => {
-//   console.log('test')
-// }
+const sendMessage = async () => {
+  console.log('test')
+}
 </script>
+
 <template>
   <div>
     <!-- <div>

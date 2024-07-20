@@ -6,13 +6,11 @@ export interface Ticket {
   status: 'approved' | 'rejected' | 'Pending'
   lastMessage: Message
 }
-
+export interface TicketList {
+  result: Ticket[]
+}
 export interface Message {
   message: string
   is_answer: boolean
-  file?: Blob | null
-}
-export interface SendMessage extends FormData {
-  message: string
   file?: Blob | null
 }

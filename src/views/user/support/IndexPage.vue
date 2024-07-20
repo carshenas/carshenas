@@ -13,8 +13,7 @@ const tickets = ref<Ticket[]>([])
 onMounted(async () => {
   try {
     const response = await getTicketList()
-    // tickets.value = response.data.result
-    // console.log(response.data.result[0].id)
+    tickets.value = response.data.result
   } catch (error) {
     console.error('Error fetching address list:', error)
   }
