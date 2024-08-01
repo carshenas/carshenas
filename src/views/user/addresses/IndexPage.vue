@@ -58,7 +58,7 @@ const handleLatLngStringUpdate = (latLngString: string) => {
   <section class="pa-4 d-flex flex-column ga-4 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
-      <h1>{{ $t('profile.addresses') }}</h1>
+      <h1>{{ $t('user.addresses') }}</h1>
       <v-btn icon="" variant="text" />
     </div>
     <div class="d-flex flex-column ga-4">
@@ -73,10 +73,10 @@ const handleLatLngStringUpdate = (latLngString: string) => {
             size="x-large"
             append-icon="add"
           >
-            {{ $t('profile.newAddress') }}
+            {{ $t('user.newAddress') }}
           </v-btn>
         </template>
-        <v-card class="d-flex flex-column ga-4" :title="$t('profile.newAddress')">
+        <v-card class="d-flex flex-column ga-4" :title="$t('user.newAddress')">
           <NewAddressMap
             :showInfo="showInfo"
             @update:position="handleMapPositionUpdate"

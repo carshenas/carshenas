@@ -1,9 +1,12 @@
 import carshenasService from '@/services'
-import type { TicketList } from '@/types/dto/tickets'
+import type { TicketList, TicketMessages } from '@/types/dto/tickets'
 
-export const getTicketList = () => carshenasService.get<TicketList>('/support/')
+export const getTicketListService = () => carshenasService.get<TicketList>('/support/')
 
-export const createTicket = (body: FormData) =>
+export const getTicketService = (id: number) =>
+  carshenasService.get<TicketMessages>(`/support/${id}`, {})
+
+export const createTicketService = (body: FormData) =>
   carshenasService.post<{
     message: string
     file?: Blob

@@ -4,7 +4,15 @@ export interface Ticket {
   supportEmployee: string
   dateCreated: string
   status: 'approved' | 'rejected' | 'Pending'
-  lastMessage: Message
+  lastMessage: Message | null
+}
+
+export interface TicketMessages {
+  id: number
+  user: string
+  order: string | null
+  status: 'approved' | 'rejected' | 'Pending'
+  messages: Message[] | null
 }
 export interface TicketList {
   result: Ticket[]

@@ -80,7 +80,7 @@ const clearSelectedOrderIndex = () => {
       <v-btn v-if="selectedOrderIndex === null" icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
       <v-btn v-if="selectedOrderIndex !== null" icon="arrow_forward_ios" variant="text"
         @click="clearSelectedOrderIndex" />
-      <h1>{{ $t('profile.orders') }}</h1>
+      <h1>{{ $t('user.orders') }}</h1>
       <v-btn icon="" variant="text" />
 
 

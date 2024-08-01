@@ -1,37 +1,30 @@
 <script setup lang="ts">
-import type { Ticket } from '@/types/dto/tickets'
+import type { TicketMessages } from '@/types/dto/tickets'
 
 const props = defineProps<{
-  selectedTicket: Ticket | null
+  ticket: TicketMessages | null
 }>()
 
 const sendMessage = async () => {
-  console.log('test')
+  console.log(props.ticket)
 }
+
+const isEven = (index: number): boolean => index % 2 === 0
 </script>
 
 <template>
-  <div>
-    <!-- <div>
-      <v-card
-        class="w-auto pa-2 my-4 text-sm"
-        :class="{
-          'bg-primary ml-5': lastMessage.message === 'user',
-          'bg-white mr-5': lastMessage.message !== 'user'
-        }"
-        v-for="(lastMessage, index) in selectedTicket.lastMessage"
-        :key="index"
-      >
-        <div class="d-flex align-center justify-space-between">
-          <span>{{
-            lastMessage.message === 'user' ? selectedTicket.user : selectedTicket.supportEmployee
-          }}</span>
-        </div>
+  <div class="d-flex flex-column h-100 justify-end" v-if="props.ticket">
+    <div
+      v-for="(message, index) in props.ticket.messages"
+      :key="index"
+      :class="{ 'justify-end': !isEven(index), 'justify-start': isEven(index) }"
+      class="d-flex"
+    >
+      <v-card style="width: fit-content" class="flex-shrink-0 pa-2 my-4 text-sm">
+        <div class="d-flex align-center justify-space-between"></div>
+
         <v-card-text class="pa-2">
-          <div>
-            <p>{{ lastMessage.message }}</p>
-            <span>{{ lastMessage.message }}</span>
-          </div>
+          {{ message.message }}
         </v-card-text>
       </v-card>
     </div>
@@ -44,6 +37,16 @@ const sendMessage = async () => {
         clearable
         @click:append-inner="sendMessage"
       ></v-text-field>
-    </div> -->
+    </div>
   </div>
 </template>
+
+<style scoped>
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+</style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VForm } from 'vuetify/components'
 import { ref } from 'vue'
-import { createTicket } from '@/services/carshenas/support'
+import { createTicketService } from '@/services/carshenas/support'
 const formRef = ref<VForm | null>(null)
 const isLoading = ref(false)
 const rules = {
@@ -22,7 +22,7 @@ const handleSubmit = async () => {
     try {
       isLoading.value = true
       console.log('Form data to be submitted:', formData)
-      await createTicket(formData)
+      await createTicketService(formData)
     } catch (error) {
       console.error('Form submission failed:', error)
     } finally {

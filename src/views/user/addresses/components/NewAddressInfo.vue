@@ -75,7 +75,7 @@ const handleSubmit = async () => {
             <v-text-field
               v-model="address"
               class="pa-1 mt-4"
-              :label="$t('profile.address')"
+              :label="$t('user.address')"
               variant="outlined"
               :rules="[requiredRule]"
               :placeholder="latLngString"
@@ -89,7 +89,7 @@ const handleSubmit = async () => {
               type="tel"
               v-model="plaque"
               class="pa-1"
-              :label="$t('profile.plaque')"
+              :label="$t('user.plaque')"
               variant="outlined"
               :rules="[positiveInteger]"
             ></v-text-field>
@@ -100,7 +100,7 @@ const handleSubmit = async () => {
               type="tel"
               v-model="unit"
               class="pa-1"
-              :label="$t('profile.unit')"
+              :label="$t('user.unit')"
               variant="outlined"
               :rules="[positiveInteger]"
             ></v-text-field>
@@ -111,7 +111,7 @@ const handleSubmit = async () => {
               v-model="postalCode"
               type="tel"
               class="pa-1"
-              :label="$t('profile.postalCode')"
+              :label="$t('user.postalCode')"
               variant="outlined"
               :rules="[postalCodeValidation]"
               maxlength="10"

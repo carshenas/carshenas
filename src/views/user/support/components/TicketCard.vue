@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { defineProps, defineEmits } from 'vue'
 import type { Ticket } from '@/types/dto/tickets'
 
+// Define props and emits
 const props = defineProps<{
   ticket: Ticket
 }>()
@@ -8,9 +10,10 @@ const props = defineProps<{
 const emit = defineEmits(['ticketSelected'])
 
 const handleMoreClick = () => {
-  emit('ticketSelected', props.ticket)
+  emit('ticketSelected', props.ticket.id)
 }
 
+// Get state data for displaying ticket status
 const getStateData = (status: string) => {
   switch (status) {
     case 'approved':
@@ -44,13 +47,15 @@ const getStateData = (status: string) => {
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(ticket.status).class">
+      <span :class="getStateData(props.ticket.status).class">
         {{ getStateData(props.ticket.status).text }}
-        <v-icon :icon="getStateData(ticket.status).icon" size="x-small" />
+        <v-icon :icon="getStateData(props.ticket.status).icon" size="x-small" />
       </span>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />
     </div>
-    <v-card-text>{{ props.ticket.lastMessage.message }}</v-card-text>
+    <v-card-text v-if="props.ticket.lastMessage">
+      {{ props.ticket.lastMessage.message }}
+    </v-card-text>
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
