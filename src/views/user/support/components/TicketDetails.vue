@@ -1,12 +1,32 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { updateTicketService } from '@/services/carshenas/support'
 import type { TicketMessages } from '@/types/dto/tickets'
 
 const props = defineProps<{
   ticket: TicketMessages | null
 }>()
 
+const messageInput = ref<string>('')
+
 const sendMessage = async () => {
-  console.log(props.ticket)
+  if (!props.ticket || !props.ticket.id) {
+    console.error('No ticket selected or ticket ID is missing')
+    return
+  }
+
+  try {
+    const payload = {
+      message: messageInput.value
+    }
+
+    const response = await updateTicketService(props.ticket.id, payload)
+    console.log('Ticket updated successfully:', response)
+
+    messageInput.value = ''
+  } catch (error) {
+    console.error('Failed to update ticket:', error)
+  }
 }
 
 const isEven = (index: number): boolean => index % 2 === 0
@@ -22,7 +42,6 @@ const isEven = (index: number): boolean => index % 2 === 0
     >
       <v-card style="width: fit-content" class="flex-shrink-0 pa-2 my-4 text-sm">
         <div class="d-flex align-center justify-space-between"></div>
-
         <v-card-text class="pa-2">
           {{ message.message }}
         </v-card-text>
@@ -30,8 +49,9 @@ const isEven = (index: number): boolean => index % 2 === 0
     </div>
     <div>
       <v-text-field
+        v-model="messageInput"
         append-inner-icon="arrow_left"
-        label="پیام خود را بنویسد"
+        label="پیام خود را بنویسید"
         type="text"
         variant="filled"
         clearable
