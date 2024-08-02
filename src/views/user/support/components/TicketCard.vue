@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
-import type { Ticket } from '@/types/dto/tickets'
+import { defineProps, defineEmits } from 'vue';
+import type { Ticket } from '@/types/dto/tickets';
+import jalaali from 'jalaali-js';
 
 // Define props and emits
 const props = defineProps<{
-  ticket: Ticket
-}>()
+  ticket: Ticket;
+}>();
 
-const emit = defineEmits(['ticketSelected'])
+const emit = defineEmits(['ticketSelected']);
 
 const handleMoreClick = () => {
-  emit('ticketSelected', props.ticket.id)
-}
+  emit('ticketSelected', props.ticket.id);
+};
 
 // Get state data for displaying ticket status
 const getStateData = (status: string) => {
@@ -20,28 +21,37 @@ const getStateData = (status: string) => {
       return {
         class: 'text-green-darken-4',
         text: 'پاسخ داده شد',
-        icon: 'done'
-      }
+        icon: 'done',
+      };
     case 'Pending':
       return {
         class: 'text-orange',
         text: 'درجریان',
-        icon: 'pending'
-      }
+        icon: 'pending',
+      };
     case 'rejected':
       return {
         class: 'text-red-darken-4',
         text: 'رد شده',
-        icon: 'close'
-      }
+        icon: 'close',
+      };
     default:
       return {
         class: '',
         text: '',
-        icon: ''
-      }
+        icon: '',
+      };
   }
-}
+};
+
+// Function to convert Gregorian date to Jalali date
+const convertToJalali = (dateString: string) => {
+  const date = new Date(dateString);
+  const jalaaliDate = jalaali.toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate());
+
+  // Format the Jalali date string
+  return `${jalaaliDate.jy}/${jalaaliDate.jm}/${jalaaliDate.jd}`;
+};
 </script>
 
 <template>
@@ -59,7 +69,8 @@ const getStateData = (status: string) => {
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <span>{{ props.ticket.dateCreated }}</span>
+        <!-- Display the Jalali date here -->
+        <span>{{ convertToJalali(props.ticket.dateCreated) }}</span>
       </div>
     </div>
   </v-card>

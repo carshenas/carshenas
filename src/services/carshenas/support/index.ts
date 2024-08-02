@@ -6,7 +6,16 @@ export const getTicketListService = () => carshenasService.get<TicketList>('/sup
 export const getTicketService = (id: number) =>
   carshenasService.get<TicketMessages>(`/support/${id}`, {})
 
+
 export const createTicketService = (body: FormData) =>
+  carshenasService.post<{
+    message: string
+    file?: Blob
+  }>('/support/', {
+    body
+  })
+
+export const sendMessageService = (body: FormData) =>
   carshenasService.post<{
     message: string
     file?: Blob

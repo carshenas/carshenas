@@ -36,7 +36,8 @@ const isEven = (index: number): boolean => index % 2 === 0
         variant="filled"
         clearable
         @click:append-inner="sendMessage"
-      ></v-text-field>
+      >
+      </v-text-field>
     </div>
   </div>
 </template>
