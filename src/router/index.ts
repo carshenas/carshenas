@@ -1,4 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import i18n from '@/plugins/i18n'
+
+const { t } = i18n.global
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,7 +16,7 @@ const router = createRouter({
       name: 'SearchPage',
       component: () => import('../views/search/IndexPage.vue'),
       meta: {
-        contentOnly: true
+        layout: false
       }
     },
     {
@@ -24,7 +27,7 @@ const router = createRouter({
     {
       path: '/product/:id(\\d+)',
       name: 'ProductDetailPage',
-      component: () => import('@/views/product/DetailPage.vue')
+      component: () => import('@/views/product/indexPage.vue')
     },
     {
       name: 'CartPage',
@@ -38,33 +41,29 @@ const router = createRouter({
     },
     {
       path: '/user',
-      name: 'UserProfile',
-      component: () => import('../views/user/IndexPage.vue')
-    },
-    {
-      path: '/user/info',
-      name: 'UserProfileInfo',
-      component: () => import('../views/user/InfoPage.vue')
+      name: 'UserProfilePage',
+      component: () => import('@/views/user/profile/IndexPage.vue'),
+      meta: { layout: 'SimpleHeader', title: t('user.title') }
     },
     {
       path: '/user/addresses',
-      name: 'UserProfileAddresses',
-      component: () => import('../views/user/AddressesPage.vue')
+      name: 'UserAddressPage',
+      component: () => import('@/views/user/addresses/IndexPage.vue')
     },
     {
       path: '/user/orders',
-      name: 'UserProfileOrders',
-      component: () => import('../views/user/OrdersPage.vue')
+      name: 'UserOrderPage',
+      component: () => import('@/views/user/orders/IndexPage.vue')
     },
     {
       path: '/user/car-support',
-      name: 'UserProfileSupport',
-      component: () => import('../views/user/SupportPage.vue')
+      name: 'UserSupportPage',
+      component: () => import('@/views/user/support/IndexPage.vue')
     },
     {
       path: '/user/notifications',
-      name: 'UserNotifications',
-      component: () => import('../views/user/NotifPage.vue')
+      name: 'UserNotificationPage',
+      component: () => import('@/views/user/notification/IndexPage.vue')
     }
   ]
 })

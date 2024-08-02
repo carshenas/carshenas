@@ -13,11 +13,9 @@ const getMostViewedCategories = async () => {
   try {
     const response = await getMostViewedCategoriesService()
 
-    console.log(response.data)
-
     items.value = response.data
   } catch (e) {
-    console.log(e)
+    console.error(e)
   } finally {
     loading.value = false
   }
@@ -33,7 +31,7 @@ onMounted(() => getMostViewedCategories())
         {{ $t('home.headline') }}
       </h1>
 
-      <p class="mt-4 body-md">
+      <p class="mt-2 body-md">
         {{ $t('home.description') }}
       </p>
 

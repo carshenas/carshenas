@@ -1,16 +1,15 @@
 export default {
-  userInfo: 'اطلاعات کاربری',
-  name: 'نام',
+  title: 'اطلاعات کاربری',
+  firstName: 'نام',
   lastName: 'نام خانوادگی',
   phoneNumber: 'شماره تماس',
-  email: 'ایمیل',
   nationalCode: 'کد ملی',
   addresses: 'آدرس ها',
   address: 'آدرس',
   orders: 'سفارش ها',
   support: 'پشتیبانی',
   notification: 'اعلان ها',
-  logout: 'خروج',
+  logout: 'خروج از پروفایل',
   newAddress: 'آدرس جدید',
   state: 'استان',
   city: 'شهر',
@@ -18,4 +17,5 @@ export default {
   unit: 'واحد',
   postalCode: 'کد پستی',
   newTicket: 'تیکت جدید',
+  editPersonalInfo: 'ویرایش اطلاعات شخصی'
 }

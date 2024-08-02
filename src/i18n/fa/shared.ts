@@ -4,5 +4,11 @@ export default {
   carFilter: 'فیلتر خودرو',
   phone: 'شماره تماس',
   submit: 'ثبت',
-  more: 'بیشتر'
+  close: 'بستن',
+  more: 'بیشتر',
+  brands: 'برند ها',
+  models: 'مدل ها',
+  successMessage: 'ثبت موفقیت آمیز بود',
+  nothingFound: 'موردی یافت نشد',
+  noName: 'بدون نام'
 }

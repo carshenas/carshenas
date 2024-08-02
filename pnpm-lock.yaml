@@ -8,6 +8,15 @@ importers:
 
   .:
     dependencies:
+<<<<<<< HEAD
+=======
+      '@vue-leaflet/vue-leaflet':
+        specifier: ^0.10.1
+        version: 0.10.1(leaflet@1.9.4)(typescript@5.3.3)
+      leaflet:
+        specifier: ^1.9.4
+        version: 1.9.4
+>>>>>>> 76671f3eb309264d8542bf444b41fcb96fddde58
       pinia:
         specifier: ^2.1.7
         version: 2.1.7(typescript@5.3.3)(vue@3.4.15(typescript@5.3.3))
@@ -575,6 +584,18 @@ packages:
   '@volar/typescript@1.11.1':
     resolution: {integrity: sha512-iU+t2mas/4lYierSnoFOeRFQUhAEMgsFuQxoxvwn5EdQopw43j+J27a4lt9LMInx1gLJBC6qL14WYGlgymaSMQ==}
 
+<<<<<<< HEAD
+=======
+  '@vue-leaflet/vue-leaflet@0.10.1':
+    resolution: {integrity: sha512-RNEDk8TbnwrJl8ujdbKgZRFygLCxd0aBcWLQ05q/pGv4+d0jamE3KXQgQBqGAteE1mbQsk3xoNcqqUgaIGfWVg==}
+    peerDependencies:
+      '@types/leaflet': ^1.5.7
+      leaflet: ^1.6.0
+    peerDependenciesMeta:
+      '@types/leaflet':
+        optional: true
+
+>>>>>>> 76671f3eb309264d8542bf444b41fcb96fddde58
   '@vue/compiler-core@3.4.15':
     resolution: {integrity: sha512-XcJQVOaxTKCnth1vCxEChteGuwG6wqnUHxAm1DO3gCz0+uXKaJNx8/digSz4dLALCy8n2lKq24jSUs8segoqIw==}
 
@@ -1519,6 +1540,12 @@ packages:
     resolution: {integrity: sha512-cc8oEVoctTvsFZ/Oje/kGnHbpWHYBe8IAJe4C0QNc3t8uM/0Y8+erSz/7Y1ALuXTEZTMvxXwO6YbX1ey3ujiZw==}
     engines: {node: '> 0.8'}
 
+<<<<<<< HEAD
+=======
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
+
+>>>>>>> 76671f3eb309264d8542bf444b41fcb96fddde58
   levn@0.4.1:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
@@ -2860,6 +2887,16 @@ snapshots:
       '@volar/language-core': 1.11.1
       path-browserify: 1.0.1
 
+<<<<<<< HEAD
+=======
+  '@vue-leaflet/vue-leaflet@0.10.1(leaflet@1.9.4)(typescript@5.3.3)':
+    dependencies:
+      leaflet: 1.9.4
+      vue: 3.4.15(typescript@5.3.3)
+    transitivePeerDependencies:
+      - typescript
+
+>>>>>>> 76671f3eb309264d8542bf444b41fcb96fddde58
   '@vue/compiler-core@3.4.15':
     dependencies:
       '@babel/parser': 7.23.6
@@ -3935,6 +3972,11 @@ snapshots:
 
   lazy-ass@1.6.0: {}
 
+<<<<<<< HEAD
+=======
+  leaflet@1.9.4: {}
+
+>>>>>>> 76671f3eb309264d8542bf444b41fcb96fddde58
   levn@0.4.1:
     dependencies:
       prelude-ls: 1.2.1
