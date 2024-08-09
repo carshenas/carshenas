@@ -6,13 +6,14 @@ import TicketCards from './components/TicketCard.vue'
 import TicketDetails from './components/TicketDetails.vue'
 import TicketForm from './components/TicketForm.vue'
 import { getTicketListService, getTicketService } from '@/services/carshenas/support'
+import type { Nullable } from '@/types/utilities'
 
 const router = useRouter()
 
 const tickets = ref<Ticket[]>([])
 const selectedTicketId = ref<number | null>(null)
-const showForm = ref(false)
-const selectedTicket = ref<TicketMessages | null>(null) // Initialize selectedTicket ref
+const isFormVisible = ref<boolean>(false)
+const selectedTicket = ref<Nullable<TicketMessages>>(null) 
 
 onMounted(async () => {
   try {
@@ -40,15 +41,15 @@ const handleTicketSelected = async (ticket: number) => {
 
 // Toggle form visibility
 const toggleFormVisibility = () => {
-  showForm.value = !showForm.value
+  isFormVisible.value = !isFormVisible.value
 }
 
 // Handle navigation back
 const goBack = () => {
   if (selectedTicket.value) {
     selectedTicket.value = null
-  } else if (showForm.value) {
-    showForm.value = !showForm.value
+  } else if (isFormVisible.value) {
+    isFormVisible.value = !isFormVisible.value
   } else {
     router.go(-1)
   }
@@ -65,7 +66,7 @@ const goBack = () => {
 
     <div class="d-flex flex-column ga-4 flex-grow-1">
       <!-- Button to create a new ticket -->
-      <div v-if="!selectedTicket && !showForm">
+      <div v-if="!selectedTicket && !isFormVisible">
         <v-btn
           block
           class="justify-space-between"
@@ -80,7 +81,7 @@ const goBack = () => {
       </div>
 
       <!-- List of tickets -->
-      <div class="d-flex flex-column ga-4" v-if="!selectedTicket && !showForm">
+      <div class="d-flex flex-column ga-4" v-if="!selectedTicket && !isFormVisible">
         <TicketCards
           v-for="(ticket, index) in tickets"
           :key="index"
@@ -93,7 +94,7 @@ const goBack = () => {
       <TicketDetails v-if="selectedTicket" :ticket="selectedTicket" />
 
       <!-- Ticket form -->
-      <TicketForm :showForm="showForm" />
+      <TicketForm :isFormVisible="isFormVisible" />
     </div>
   </section>
 </template>

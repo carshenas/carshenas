@@ -34,16 +34,16 @@ const handleSubmit = async () => {
 }
 
 const props = defineProps<{
-  showForm: boolean
+  isFormVisible: boolean
 }>()
 </script>
 
 <template>
-  <v-form ref="formRef" v-if="props.showForm" class="d-flex flex-column justify-space-between">
+  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
     <div>
       <v-textarea
         v-model="message"
-        label="متن پیام"
+        :label="$t('support.textLabel')"
         row-height="30"
         rows="4"
         variant="filled"
@@ -55,7 +55,7 @@ const props = defineProps<{
     <div>
       <v-file-input
         v-model="files"
-        label="File input"
+        :label="$t('support.fileLabel')"
         placeholder="Upload your documents"
         prepend-icon="mdi-paperclip"
         multiple

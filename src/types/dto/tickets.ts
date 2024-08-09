@@ -1,22 +1,22 @@
+import type { Nullable } from '../utilities'
+
 export interface Ticket {
   id: number
   user: string
   supportEmployee: string
   dateCreated: string
-  status: 'approved' | 'rejected' | 'Pending'
-  lastMessage: Message | null
+  status: 'Approved' | 'Rejected' | 'Pending'
+  lastMessage: Nullable<Message>
 }
 
 export interface TicketMessages {
   id: number
   user: string
   order: string | null
-  status: 'approved' | 'rejected' | 'Pending'
+  status: 'Approved' | 'Rejected' | 'Pending'
   messages: Message[] | null
 }
-export interface TicketList {
-  result: Ticket[]
-}
+
 export interface Message {
   message: string
   is_answer: boolean

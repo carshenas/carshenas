@@ -1,10 +1,11 @@
 import carshenasService from '@/services'
-import type { TicketList, TicketMessages, Message } from '@/types/dto/tickets'
+import type { Ticket, TicketMessages } from '@/types/dto/tickets'
+import type { Pagination } from '@/types/dto/pagination'
 
-export const getTicketListService = () => carshenasService.get<TicketList>('/support/')
+export const getTicketListService = () => carshenasService.get<Pagination<Ticket[]>>('/support/')
 
 export const getTicketService = (id: number) =>
-  carshenasService.get<TicketMessages>(`/support/${id}`, {})
+  carshenasService.get<TicketMessages>(`/support/${id}`)
 
 export const createTicketService = (body: FormData) =>
   carshenasService.post<{

@@ -9,6 +9,7 @@ import validation from './validation'
 import cart from './cart'
 import productDetail from './productDetail'
 import product from './product'
+import support from './support'
 
 export default {
   app,
@@ -21,5 +22,6 @@ export default {
   user,
   validation,
   cart,
-  productDetail
+  productDetail,
+  support
 }

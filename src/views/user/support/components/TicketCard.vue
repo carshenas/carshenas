@@ -1,66 +1,65 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
-import type { Ticket } from '@/types/dto/tickets';
-import jalaali from 'jalaali-js';
+import {  defineEmits } from 'vue'
+import type { Ticket } from '@/types/dto/tickets'
+import { useJalaliDate } from '@/composables/use-jalali-date' // Adjust the path as needed
 
-// Define props and emits
 const props = defineProps<{
-  ticket: Ticket;
-}>();
+  ticket: Ticket
+}>()
 
-const emit = defineEmits(['ticketSelected']);
+const emit = defineEmits(['ticketSelected'])
 
 const handleMoreClick = () => {
-  emit('ticketSelected', props.ticket.id);
-};
+  emit('ticketSelected', props.ticket.id)
+}
 
-// Get state data for displaying ticket status
 const getStateData = (status: string) => {
   switch (status) {
-    case 'approved':
+    case 'Approved':
       return {
         class: 'text-green-darken-4',
-        text: 'پاسخ داده شد',
-        icon: 'done',
-      };
+        text: 'Approved',
+        icon: 'done'
+      }
     case 'Pending':
       return {
         class: 'text-orange',
-        text: 'درجریان',
-        icon: 'pending',
-      };
-    case 'rejected':
+        text: 'Pending',
+        icon: 'pending'
+      }
+    case 'Rejected':
       return {
         class: 'text-red-darken-4',
-        text: 'رد شده',
-        icon: 'close',
-      };
+        text: ' ',
+        icon: 'close'
+      }
     default:
       return {
         class: '',
         text: '',
-        icon: '',
-      };
+        icon: ''
+      }
   }
-};
+}
 
-// Function to convert Gregorian date to Jalali date
-const convertToJalali = (dateString: string) => {
-  const date = new Date(dateString);
-  const jalaaliDate = jalaali.toJalaali(date.getFullYear(), date.getMonth() + 1, date.getDate());
-
-  // Format the Jalali date string
-  return `${jalaaliDate.jy}/${jalaaliDate.jm}/${jalaaliDate.jd}`;
-};
+const { convertToJalali } = useJalaliDate()
 </script>
 
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(props.ticket.status).class">
-        {{ getStateData(props.ticket.status).text }}
+      <p :class="getStateData(props.ticket.status).class">
+        <span v-if="props.ticket.status === 'Rejected'">
+          {{ $t('support.rejected') }}
+        </span>
+        <span v-if="props.ticket.status === 'Approved'">
+          {{ $t('support.approved') }}
+        </span>
+        <span v-if="props.ticket.status === 'Pending'">
+          {{ $t('support.pending') }}
+        </span>
         <v-icon :icon="getStateData(props.ticket.status).icon" size="x-small" />
-      </span>
+      </p>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />
     </div>
     <v-card-text v-if="props.ticket.lastMessage">
@@ -69,7 +68,6 @@ const convertToJalali = (dateString: string) => {
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <!-- Display the Jalali date here -->
         <span>{{ convertToJalali(props.ticket.dateCreated) }}</span>
       </div>
     </div>
