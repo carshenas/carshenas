@@ -2,9 +2,11 @@
 import TheLayout from '@/layouts/TheLayout.vue'
 import { RouterView } from 'vue-router'
 import { onMounted } from 'vue'
-import getNotification from '@/composable/notification'
+import { registerServiceWorker } from '@/composable/notification'
 
-onMounted(() => getNotification)
+onMounted(() => {
+  registerServiceWorker()
+})
 </script>
 
 <template>
