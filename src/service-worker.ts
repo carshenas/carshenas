@@ -1,4 +1,10 @@
 /// <reference lib="webworker" />
+
+//  FCM
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js')
+importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js')
+
+import { firebaseConfig } from '@/constants/firebase'
 import {
   cleanupOutdatedCaches,
   createHandlerBoundToURL,
@@ -7,37 +13,6 @@ import {
 import { NavigationRoute, registerRoute } from 'workbox-routing'
 
 declare let self: ServiceWorkerGlobalScope
-
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting()
-})
-
-// self.__WB_MANIFEST is the default injection point
-precacheAndRoute(self.__WB_MANIFEST)
-
-// clean old assets
-cleanupOutdatedCaches()
-
-/** @type {RegExp[] | undefined} */
-let allowlist
-// in dev mode, we disable precaching to avoid caching issues
-if (import.meta.env.DEV) allowlist = [/^\/$/]
-
-// to allow work offline
-registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html'), { allowlist }))
-
-importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js')
-importScripts('https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js')
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyCLSjKvPjS3h70bD9JZAztDxCxEHSsVDN0',
-  authDomain: 'carshenas-49efe.firebaseapp.com',
-  projectId: 'carshenas-49efe',
-  storageBucket: 'carshenas-49efe.appspot.com',
-  messagingSenderId: '1060917373200',
-  appId: '1:1060917373200:web:55a69f87282507dab5dd95',
-  measurementId: 'G-WP726B7ZB0'
-}
 
 // @ts-ignore
 firebase.initializeApp(firebaseConfig)
@@ -59,3 +34,21 @@ messaging.onBackgroundMessage(function (payload: {
 
   self.registration.showNotification(notificationTitle, notificationOptions)
 })
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') self.skipWaiting()
+})
+
+// self.__WB_MANIFEST is the default injection point
+precacheAndRoute(self.__WB_MANIFEST)
+
+// clean old assets
+cleanupOutdatedCaches()
+
+/** @type {RegExp[] | undefined} */
+let allowlist
+// in dev mode, we disable precaching to avoid caching issues
+if (import.meta.env.DEV) allowlist = [/^\/$/]
+
+// to allow work offline
+registerRoute(new NavigationRoute(createHandlerBoundToURL('index.html'), { allowlist }))
