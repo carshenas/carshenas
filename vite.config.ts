@@ -9,14 +9,14 @@ export default defineConfig({
     vue(),
     vuetify({
       autoImport: true,
-      styles: { configFile: 'src/assets/styles/vuetify.scss' }
+      styles: {
+        configFile: 'src/assets/styles/vuetify.scss'
+      }
     }),
     VitePWA({
-      strategies: 'injectManifest',
+      strategies: 'generateSW',
       srcDir: 'src',
-      filename: 'service-worker.ts',
       registerType: 'autoUpdate',
-      injectRegister: false,
       manifest: {
         name: 'Carshenas',
         short_name: 'Carshenas',
@@ -24,8 +24,8 @@ export default defineConfig({
         theme_color: '#0C0634'
       },
       devOptions: {
-        enabled: true,
-        type: 'module'
+        enabled: true, // Enable in development
+        type: 'module' // Use module format for service worker in dev
       }
     })
   ],

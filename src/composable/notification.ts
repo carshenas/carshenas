@@ -23,12 +23,8 @@ const requestPermission = async () => {
 
 const registerServiceWorker = () => {
   if ('serviceWorker' in navigator) {
-    const swPath = import.meta.env.DEV
-      ? '/src/service-worker.ts' // Dev mode: reference the TypeScript file directly
-      : '/service-worker.js' // Production mode: reference the built JavaScript file
-
     navigator.serviceWorker
-      .register(swPath)
+      .register('/firebase-messaging-sw.js') // This works for both dev and prod
       .then((registration) => {
         console.log('Service Worker registered with scope:', registration.scope)
         requestPermission()
