@@ -12,7 +12,7 @@ import { getOTPService, validateOTPService } from '@/services/carshenas/auth'
 import type { NullableNumber, NullableString } from '@/types/global'
 import type { GetOTPBody, ValidateOTPBody } from '@/types/dto/auth'
 import { useUserStore } from '@/stores/user'
-import useOnBack from '@/composables/on-back'
+import useOnBack from '@/composable/on-back'
 
 const router = useRouter()
 const userStore = useUserStore()

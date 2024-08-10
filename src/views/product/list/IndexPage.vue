@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ProductList from '@/components/ProductList.vue'
-import { useGetFilterFromURL } from '@/composables/filter'
+import { useGetFilterFromURL } from '@/composable/filter'
 import type { ProductFilter } from '@/types/dto/product'
 import BrandFilterBottomSheet from './components/BrandFilterBottomSheet.vue'
 

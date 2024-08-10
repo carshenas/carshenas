@@ -1,4 +1,4 @@
-import useAppConfig from '@/composables/app-config'
+import useAppConfig from '@/composable/app-config'
 import type { NullableNumber, NullableString } from '@/types/global'
 
 export const rates = {

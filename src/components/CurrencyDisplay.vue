@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import useAppConfig from '@/composables/app-config'
+import useAppConfig from '@/composable/app-config'
 import { toDisplayCurrency } from '@/helpers/currency'
 import type { NullableNumber, NullableString } from '@/types/global'
 import { computed } from 'vue'
