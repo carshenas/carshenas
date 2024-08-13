@@ -9,7 +9,6 @@ import { getTicketListService, getTicketService } from '@/services/carshenas/sup
 import type { Nullable } from '@/types/utilities'
 
 const router = useRouter()
-
 const tickets = ref<Ticket[]>([])
 const selectedTicketId = ref<number | null>(null)
 const isFormVisible = ref<boolean>(false)
@@ -24,7 +23,6 @@ onMounted(async () => {
   }
 })
 
-// Handle ticket selection
 const handleTicketSelected = async (ticket: number) => {
   selectedTicketId.value = ticket
 
