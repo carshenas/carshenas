@@ -3,11 +3,7 @@ import carshenasService from '@/services'
 
 export const getUser = () => carshenasService.get<User[]>('/user/profile/')
 
-export const updateUserService = (data: {
-  firstName?: string
-  lastName?: string
-  nationalCode?: string
-}) => {
+export const updateUserService = (data: UserUpdate) => {
   const formData = new FormData()
 
   if (data.firstName) formData.append('firstName', data.firstName)
