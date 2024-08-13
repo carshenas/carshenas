@@ -84,9 +84,7 @@ const props = defineProps<{
 .justify-end {
   justify-content: flex-end;
 }
-input {
-  padding-top: 2rem;
-}
+ 
 
 textarea {
   padding-top: 2rem !important;

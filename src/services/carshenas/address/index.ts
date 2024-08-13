@@ -15,9 +15,12 @@ export const sendAddressService = (body: SendAddress) =>
     longitude: number
     is_default: boolean
   }>('/user/location/', {
-    body
+    body,
+    headers: {
+      'Content-Type': 'application/json'
+    }
   })
-
+  
 export const getAddressList = () => carshenasService.get<Address>(`user/location/`)
 
 export const delAddress = (id: number) => carshenasService.delete(`user/location/${id}/`)

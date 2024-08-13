@@ -10,7 +10,9 @@ const isHttps = import.meta.env.VITE_SSL_ENABLED === 'true'
 const scheme = isHttps ? 'https' : 'http'
 const baseURL = `${scheme}://${import.meta.env.VITE_API_SERVER}`
 
-const headers = new Headers()
+const headers = new Headers({
+  'Content-Type': 'application/json' 
+})
 
 const carshenasFetchOptions = {
   baseURL,

@@ -16,14 +16,16 @@ const addressList = ref<Address[]>([])
 onMounted(async () => {
   try {
     const response = await getAddressList()
-    // addressList.value = response.data
+    addressList.value = response.data as unknown as Address[]
   } catch (error) {
     console.error('Error fetching address list:', error)
   }
 })
+
 const handleMapPositionUpdate = (newPosition: LatLng) => {
   selectedPosition.value = newPosition
 }
+
 const handleShowInfoUpdate = (value: boolean) => {
   showInfo.value = value
 }
@@ -34,21 +36,22 @@ const handleAddressSubmit = async (newAddress: SendAddress) => {
     showInfo.value = false
     bottomSheetVisible.value = false
     const updatedList = await getAddressList()
-    // addressList.value = updatedList.data
+    addressList.value = updatedList.data as unknown as Address[]
   } catch (error) {
     console.error('Error submitting address:', error)
   }
 }
+
 const handleDeleteAddress = async (id: number) => {
   try {
     await delAddress(id)
+    const updatedList = await getAddressList()
+    addressList.value = updatedList.data as unknown as Address[]
   } catch (error) {
     console.error('Error deleting address:', error)
-  } finally {
-    const updatedList = await getAddressList()
-    // addressList.value = updatedList.data
   }
 }
+
 const handleLatLngStringUpdate = (latLngString: string) => {
   selectedAddress.value = latLngString
 }
