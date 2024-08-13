@@ -4,9 +4,11 @@ import EditProfileBottomSheet from './components/EditProfileBottomSheet.vue'
 import { useUserStore } from '@/stores/user'
 import i18n from '@/plugins/i18n'
 import type { RouteLocationRaw } from 'vue-router'
+import { useRouter } from 'vue-router'
 
-const { user } = useUserStore()
+const { user, wipeUserData } = useUserStore()
 const { t } = i18n.global
+const router = useRouter() // Use Vue Router to navigate
 
 const name = computed(() =>
   user.firstName || user.lastName ? `${user.firstName} ${user.lastName}` : t('shared.noName')
@@ -26,6 +28,11 @@ const items: { title: string; 'prepend-icon': string; to: RouteLocationRaw }[] =
     to: { name: 'UserNotificationPage' }
   }
 ]
+
+const handleLogout = () => {
+  wipeUserData() // Wipe user data from store and local storage
+  router.push({ name: 'HomePage' }) // Navigate to the main page (assuming 'HomePage' is the name of your main page route)
+}
 </script>
 
 <template>
@@ -50,6 +57,8 @@ const items: { title: string; 'prepend-icon': string; to: RouteLocationRaw }[] =
       ></v-list-item>
     </v-list>
 
-    <v-btn variant="text" prepend-icon="exit_to_app" :text="$t('user.logout')" />
+    <v-btn variant="text" prepend-icon="exit_to_app" @click="handleLogout">
+      {{ $t('user.logout') }}
+    </v-btn>
   </v-container>
 </template>
