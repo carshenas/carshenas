@@ -13,7 +13,7 @@ const router = useRouter()
 const tickets = ref<Ticket[]>([])
 const selectedTicketId = ref<number | null>(null)
 const isFormVisible = ref<boolean>(false)
-const selectedTicket = ref<Nullable<TicketMessages>>(null) 
+const selectedTicket = ref<Nullable<TicketMessages>>(null)
 
 onMounted(async () => {
   try {
@@ -57,7 +57,7 @@ const goBack = () => {
 </script>
 
 <template>
-  <section class="pa-4 d-flex flex-column ga-8 h-screen">
+  <section class="pa-4 d-flex flex-column ga-8 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="goBack" />
       <h1>{{ $t('user.support') }}</h1>
@@ -98,3 +98,18 @@ const goBack = () => {
     </div>
   </section>
 </template>
+
+<style scoped> 
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+textarea {
+  padding-top: 2rem !important;
+}
+
+</style>

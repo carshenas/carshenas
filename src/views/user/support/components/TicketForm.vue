@@ -50,6 +50,7 @@ const props = defineProps<{
         auto-grow
         shaped
         :rules="[rules.required]"
+        class="support-input"
       ></v-textarea>
     </div>
     <div>
@@ -57,7 +58,6 @@ const props = defineProps<{
         v-model="files"
         :label="$t('support.fileLabel')"
         placeholder="Upload your documents"
-        prepend-icon="mdi-paperclip"
         multiple
       >
         <template v-slot:selection="{ fileNames }">
@@ -76,3 +76,19 @@ const props = defineProps<{
     </div>
   </v-form>
 </template>
+<style scoped>
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+input {
+  padding-top: 2rem;
+}
+
+textarea {
+  padding-top: 2rem !important;
+}
+</style>

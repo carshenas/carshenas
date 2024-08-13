@@ -62,12 +62,15 @@ const isEven = (index: number): boolean => index % 2 === 0
   </div>
 </template>
 
-<style scoped>
+<style >
 .justify-start {
   justify-content: flex-start;
 }
 
 .justify-end {
   justify-content: flex-end;
+}
+.v-field__input {
+  padding-top: 2rem !important;
 }
 </style>
