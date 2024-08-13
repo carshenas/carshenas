@@ -15,7 +15,7 @@ export default {
   city: 'شهر',
   plaque: 'پلاک',
   unit: 'واحد',
-  postalCode: 'کد پستی',
+  postal_code: 'کد پستی',
   newTicket: 'تیکت جدید',
   editPersonalInfo: 'ویرایش اطلاعات شخصی'
 }

@@ -17,7 +17,7 @@ const emit = defineEmits<{
       address: string
       latitude: number
       longitude: number
-      postalCode: string
+      postal_code: string
       is_default: boolean
     }
   ): void
@@ -27,7 +27,7 @@ const formRef = ref<VForm | null>(null)
 const address = ref(props.latLngString || '')
 const plaque = ref('')
 const unit = ref('')
-const postalCode = ref('')
+const postal_code = ref('')
 
 const requiredRule = (value: string) => !!value || 'لطفا آدرس خود را بنویسد'
 
@@ -36,7 +36,7 @@ const positiveInteger = (value: string) => {
   return (Number.isInteger(intValue) && intValue >= 0) || ''
 }
 
-const postalCodeValidation = (value: string) => {
+const postal_codeValidation = (value: string) => {
   const regex = /^[13-9]{4}[1346-9][013-9]{5}$/
   return regex.test(value) || 'کد پستی درست وارد کنید'
 }
@@ -54,7 +54,7 @@ const handleSubmit = async () => {
       address: concatenatedAddress.value,
       latitude: props.position.lat,
       longitude: props.position.lng,
-      postalCode: postalCode.value,
+      postal_code: postal_code.value,
       is_default: false
     }
     emit('submit', FormData)
@@ -108,12 +108,12 @@ const handleSubmit = async () => {
 
           <v-col>
             <v-text-field
-              v-model="postalCode"
+              v-model="postal_code"
               type="tel"
               class="pa-1"
-              :label="$t('user.postalCode')"
+              :label="$t('user.postal_code')"
               variant="outlined"
-              :rules="[postalCodeValidation]"
+              :rules="[postal_codeValidation]"
               maxlength="10"
             ></v-text-field>
           </v-col>
