@@ -31,7 +31,7 @@ const getProducts = async () => {
     const params = { title: search.value }
 
     const response = await getProductListService(params)
-    products.value = response.data
+    products.value = response.data.result
   } catch (e) {
     console.error(e)
   }
