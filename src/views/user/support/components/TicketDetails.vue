@@ -48,7 +48,8 @@ const isEven = (index: number): boolean => index % 2 === 0
       </v-card>
     </div>
     <div>
-      <v-text-field
+      <v-textarea
+        rows="1"
         v-model="messageInput"
         append-inner-icon="arrow_left"
         label="پیام خود را بنویسید"
@@ -57,12 +58,12 @@ const isEven = (index: number): boolean => index % 2 === 0
         clearable
         @click:append-inner="sendMessage"
       >
-      </v-text-field>
+      </v-textarea>
     </div>
   </div>
 </template>
 
-<style >
+<style>
 .justify-start {
   justify-content: flex-start;
 }
@@ -70,7 +71,7 @@ const isEven = (index: number): boolean => index % 2 === 0
 .justify-end {
   justify-content: flex-end;
 }
-.v-field__input {
+textarea {
   padding-top: 2rem !important;
 }
 </style>

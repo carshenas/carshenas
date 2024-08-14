@@ -33,7 +33,7 @@ const onSubmit = async () => {
 <template>
   <v-bottom-sheet v-model="isOpen">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" icon="edit" />
+      <v-btn v-bind="props" icon="edit" variant="icon" />
     </template>
 
     <v-card>
@@ -41,7 +41,7 @@ const onSubmit = async () => {
         <div class="mt-2 title-md d-flex justify-space-between">
           {{ $t('user.editPersonalInfo') }}
 
-          <v-btn  icon="close" density="comfortable" @click="isOpen = false" />
+          <v-btn variant="icon" icon="close" density="comfortable" @click="isOpen = false" />
         </div>
       </v-card-title>
 

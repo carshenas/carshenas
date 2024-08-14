@@ -2,6 +2,7 @@
 import type { VForm } from 'vuetify/components'
 import { ref } from 'vue'
 import { createTicketService } from '@/services/carshenas/support'
+
 const formRef = ref<VForm | null>(null)
 const isLoading = ref(false)
 const rules = {
@@ -9,6 +10,11 @@ const rules = {
 }
 const files = ref<File[]>([])
 const message = ref('')
+
+const emit = defineEmits<{
+  (event: 'update:isFormVisible', value: boolean): void
+}>()
+
 const handleSubmit = async () => {
   const { valid: isValid } = await formRef.value!.validate()
   if (isValid) {
@@ -23,6 +29,7 @@ const handleSubmit = async () => {
       isLoading.value = true
       console.log('Form data to be submitted:', formData)
       await createTicketService(formData)
+      emit('update:isFormVisible', false) // Hide the form upon successful submission
     } catch (error) {
       console.error('Form submission failed:', error)
     } finally {
@@ -84,7 +91,6 @@ const props = defineProps<{
 .justify-end {
   justify-content: flex-end;
 }
- 
 
 textarea {
   padding-top: 2rem !important;

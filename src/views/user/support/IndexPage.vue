@@ -15,13 +15,17 @@ const isFormVisible = ref<boolean>(false)
 const selectedTicket = ref<Nullable<TicketMessages>>(null)
 
 onMounted(async () => {
+  await refreshTicketList()
+})
+
+const refreshTicketList = async () => {
   try {
     const response = await getTicketListService()
     tickets.value = response.data.result
   } catch (error) {
     console.error('Error fetching ticket list:', error)
   }
-})
+}
 
 const handleTicketSelected = async (ticket: number) => {
   selectedTicketId.value = ticket
@@ -37,9 +41,13 @@ const handleTicketSelected = async (ticket: number) => {
   }
 }
 
-// Toggle form visibility
-const toggleFormVisibility = () => {
+// Toggle form visibility and refresh ticket list if needed
+const toggleFormVisibility = async (refreshList = false) => {
   isFormVisible.value = !isFormVisible.value
+
+  if (refreshList) {
+    await refreshTicketList()
+  }
 }
 
 // Handle navigation back
@@ -92,12 +100,15 @@ const goBack = () => {
       <TicketDetails v-if="selectedTicket" :ticket="selectedTicket" />
 
       <!-- Ticket form -->
-      <TicketForm :isFormVisible="isFormVisible" />
+      <TicketForm
+        v-bind:isFormVisible="isFormVisible"
+        v-on:update:isFormVisible="isFormVisible = $event"
+      />
     </div>
   </section>
 </template>
 
-<style scoped> 
+<style scoped>
 .justify-start {
   justify-content: flex-start;
 }
@@ -109,5 +120,4 @@ const goBack = () => {
 textarea {
   padding-top: 2rem !important;
 }
-
 </style>
