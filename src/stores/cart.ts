@@ -6,6 +6,7 @@ import type { Product } from '@/types/dto/product'
 
 export const useCartStore = defineStore('cart', () => {
   const items = ref<Product[]>([])
+  const address = ref<string>('تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی')
 
   const addItem = (product: Product) => {
     items.value.push(product)
@@ -29,5 +30,5 @@ export const useCartStore = defineStore('cart', () => {
     items.value.reduce((acc, item) => acc + item.price * item.quantity, 0)
   )
 
-  return { items, addItem, updateCount, removeItem, wipeItems, payableAmount }
+  return { items, addItem, updateCount, removeItem, wipeItems, address, payableAmount }
 })

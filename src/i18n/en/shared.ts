@@ -8,5 +8,6 @@ export default {
   brands: 'Brands',
   models: 'Models',
   nothingFound: 'Nothing found',
-  noName: 'No name'
+  noName: 'No name',
+  continue: 'Continue'
 }

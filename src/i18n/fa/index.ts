@@ -6,7 +6,7 @@ import home from './home'
 import user from './user'
 import auth from './auth'
 import validation from './validation'
-import cart from './cart'
+import checkout from './checkout'
 import productDetail from './productDetail'
 import product from './product'
 
@@ -20,6 +20,6 @@ export default {
   auth,
   user,
   validation,
-  cart,
+  checkout,
   productDetail
 }
