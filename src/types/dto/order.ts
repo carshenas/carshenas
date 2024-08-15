@@ -3,7 +3,7 @@ export default interface Order {
   state: 'canceled' | 'successful' | 'doing'
   date: string
   price: string
-  postalCode: string
+  postal_code: string
   orderDetail: OrderItems[]
 }
 

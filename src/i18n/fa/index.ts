@@ -9,6 +9,7 @@ import validation from './validation'
 import checkout from './checkout'
 import productDetail from './productDetail'
 import product from './product'
+import support from './support'
 
 export default {
   app,
@@ -21,5 +22,7 @@ export default {
   user,
   validation,
   checkout,
-  productDetail
+  cart,
+  productDetail,
+  support
 }

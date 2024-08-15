@@ -14,8 +14,10 @@ export interface LeafletMouseEvent {
 }
 
 export interface LatLngString {
-  desc: string
+  address: string
 }
+
+
 
 export interface IconOptions {
   iconUrl: string
