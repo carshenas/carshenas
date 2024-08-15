@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Product, ProductFilter } from '@/types/dto/product'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 
 // Services
 import { getProductListService } from '@/services/carshenas/product'
@@ -32,6 +32,11 @@ const getProducts = async () => {
     _loading.value = false
   }
 }
+
+watch(
+  () => props.filter,
+  () => getProducts()
+)
 
 onMounted(() => {
   !props.manual ? getProducts() : undefined

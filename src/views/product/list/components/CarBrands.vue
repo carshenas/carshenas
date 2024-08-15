@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import ImageLoader from '@/components/ImageLoader.vue'
 import { getVehicleService } from '@/services/carshenas/vehicle'
-import type { Brand } from '@/types/dto/brands'
+import type { Brand, Vehicle } from '@/types/dto/brands'
 import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const brands = ref<Brand[]>()
+const models = ref<Vehicle[]>()
 const loading = ref<boolean>(false)
 const search = ref<string>()
-const emit = defineEmits<{ (e: 'select', payload: number): void; (e: 'close'): void }>()
+const emit = defineEmits<{
+  (e: 'select', payload: number): void
+  (e: 'close'): void
+}>()
 
 const getVehicles = async () => {
   loading.value = true
@@ -22,10 +27,18 @@ const getVehicles = async () => {
   }
 }
 
-const filteredBrands = computed((): Brand[] => {
-  if (search.value) return brands.value?.filter((brand) => brand.name.includes(search.value!)) || []
-  else return brands.value || []
+const filteredItems = computed((): Brand[] | Vehicle[] => {
+  const items = models.value?.length ? models.value : brands.value
+  if (search.value) return items?.filter((brand) => brand.name.includes(search.value!)) || []
+  else return items || []
 })
+
+const handleClick = (item: any) => {
+  if (item.vehicles) return (models.value = item.vehicles)
+
+  useRouter().push({ query: { ...useRoute().query, vehicle_id: item.id } })
+  emit('close')
+}
 
 onMounted(getVehicles)
 </script>
@@ -52,15 +65,21 @@ onMounted(getVehicles)
   <v-card-text class="pa-0">
     <v-list lines="false">
       <v-list-item
-        v-for="brand in filteredBrands"
-        :key="brand.id"
-        :title="brand.name"
+        v-for="item in filteredItems"
+        :key="item.id"
+        :title="item.name"
         append-icon="chevron_left"
         class="py-4"
-        @click="emit('select', brand.id)"
+        @click="handleClick(item)"
       >
         <template #prepend>
-          <ImageLoader :src="brand.image" width="24" aspect-ratio="1" :alt="brand.name" />
+          <ImageLoader
+            class="ml-4"
+            :src="item.image"
+            width="24"
+            aspect-ratio="1"
+            :alt="item.name"
+          />
         </template>
       </v-list-item>
     </v-list>

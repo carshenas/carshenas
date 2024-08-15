@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import ProductList from '@/components/ProductList.vue'
-import { useGetFilterFromURL } from '@/composables/filter'
+import { useGetFilterFromURL } from '@/composable/filter'
 import type { ProductFilter } from '@/types/dto/product'
 import BrandFilterBottomSheet from './components/BrandFilterBottomSheet.vue'
 
-const filter = ref<ProductFilter>(useGetFilterFromURL())
+const filter = computed((): ProductFilter => useGetFilterFromURL())
 </script>
 
 <template>
