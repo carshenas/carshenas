@@ -22,7 +22,6 @@ export default {
   user,
   validation,
   checkout,
-  cart,
   productDetail,
   support
 }
