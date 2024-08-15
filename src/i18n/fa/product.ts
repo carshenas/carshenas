@@ -1,4 +1,5 @@
 export default {
   title: 'محصولات {title}',
-  vehicleFilter: 'فیلتر خودرو'
+  vehicleFilter: 'فیلتر خودرو',
+  noProducts: 'محصولی یافت نشد'
 }

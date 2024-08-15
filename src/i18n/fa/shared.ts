@@ -10,5 +10,6 @@ export default {
   models: 'مدل ها',
   successMessage: 'ثبت موفقیت آمیز بود',
   nothingFound: 'موردی یافت نشد',
-  noName: 'بدون نام'
+  noName: 'بدون نام',
+  continue: 'ادامه'
 }
