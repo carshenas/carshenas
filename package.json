@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.10.1",
+    "jalaali-js": "^1.2.7",
     "leaflet": "^1.9.4",
     "pinia": "^2.1.7",
     "vite-plugin-vuetify": "^2.0.3",

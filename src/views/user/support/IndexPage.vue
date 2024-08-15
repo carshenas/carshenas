@@ -1,59 +1,78 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Ticket } from '@/types/dto/tickets'
 import { useRouter } from 'vue-router'
-import TicketList from './components/TicketList.vue'
+import type { Ticket, TicketMessages } from '@/types/dto/tickets'
+import TicketCards from './components/TicketCard.vue'
 import TicketDetails from './components/TicketDetails.vue'
 import TicketForm from './components/TicketForm.vue'
-import { getTicketList } from '@/services/carshenas/support'
+import { getTicketListService, getTicketService } from '@/services/carshenas/support'
+import type { Nullable } from '@/types/utilities'
 
 const router = useRouter()
 const tickets = ref<Ticket[]>([])
+const selectedTicketId = ref<number | null>(null)
+const isFormVisible = ref<boolean>(false)
+const selectedTicket = ref<Nullable<TicketMessages>>(null)
 
 onMounted(async () => {
-  try {
-    const response = await getTicketList()
-    // tickets.value = response.data.result
-    // console.log(response.data.result[0].id)
-  } catch (error) {
-    console.error('Error fetching address list:', error)
-  }
+  await refreshTicketList()
 })
 
-const handleTicketSelected = (ticket: Ticket) => {
-  selectedTicket.value = ticket
+const refreshTicketList = async () => {
+  try {
+    const response = await getTicketListService()
+    tickets.value = response.data.result
+  } catch (error) {
+    console.error('Error fetching ticket list:', error)
+  }
 }
 
-const showForm = ref(false)
+const handleTicketSelected = async (ticket: number) => {
+  selectedTicketId.value = ticket
 
-const toggleFormVisibility = () => {
-  showForm.value = !showForm.value
+  try {
+    if (selectedTicketId.value !== null) {
+      const response = await getTicketService(selectedTicketId.value)
+      selectedTicket.value = response.data
+      console.log(response.data)
+    }
+  } catch (error) {
+    console.error('Error fetching ticket details:', error)
+  }
 }
 
-const selectedTicket = ref<Ticket | null>(null)
+// Toggle form visibility and refresh ticket list if needed
+const toggleFormVisibility = async (refreshList = false) => {
+  isFormVisible.value = !isFormVisible.value
 
+  if (refreshList) {
+    await refreshTicketList()
+  }
+}
+
+// Handle navigation back
 const goBack = () => {
   if (selectedTicket.value) {
     selectedTicket.value = null
-  }
-  if (showForm.value) {
-    showForm.value = !showForm.value
+  } else if (isFormVisible.value) {
+    isFormVisible.value = !isFormVisible.value
   } else {
     router.go(-1)
   }
 }
 </script>
+
 <template>
-  <section class="pa-4 d-flex flex-column ga-8 h-screen">
+  <section class="pa-4 d-flex flex-column ga-8 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="goBack" />
-
-      <h1>{{ $t('profile.support') }}</h1>
-
+      <h1>{{ $t('user.support') }}</h1>
       <v-btn icon="" variant="text" />
     </div>
+
     <div class="d-flex flex-column ga-4 flex-grow-1">
-      <div v-if="!selectedTicket && !showForm">
+      <!-- Button to create a new ticket -->
+      <div v-if="!selectedTicket && !isFormVisible">
         <v-btn
           block
           class="justify-space-between"
@@ -63,20 +82,42 @@ const goBack = () => {
           append-icon="add"
           @click="toggleFormVisibility"
         >
-          {{ $t('profile.newTicket') }}
+          {{ $t('user.newTicket') }}
         </v-btn>
       </div>
-      <div v-if="!selectedTicket && !showForm">
-        <TicketList
+
+      <!-- List of tickets -->
+      <div class="d-flex flex-column ga-4" v-if="!selectedTicket && !isFormVisible">
+        <TicketCards
           v-for="(ticket, index) in tickets"
           :key="index"
           :ticket="ticket"
           @ticketSelected="handleTicketSelected"
         />
       </div>
-      <!-- <TicketDetails :selectedTicket="selectedTicket" /> -->
 
-      <TicketForm :showForm="showForm" />
+      <!-- Ticket details -->
+      <TicketDetails v-if="selectedTicket" :ticket="selectedTicket" />
+
+      <!-- Ticket form -->
+      <TicketForm
+        v-bind:isFormVisible="isFormVisible"
+        v-on:update:isFormVisible="isFormVisible = $event"
+      />
     </div>
   </section>
 </template>
+
+<style scoped>
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+textarea {
+  padding-top: 2rem !important;
+}
+</style>

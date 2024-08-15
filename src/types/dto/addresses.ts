@@ -8,11 +8,11 @@ export interface Address {
   is_default: boolean
 }
 
-export interface SendAddress   {
+export interface SendAddress {
   name: string
   address: string
   latitude: number
   longitude: number
-  postalCode: string
+  postal_code: string
   is_default: boolean
 }

@@ -16,7 +16,7 @@ const Notif = ref<Notification[]>([
     <section class="pa-4 d-flex flex-column ga-8 h-screen">
         <div class="w-100 d-flex align-center justify-space-between">
             <v-btn icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
-            <h1>{{ $t('profile.notification') }}</h1>
+            <h1>{{ $t('user.notification') }}</h1>
             <v-btn icon="" variant="text" />
         </div>
 

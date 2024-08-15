@@ -10,7 +10,7 @@ const Orders = ref<Order[]>([
     state: 'successful',
     date: '2024-03-19',
     price: '100.00',
-    postalCode: '12345',
+    postal_code: '12345',
     orderDetail: [
       {
         itemId: 101,
@@ -33,7 +33,7 @@ const Orders = ref<Order[]>([
     state: 'doing',
     date: '2024-03-20',
     price: '75.00',
-    postalCode: '54321',
+    postal_code: '54321',
     orderDetail: [
       {
         itemId: 201,
@@ -49,7 +49,7 @@ const Orders = ref<Order[]>([
     state: 'canceled',
     date: '2024-03-20',
     price: '75.00',
-    postalCode: '54321',
+    postal_code: '54321',
     orderDetail: [
       {
         itemId: 301,
@@ -80,7 +80,7 @@ const clearSelectedOrderIndex = () => {
       <v-btn v-if="selectedOrderIndex === null" icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
       <v-btn v-if="selectedOrderIndex !== null" icon="arrow_forward_ios" variant="text"
         @click="clearSelectedOrderIndex" />
-      <h1>{{ $t('profile.orders') }}</h1>
+      <h1>{{ $t('user.orders') }}</h1>
       <v-btn icon="" variant="text" />
 
 
