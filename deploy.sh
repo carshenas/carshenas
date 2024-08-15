@@ -1,15 +1,17 @@
 #! /bin/bash
 
 if [ "$1" == "main" ]; then
-  branch="main"
+  username="$FARZAD_DOCKER_USERNAME"
+  password="$FARZAD_DOCKER_PASSWORD"
   image="main"
 else
-  branch="development"
+  username="$FARHAD_DOCKER_USERNAME"
+  password="$FARHAD_DOCKER_PASSWORD"
   image="development"
 fi
 
 cd carshenas-frontend
-git checkout "$branch"
-git pull origin "$branch" --rebase
-docker compose build "$image"
+docker login -u "$username" -p "$password"
+docker pull "$username"/carshenas:latest
+docker logout
 docker compose up --force-recreate "$image" -d
