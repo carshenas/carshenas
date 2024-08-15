@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import { getAddressService } from '@/services/carshenas/address/'
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet'
-import { Icon } from '@/types/dto/the-map' 
+import { Icon } from '@/types/dto/the-map'
 import type { IconOptions, LatLng, LeafletMouseEvent } from '@/types/dto/the-map'
 
 const zoom = ref(8)
@@ -36,7 +36,7 @@ const handleMapClick = async (event: LeafletMouseEvent) => {
   try {
     isLoading.value = true
     const response = await getAddressService(lat, lng)
-    // latLngString.value = response.data.address
+    latLngString.value = response.data.address
     selectedPosition.value = { lat: event.latlng.lat, lng: event.latlng.lng }
     center.value = { lat: event.latlng.lat, lng: event.latlng.lng }
     emit('update:position', selectedPosition.value)

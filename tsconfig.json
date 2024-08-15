@@ -12,7 +12,11 @@
     }
   ],
   "compilerOptions": {
-    "module": "NodeNext"
+    "module": "NodeNext",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["@/firebase-worker.d.ts"]
+  "typeRoots": ["node_modules/@types", "src/types"]
 }

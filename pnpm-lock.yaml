@@ -14,6 +14,9 @@ importers:
       firebase:
         specifier: ^10.12.5
         version: 10.12.5
+      jalaali-js:
+        specifier: ^1.2.7
+        version: 1.2.7
       leaflet:
         specifier: ^1.9.4
         version: 1.9.4
@@ -2767,6 +2770,9 @@ packages:
     resolution: {integrity: sha512-2P4SQ0HrLQ+fw6llpLnOaGAvN2Zu6778SJMrCUwns4fOoG9ayrTiZk3VV8sCPkVZF8ab0zksVpS8FDY5pRCNBA==}
     engines: {node: '>=10'}
     hasBin: true
+
+  jalaali-js@1.2.7:
+    resolution: {integrity: sha512-gE+YHWSbygYAoJa+Xg8LWxGILqFOxZSBQQw39ghel01fVFUxV7bjL0x1JFsHcLQ3uPjvn81HQMa+kxwyPWnxGQ==}
 
   jiti@1.21.6:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
@@ -7307,6 +7313,8 @@ snapshots:
       chalk: 4.1.2
       filelist: 1.0.4
       minimatch: 3.1.2
+
+  jalaali-js@1.2.7: {}
 
   jiti@1.21.6: {}
 

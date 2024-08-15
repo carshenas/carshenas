@@ -16,14 +16,16 @@ const addressList = ref<Address[]>([])
 onMounted(async () => {
   try {
     const response = await getAddressList()
-    // addressList.value = response.data
+    addressList.value = response.data as unknown as Address[]
   } catch (error) {
     console.error('Error fetching address list:', error)
   }
 })
+
 const handleMapPositionUpdate = (newPosition: LatLng) => {
   selectedPosition.value = newPosition
 }
+
 const handleShowInfoUpdate = (value: boolean) => {
   showInfo.value = value
 }
@@ -34,21 +36,22 @@ const handleAddressSubmit = async (newAddress: SendAddress) => {
     showInfo.value = false
     bottomSheetVisible.value = false
     const updatedList = await getAddressList()
-    // addressList.value = updatedList.data
+    addressList.value = updatedList.data as unknown as Address[]
   } catch (error) {
     console.error('Error submitting address:', error)
   }
 }
+
 const handleDeleteAddress = async (id: number) => {
   try {
     await delAddress(id)
+    const updatedList = await getAddressList()
+    addressList.value = updatedList.data as unknown as Address[]
   } catch (error) {
     console.error('Error deleting address:', error)
-  } finally {
-    const updatedList = await getAddressList()
-    // addressList.value = updatedList.data
   }
 }
+
 const handleLatLngStringUpdate = (latLngString: string) => {
   selectedAddress.value = latLngString
 }
@@ -58,7 +61,7 @@ const handleLatLngStringUpdate = (latLngString: string) => {
   <section class="pa-4 d-flex flex-column ga-4 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
-      <h1>{{ $t('profile.addresses') }}</h1>
+      <h1>{{ $t('user.addresses') }}</h1>
       <v-btn icon="" variant="text" />
     </div>
     <div class="d-flex flex-column ga-4">
@@ -73,10 +76,10 @@ const handleLatLngStringUpdate = (latLngString: string) => {
             size="x-large"
             append-icon="add"
           >
-            {{ $t('profile.newAddress') }}
+            {{ $t('user.newAddress') }}
           </v-btn>
         </template>
-        <v-card class="d-flex flex-column ga-4" :title="$t('profile.newAddress')">
+        <v-card class="d-flex flex-column ga-4" :title="$t('user.newAddress')">
           <NewAddressMap
             :showInfo="showInfo"
             @update:position="handleMapPositionUpdate"

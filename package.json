@@ -17,7 +17,11 @@
   },
   "dependencies": {
     "@vue-leaflet/vue-leaflet": "^0.10.1",
+<<<<<<< HEAD
     "firebase": "^10.12.5",
+=======
+    "jalaali-js": "^1.2.7",
+>>>>>>> f325e7dd70acb85bba10990f67a41f5f5f124245
     "leaflet": "^1.9.4",
     "pinia": "^2.1.7",
     "vite-plugin-vuetify": "^2.0.3",

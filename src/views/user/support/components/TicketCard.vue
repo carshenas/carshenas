@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import {  defineEmits } from 'vue'
 import type { Ticket } from '@/types/dto/tickets'
+import { useJalaliDate } from '@/composables/use-jalali-date' // Adjust the path as needed
 
 const props = defineProps<{
   ticket: Ticket
@@ -8,27 +10,27 @@ const props = defineProps<{
 const emit = defineEmits(['ticketSelected'])
 
 const handleMoreClick = () => {
-  emit('ticketSelected', props.ticket)
+  emit('ticketSelected', props.ticket.id)
 }
 
 const getStateData = (status: string) => {
   switch (status) {
-    case 'approved':
+    case 'Approved':
       return {
         class: 'text-green-darken-4',
-        text: 'پاسخ داده شد',
+        text: 'Approved',
         icon: 'done'
       }
     case 'Pending':
       return {
         class: 'text-orange',
-        text: 'درجریان',
+        text: 'Pending',
         icon: 'pending'
       }
-    case 'rejected':
+    case 'Rejected':
       return {
         class: 'text-red-darken-4',
-        text: 'رد شده',
+        text: ' ',
         icon: 'close'
       }
     default:
@@ -39,21 +41,34 @@ const getStateData = (status: string) => {
       }
   }
 }
+
+const { convertToJalali } = useJalaliDate()
 </script>
+
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(ticket.status).class"
-        >{{ getStateData(ticket.status).text }}
-        <v-icon :icon="getStateData(ticket.status).icon" size="x-small" />
-      </span>
+      <p :class="getStateData(props.ticket.status).class">
+        <span v-if="props.ticket.status === 'Rejected'">
+          {{ $t('support.rejected') }}
+        </span>
+        <span v-if="props.ticket.status === 'Approved'">
+          {{ $t('support.approved') }}
+        </span>
+        <span v-if="props.ticket.status === 'Pending'">
+          {{ $t('support.pending') }}
+        </span>
+        <v-icon :icon="getStateData(props.ticket.status).icon" size="x-small" />
+      </p>
       <v-btn @click="handleMoreClick" icon="more_horiz" variant="text" />
     </div>
-    <v-card-text>{{ ticket.lastMessage.message }}</v-card-text>
+    <v-card-text v-if="props.ticket.lastMessage">
+      {{ props.ticket.lastMessage.message }}
+    </v-card-text>
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <span>{{ ticket.dateCreated }}</span>
+        <span>{{ convertToJalali(props.ticket.dateCreated) }}</span>
       </div>
     </div>
   </v-card>
