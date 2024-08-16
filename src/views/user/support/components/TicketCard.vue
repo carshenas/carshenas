@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineEmits } from 'vue'
 import type { Ticket } from '@/types/dto/tickets'
-import { useJalaliDate } from '@/composables/use-jalali-date'
+import { useJalaliDate } from '@/composable/use-jalali-date'
 
 const props = defineProps<{
   ticket: Ticket
