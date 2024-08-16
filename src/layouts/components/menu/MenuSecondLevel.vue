@@ -17,13 +17,7 @@ const onClick = (categoryId: number) => {
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" :title="category.name">
             <template v-slot:prepend>
-              <ImageLoader
-                :src="category.image"
-                :alt="category.name"
-                width="24"
-                aspect-ratio="1"
-                class="ml-2"
-              />
+
             </template>
           </v-list-item>
         </template>
