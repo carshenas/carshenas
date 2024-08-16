@@ -12,7 +12,7 @@ const emit = defineEmits<{
 <template>
   <div style="padding-bottom: 72px" class="h-100 d-flex flex-column">
     <div class="flex-grow-1">
-      <ProductList v-if="cartStore.items.length" :items="cartStore.items" has-counter manual />
+      <ProductList v-if="cartStore.items.length" has-counter  />
 
       <div class="h-100 w-100 d-flex align-center justify-center" v-else>
         {{ $t('product.noProducts') }}
