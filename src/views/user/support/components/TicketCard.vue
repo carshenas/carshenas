@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineEmits } from 'vue'
 import type { Ticket } from '@/types/dto/tickets'
-// import { useJalaliDate } from '@/composables/use-jalali-date' // Adjust the path as needed
+import { useJalaliDate } from '@/composables/use-jalali-date'
 
 const props = defineProps<{
   ticket: Ticket
@@ -42,7 +42,7 @@ const getStateData = (status: string) => {
   }
 }
 
-// const { convertToJalali } = useJalaliDate()
+const { convertToJalali } = useJalaliDate()
 </script>
 
 <template>
@@ -68,7 +68,7 @@ const getStateData = (status: string) => {
     <div class="d-flex w-100 justify-space-between text-grey">
       <div>
         <v-icon icon="calendar_month" />
-        <!-- <span>{{ convertToJalali(props.ticket.dateCreated) }}</span> -->
+        <span>{{ convertToJalali(props.ticket.dateCreated) }}</span>
       </div>
     </div>
   </v-card>
