@@ -10,5 +10,6 @@ export default {
   addToCart: 'افزودن به سبد ',
   comments: 'نظرات',
   newComment: 'ثبت نظر',
-  readMore: 'بیشتر بخوانید'
+  readMore: 'بیشتر بخوانید',
+  alert: 'لطفا انتخاب کنید '
 }

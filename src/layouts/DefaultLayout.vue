@@ -42,7 +42,7 @@ const openMenu = () => {
           v-if="cartStore.items.length"
           icon="local_mall"
           density="comfortable"
-          :to="{ name: 'CartPage' }"
+          :to="{ name: 'CheckoutPage' }"
         />
 
         <v-btn

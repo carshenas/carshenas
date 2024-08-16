@@ -46,7 +46,7 @@ onMounted(() => {
     >
       <router-link
         class="category w-100 d-flex flex-column justify-center align-center"
-        :to="{ name: 'ProductsPage', query: { categoryId: category.id } }"
+        :to="{ name: 'ProductsPage', query: { category: category.id } }"
       >
         <div class="icon w-100 bg-primary rounded-circle d-flex justify-center align-center">
           <ImageLoader :src="category.image" :alt="category.name" width="32" />
