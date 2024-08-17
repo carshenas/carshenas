@@ -1,5 +1,7 @@
 #! /bin/bash
 
+source /root/.bashrc
+
 if [ "$1" == "main" ]; then
   username="$FARZAD_DOCKER_USERNAME"
   password="$FARZAD_DOCKER_PASSWORD"
