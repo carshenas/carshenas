@@ -1,33 +1,37 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { computed, ref } from 'vue'
 import CategoryList from '@/components/CategoryList.vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
 import SearchSuggestions from './components/SearchSuggestions.vue'
 import { useDatabaseStore } from '@/stores/database'
 import { onBeforeRouteLeave } from 'vue-router'
 import { generateNumericId } from '@/helpers/general'
 import type { Category } from '@/types/dto/category'
-import { getCategoryListService } from '@/services/carshenas/category'
 import { debounce } from 'lodash'
+import type { Product } from '@/types/dto/product'
+import { useCategoryStore } from '@/stores/category'
+import { getProductListService } from '@/services/carshenas/product'
 
+const router = useRouter()
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
+const categoryStore = useCategoryStore()
 const search = ref<string>()
 
-const categories = ref<Category[]>()
-const products = ref<Category[]>()
-const getCategories = async () => {
-  try {
-    const response = await getCategoryListService({ title: search.value || '' })
-    categories.value = response
-  } catch (e) {
-    console.error(e)
-  }
-}
+const products = ref<Product[]>()
+
+const categories = computed((): Category[] => {
+  return search.value
+    ? categoryStore.filteredCategories(categoryStore.categories, search.value)
+    : []
+})
+
 const getProducts = async () => {
   try {
-    // const response = await getProductListService({ title: search.value || '' })
-    // products.value = response
+    const params = { title: search.value }
+
+    const response = await getProductListService(params)
+    products.value = response.data.result
   } catch (e) {
     console.error(e)
   }
@@ -35,10 +39,8 @@ const getProducts = async () => {
 
 const onInput = debounce(() => {
   if (!search.value || search.value.length < 2) return
-
-  getCategories()
   getProducts()
-}, 500)
+}, 1000)
 
 openDatabase('search', undefined, (db: IDBDatabase) => {
   db.createObjectStore('suggestions', { keyPath: 'id' })
@@ -55,56 +57,76 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <v-container>
-    <v-text-field
-      v-model="search"
-      :placeholder="$t('shared.search')"
-      variant="outlined"
-      rounded
-      hide-details
-      @input="onInput"
-    >
-      <template v-slot:prepend-inner>
-        <v-btn variant="text" class="pa-0" size="x-small" color="text">
-          <v-icon icon="arrow_forward_ios" />
-        </v-btn>
-      </template>
-
-      <template v-slot:append-inner>
-        <v-btn variant="text" class="pa-0" size="x-small" color="text">
-          <v-icon icon="search" />
-        </v-btn>
-      </template>
-    </v-text-field>
-
-    <SearchSuggestions :title="search" @select="search = $event" />
-
-    <h2 class="title-sm mt-6">
-      {{
-        $t('search.searchInCategory', {
-          item: search
-        })
-      }}
-    </h2>
-
-    <CategoryList :items="categories" class="mt-4" />
-
-    <div class="mt-6 w-100 d-flex">
-      <h2 class="title-sm">
-        {{
-          $t('search.searchInProducts', {
-            item: search
-          })
-        }}
-      </h2>
-
-      <v-spacer />
-
-      <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
-        {{ $t('search.viewAll') }}
-      </RouterLink>
+  <div class="h-100 d-flex flex-column bar-padding">
+    <div class="fixed-bar pa-4">
+      <v-text-field
+        v-model="search"
+        :placeholder="$t('shared.search')"
+        variant="outlined"
+        rounded
+        hide-details
+        prepend-inner-icon="arrow_forward_ios"
+        append-inner-icon="search"
+        @input="onInput"
+        @click:prepend-inner="router.back()"
+      />
     </div>
 
-    <ProductList :items="products" class="mt-4" />
-  </v-container>
+    <SearchSuggestions class="px-4" :title="search" @select="search = $event" />
+
+    <template v-if="search && search.length > 2 && (products?.length || categories.length)">
+      <div v-if="categories?.length">
+        <h2 class="title-sm mt-6 px-4">
+          {{
+            $t('search.searchInCategory', {
+              item: search
+            })
+          }}
+        </h2>
+
+        <CategoryList :items="categories" class="mt-6 px-4" manual />
+      </div>
+
+      <div v-if="products?.length" class="mt-6 w-100 d-flex px-4">
+        <h2 class="title-sm">
+          {{
+            $t('search.searchInProducts', {
+              item: search
+            })
+          }}
+        </h2>
+
+        <v-spacer />
+
+        <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
+          {{ $t('search.viewAll') }}
+        </RouterLink>
+      </div>
+
+      <ProductList v-if="products?.length" :items="products" class="mt-6" manual />
+    </template>
+
+    <div v-else-if="!search || search.length < 2" class="flex-grow-1 d-flex align-center">
+      <span class="w-100 text-center"> {{ $t('search.whatProductAreYouLookingFor') }} </span>
+    </div>
+
+    <div v-else class="flex-grow-1 d-flex align-center">
+      <span class="w-100 text-center"> {{ $t('shared.nothingFound') }} </span>
+    </div>
+  </div>
 </template>
+
+<style scoped lang="scss">
+.bar-padding {
+  padding-top: 80px - 16px;
+}
+
+.fixed-bar {
+  position: fixed;
+  background-color: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+}
+</style>

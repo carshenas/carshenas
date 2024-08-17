@@ -1,14 +1,24 @@
-export default interface Ticket {
+import type { Nullable } from '../utilities'
+
+export interface Ticket {
   id: number
   user: string
   supportEmployee: string
-  state: 'approved' | 'rejected' | 'doing'
-  messages: Message[]
+  dateCreated: string
+  status: 'Approved' | 'Rejected' | 'Pending'
+  lastMessage: Nullable<Message>
 }
 
-interface Message {
-  text: string
-  sender: 'user' | 'employee'
-  time: string
-  date: string
+export interface TicketMessages {
+  id: number
+  user: string
+  order: string | null
+  status: 'Approved' | 'Rejected' | 'Pending'
+  messages: Message[] | null
+}
+
+export interface Message {
+  message: string
+  is_answer: boolean
+  file?: Blob | null
 }

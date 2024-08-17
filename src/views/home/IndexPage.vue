@@ -1,65 +1,81 @@
 <script setup lang="ts">
 import CategoryList from '@/components/CategoryList.vue'
 import PopularModels from './components/PopularModels.vue'
-import PostList from './components/PostsList.vue'
+import BlogPost from './components/PostsList.vue'
+import { onMounted, ref } from 'vue'
+import { getMostViewedCategoriesService } from '@/services/carshenas/category'
+import type { Category } from '@/types/dto/category'
+
+const items = ref<Category[]>()
+const loading = ref<boolean>()
+const getMostViewedCategories = async () => {
+  loading.value = true
+  try {
+    const response = await getMostViewedCategoriesService()
+
+    items.value = response.data
+  } catch (e) {
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => getMostViewedCategories())
 </script>
 
 <template>
   <div class="pa-4">
     <header>
-      <h1 class="title-lg">
+      <h1 class="headline-sm">
         {{ $t('home.headline') }}
       </h1>
 
-      <p class="body-md mt-4">
+      <p class="mt-2 body-md">
         {{ $t('home.description') }}
       </p>
 
       <v-btn
-        block
-        rounded="pill"
-        color="outline"
-        size="x-large"
+        :text="$t('shared.search')"
         variant="outlined"
+        color="outline"
+        rounded="pill"
+        size="large"
+        class="d-flex justify-space-between mt-6 mb-12"
+        append-icon="search"
         to="/search"
-        class="d-flex justify-space-between mt-6"
-        hide-details
-      >
-        {{ $t('shared.search') }}
-        <template v-slot:append>
-          <v-icon color="text" icon="search" />
-        </template>
-      </v-btn>
+        block
+      />
     </header>
 
-    <section class="mt-8">
-      <h2 class="title-md">
+    <section class="my-12">
+      <h2 class="title-sm">
         {{ $t('home.popularModels') }}
       </h2>
 
       <PopularModels />
     </section>
 
-    <section class="mt-8">
-      <h2 class="title-md">
+    <section class="my-12">
+      <h2 class="title-sm">
         {{ $t('home.popularCatagories') }}
       </h2>
 
-      <CategoryList class="mt-4" />
+      <CategoryList :items :loading manual class="mt-4" />
     </section>
 
-    <section class="mt-8">
+    <section class="my-12">
       <div class="d-flex justify-space-between align-center">
-        <h2 class="title-md">
+        <h2 class="title-sm">
           {{ $t('home.carMagazine') }}
         </h2>
 
-        <v-btn variant="text" class="label-lg">
+        <v-btn variant="text">
           {{ $t('shared.viewAll') }}
         </v-btn>
       </div>
 
-      <PostList />
+      <BlogPost />
     </section>
   </div>
 </template>

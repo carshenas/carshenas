@@ -3,10 +3,14 @@ import currency from './currency'
 import search from './search'
 import shared from './shared'
 import home from './home'
-import profile from './profile'
-import productList from './productList'
+import user from './user'
 import auth from './auth'
 import validation from './validation'
+import checkout from './checkout'
+import productDetail from './productDetail'
+import product from './product'
+import support from './support'
+
 
 export default {
   app,
@@ -14,8 +18,11 @@ export default {
   search,
   shared,
   home,
-  productList,
+  product,
   auth,
+  user,
   validation,
-  profile
+  checkout,
+  productDetail,
+  support
 }

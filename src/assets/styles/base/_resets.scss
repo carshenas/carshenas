@@ -8,7 +8,7 @@ body {
 }
 
 #app {
-  overflow: hidden;
+  overflow-x: hidden;
   width: 100%;
   max-width: 480px;
 }
@@ -52,6 +52,13 @@ a {
   height: 100%;
 }
 
+picture {
+  line-height: 0;
+}
+
+hr {
+  opacity: 0.2;
+}
 .v-btn {
   letter-spacing: normal !important;
 }

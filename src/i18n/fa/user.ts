@@ -1,0 +1,21 @@
+export default {
+  title: 'اطلاعات کاربری',
+  firstName: 'نام',
+  lastName: 'نام خانوادگی',
+  phoneNumber: 'شماره تماس',
+  nationalCode: 'کد ملی',
+  addresses: 'آدرس ها',
+  address: 'آدرس',
+  orders: 'سفارش ها',
+  support: 'پشتیبانی',
+  notification: 'اعلان ها',
+  logout: 'خروج از پروفایل',
+  newAddress: 'آدرس جدید',
+  state: 'استان',
+  city: 'شهر',
+  plaque: 'پلاک',
+  unit: 'واحد',
+  postal_code: 'کد پستی',
+  newTicket: 'تیکت جدید',
+  editPersonalInfo: 'ویرایش اطلاعات شخصی'
+}

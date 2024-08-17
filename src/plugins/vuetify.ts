@@ -52,7 +52,8 @@ export default createVuetify({
           'on-error': '#FFFFFF',
           info: '#A80710',
           'on-info': '#FFFFFF',
-          outline: '#89938F'
+          outline: '#89938F',
+          divider: '#F9F6EE'
         }
       }
     }

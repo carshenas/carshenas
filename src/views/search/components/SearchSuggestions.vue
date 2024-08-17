@@ -40,7 +40,7 @@ onMounted(() => getSuggestions())
 </script>
 
 <template>
-  <v-chip-group column class="mt-4">
+  <v-chip-group column class="mt-4 pa-0">
     <v-chip
       v-for="suggestion in filteredSuggestions"
       :key="suggestion.id"

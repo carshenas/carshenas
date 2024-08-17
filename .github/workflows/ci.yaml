@@ -8,15 +8,44 @@ on:
 
 jobs:
   build:
-    name: Build Test
+    name: Build & Push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-      - name: Build
-        run: docker build .
+
+      - name: Log in to Docker Hub For Production
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.FARZAD_DOCKER_USERNAME }}
+          password: ${{ secrets.FARZAD_DOCKER_PASSWORD }}
+        if: github.ref == 'refs/heads/main'
+
+      - name: Log in to Docker Hub For Development
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.FARHAD_DOCKER_USERNAME }}
+          password: ${{ secrets.FARHAD_DOCKER_PASSWORD }}
+        if: github.ref == 'refs/heads/development'
+
+      - name: Build and push Docker image For Production
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.FARZAD_DOCKER_USERNAME }}/carshenas:latest
+        if: github.ref == 'refs/heads/main'
+
+      - name: Build and push Docker image For Development
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.FARHAD_DOCKER_USERNAME }}/carshenas:latest
+        if: github.ref == 'refs/heads/development'
 
   deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     needs: [build]
     timeout-minutes: 5
