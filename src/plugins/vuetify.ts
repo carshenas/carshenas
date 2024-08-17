@@ -30,6 +30,9 @@ export default createVuetify({
   theme: {
     themes: {
       light: {
+        variables: {
+          'btn-height': '50px'
+        },
         colors: {
           primary: '#FB4847',
           'on-primary': '#FFFFFF',

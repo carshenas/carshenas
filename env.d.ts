@@ -5,18 +5,18 @@ declare namespace NodeJS {
     VITE_APP_VERSION: string | undefined
     VITE_APP_STAGE: 'DEVELOPMENT' | 'PRODUCTION' | undefined
 
-    // api
+    // API
     VITE_SSL_ENABLED: boolean | undefined
     VITE_API_SERVER: string | undefined
 
-    // app config
+    // App config
     VITE_BASE_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
     VITE_DISPLAY_CURRENCY_UNIT: 'IRT' | 'IRR' | undefined
 
     // Database
     VITE_INDEXED_DB_VERSION: number
 
-    // static files
+    // Static files
     VITE_API_STATIC_SERVER: string
   }
 }

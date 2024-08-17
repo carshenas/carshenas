@@ -5,6 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+
   '@vue-leaflet/vue-leaflet':
     specifier: ^0.10.1
     version: 0.10.1(leaflet@1.9.4)(typescript@5.3.3)

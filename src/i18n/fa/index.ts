@@ -11,6 +11,7 @@ import productDetail from './productDetail'
 import product from './product'
 import support from './support'
 
+
 export default {
   app,
   currency,

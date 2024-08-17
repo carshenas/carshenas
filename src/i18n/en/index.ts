@@ -8,6 +8,7 @@ import auth from './auth'
 import validation from './validation'
 import checkout from './checkout'
 import product from './product'
+=======
 
 export default {
   app,
@@ -20,4 +21,5 @@ export default {
   user,
   validation,
   checkout
+
 }
