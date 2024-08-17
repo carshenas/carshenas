@@ -3,13 +3,13 @@
 source /root/.bashrc
 
 if [ "$1" == "main" ]; then
-  docker login -u farzadjambor -p "$FARZAD_DOCKER_PASSWORD"
+  echo $FARZAD_DOCKER_PASSWORD | docker login -u farzadjambor --password-stdin
   docker pull farzadjambor/carshenas:latest
   image="main"
 
 else
-  docker login -u sadeq76 -p "$FARHAD_DOCKER_PASSWORD"
-  docker pull farzadjambor/carshenas:latest
+  echo $FARHAD_DOCKER_PASSWORD | docker login -u sadeq76 --password-stdin
+  docker pull sadeq76/carshenas:latest
   image="development"
 
 fi
