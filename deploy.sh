@@ -13,7 +13,7 @@ else
 fi
 
 cd carshenas-frontend
-docker login -u "$username" -p "$password"
+#docker login -u "$username" -p "$password"
 docker pull "$username"/carshenas:latest
-docker logout
+#docker logout
 docker compose up --force-recreate "$image" -d
