@@ -2,7 +2,10 @@ import carshenasService from '@/services'
 import type { Ticket, TicketMessages } from '@/types/dto/tickets'
 import type { Pagination } from '@/types/dto/pagination'
 
-export const getTicketListService = () => carshenasService.get<Pagination<Ticket[]>>('/support/')
+export const getTicketListService = (limit: number, offset: number) => {
+  const url = `/support/?limit=${limit}&offset=${offset}`
+  return carshenasService.get<Pagination<Ticket[]>>(url)
+}
 
 export const getTicketService = (id: number) =>
   carshenasService.get<TicketMessages>(`/support/${id}`)

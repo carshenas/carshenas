@@ -8,6 +8,7 @@ import ProductReview from './components/ProductReview.vue'
 import { useRoute } from 'vue-router'
 import { getProductDetailsService } from '@/services/carshenas/product'
 import { ref, computed, onMounted } from 'vue'
+import { useCartStore } from '@/stores/cart'
 import type { Variant, Warranty, Brand } from '@/types/dto/product'
 import SpecSection from './components/SpecSection.vue'
 
@@ -21,6 +22,9 @@ const selectedWarranty = ref<Warranty[] | null>(null)
 const selectedBrand = ref<Brand | null>(null)
 const selectedTab = ref(0)
 const isLoading = ref(true)
+const isInCart = ref(false)
+const cartStore = useCartStore()
+const snackbar = ref(false)
 
 const handleSelectedWarranty = (selectedWarrantyData: Warranty | null) => {
   if (selectedWarrantyData) {
@@ -59,6 +63,11 @@ const handleSelectColor = (colorCode: string) => {
   selectedColorCode.value = colorCode
 }
 
+// Check if there are variants with color defined
+const hasColorVariants = computed<boolean>(() => {
+  return variants.value.some((variant) => !!variant.color)
+})
+
 const tabItems = ref([
   { title: 'productDetail.summery', href: '#summery' },
   { title: 'productDetail.details', href: '#spec' },
@@ -77,17 +86,16 @@ const minPrice = computed<number>(() => {
 
 const selectedVariant = computed<Variant | null>(() => {
   const warranty = selectedWarranty.value && selectedWarranty.value[0]
-  if (selectedColorCode.value && selectedBrand.value && warranty) {
-    return (
-      variants.value.find(
-        (variant: Variant) =>
-          variant.color.code === selectedColorCode.value &&
-          variant.brand === selectedBrand.value?.name &&
-          variant.warranty === warranty.name
-      ) || null
-    )
-  }
-  return null
+
+  return (
+    variants.value.find((variant: Variant) => {
+      const matchesColor =
+        !selectedColorCode.value || variant.color?.code === selectedColorCode.value
+      const matchesBrand = selectedBrand.value && variant.brand === selectedBrand.value.name
+      const matchesWarranty = warranty && variant.warranty === warranty.name
+      return matchesColor && matchesBrand && matchesWarranty
+    }) || null
+  )
 })
 
 const displayPrice = computed<number>(() => {
@@ -100,9 +108,53 @@ const displayPrice = computed<number>(() => {
   }
 })
 
+// Method to add a selected variant to the cart
 const addToCart = () => {
-  console.log(selectedVariant.value)
+  if (selectedVariant.value) {
+    if (selectedVariant.value.quantity && selectedVariant.value.quantity > 0) {
+      // Variant is already in the cart, increment quantity
+      selectedVariant.value.quantity += 1
+      cartStore.updateCount(selectedVariant.value.id, selectedVariant.value.quantity)
+    } else {
+      // Variant is not in the cart, add it with an initial quantity of 1
+      selectedVariant.value.quantity = 1
+      cartStore.addItem({ ...selectedVariant.value })
+      isInCart.value = true
+    }
+    console.log('Added to cart:', selectedVariant.value)
+  } else {
+    // Show snackbar if no variant is selected
+    snackbar.value = true
+    console.warn('No variant selected!')
+  }
 }
+
+const add = () => {
+  if (selectedVariant.value) {
+    variantQuantity.value += 1
+  }
+}
+
+const remove = () => {
+  if (variantQuantity.value > 1) {
+    variantQuantity.value -= 1
+  } else if (selectedVariant.value) {
+    cartStore.removeItem(selectedVariant.value.id)
+    isInCart.value = false
+  }
+}
+
+const variantQuantity = computed({
+  get() {
+    return selectedVariant.value?.quantity || 0
+  },
+  set(newQuantity: number) {
+    if (selectedVariant.value) {
+      selectedVariant.value.quantity = newQuantity
+      cartStore.updateCount(selectedVariant.value.id, newQuantity)
+    }
+  }
+})
 </script>
 
 <template>
@@ -154,13 +206,16 @@ const addToCart = () => {
       max-width="300"
       type="avatar"
     ></v-skeleton-loader>
-    <ColorSelector
-      v-else
-      :variants="variants"
-      @selectColor="handleSelectColor"
-      :selectedWarranty="selectedWarranty"
-    />
+    <div v-else>
+      <ColorSelector
+        v-if="hasColorVariants"
+        :variants="variants"
+        @selectColor="handleSelectColor"
+        :selectedWarranty="selectedWarranty"
+      />
+    </div>
   </div>
+
   <div>
     <v-skeleton-loader
       v-if="isLoading"
@@ -190,9 +245,31 @@ const addToCart = () => {
   <div
     class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white"
   >
-    <v-btn @click="addToCart" prepend-icon="add" size="large">{{
-      $t('productDetail.addToCart')
-    }}</v-btn>
+    <div v-if="!isInCart">
+      <v-btn @click="addToCart" prepend-icon="add" size="large">
+        {{ $t('productDetail.addToCart') }}
+      </v-btn>
+    </div>
+
+    <div v-else>
+      <v-text-field
+        v-model.number="variantQuantity"
+        v-number-input
+        :clearable="false"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="centered-input"
+        prepend-inner-icon="add"
+        append-inner-icon="remove"
+        @click:prepend-inner="add"
+        @click:append-inner="remove"
+      />
+    </div>
+    <v-snackbar v-model="snackbar" :timeout="3000" color="error" bottom right>
+      {{ $t('productDetail.alert') }}
+    </v-snackbar>
+
     <CurrencyDisplay
       :value="displayPrice"
       value-class="text-primary font-weight-bold"

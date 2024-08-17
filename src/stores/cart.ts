@@ -2,13 +2,13 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 // types
-import type { Product } from '@/types/dto/product'
+import type { Variant } from '@/types/dto/product'
 
 export const useCartStore = defineStore('cart', () => {
-  const items = ref<Product[]>([])
+  const items = ref<Variant[]>([])
   const address = ref<string>('تهران،تیموری، خ. حبیب الله جنوبی، بعد از خ. تیموری غربی، خ. عزیزی')
 
-  const addItem = (product: Product) => {
+  const addItem = (product: Variant) => {
     items.value.push(product)
   }
 

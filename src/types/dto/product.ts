@@ -22,6 +22,7 @@ export interface Variant {
   warranty: string
   color: Color
   image: string | null
+  quantity: number
 }
 
 export interface Color {

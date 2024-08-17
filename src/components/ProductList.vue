@@ -72,7 +72,7 @@ onMounted(() => {
 
           <div class="mt-2 flex-grow-1 d-flex justify-space-between align-end">
             <CurrencyDisplay
-              :value="product.price * product.quantity"
+              :value="product.price"
               value-class="text-primary font-weight-bold"
               unit-class="body-sm text-outline"
               class="d-flex justify-end body-md py-1"

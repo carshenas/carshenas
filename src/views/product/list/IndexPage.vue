@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import ProductList from '@/components/ProductList.vue'
 import { useGetFilterFromURL } from '@/composable/filter'
 import type { ProductFilter } from '@/types/dto/product'

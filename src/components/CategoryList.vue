@@ -37,22 +37,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-row v-if="!_loading && !props.loading" no-gutters>
+  <v-row class=" align-start" v-if="!_loading && !props.loading" no-gutters>
     <v-col
       v-for="category in categories || props.items"
       :key="category.id"
       cols="3"
-      class="pa-2 d-flex justify-center"
+      class=" d-flex justify-center "
     >
       <router-link
         class="category w-100 d-flex flex-column justify-center align-center"
-        :to="{ name: 'ProductsPage', query: { categoryId: category.id } }"
+        :to="{ name: 'ProductsPage', query: { category: category.id } }"
       >
         <div class="icon w-100 bg-primary rounded-circle d-flex justify-center align-center">
           <ImageLoader :src="category.image" :alt="category.name" width="32" />
         </div>
 
-        <span class="title mt-2 text-text">{{ category.name }}</span>
+        <span class="title mt-2 text-text w-100">{{ category.name }}</span>
       </router-link>
     </v-col>
   </v-row>
@@ -73,7 +73,7 @@ onMounted(() => {
     aspect-ratio: 1;
   }
   .title {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     font-weight: 500;
     text-wrap: wrap;
     text-align: center;

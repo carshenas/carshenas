@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Ticket, TicketMessages } from '@/types/dto/tickets'
 import TicketCards from './components/TicketCard.vue'
@@ -13,6 +13,9 @@ const tickets = ref<Ticket[]>([])
 const selectedTicketId = ref<number | null>(null)
 const isFormVisible = ref<boolean>(false)
 const selectedTicket = ref<Nullable<TicketMessages>>(null)
+const currentPage = ref<number>(1)
+const totalPages = ref<number>(1)
+const itemsPerPage = ref<number>(10)
 
 onMounted(async () => {
   await refreshTicketList()
@@ -20,12 +23,19 @@ onMounted(async () => {
 
 const refreshTicketList = async () => {
   try {
-    const response = await getTicketListService()
+    const offset = (currentPage.value - 1) * itemsPerPage.value
+    const response = await getTicketListService(itemsPerPage.value, offset)
+
     tickets.value = response.data.result
+    totalPages.value = Math.ceil(response.data.count / itemsPerPage.value)
   } catch (error) {
     console.error('Error fetching ticket list:', error)
   }
 }
+
+watch(currentPage, async () => {
+  await refreshTicketList()
+})
 
 const handleTicketSelected = async (ticket: number) => {
   selectedTicketId.value = ticket
@@ -60,6 +70,7 @@ const goBack = () => {
     router.go(-1)
   }
 }
+
 </script>
 
 <template>
@@ -105,6 +116,13 @@ const goBack = () => {
         v-on:update:isFormVisible="isFormVisible = $event"
       />
     </div>
+
+    <v-pagination
+      v-model="currentPage"
+      :length="totalPages"
+      :total-visible="5"
+      @input="refreshTicketList"
+    />
   </section>
 </template>
 
