@@ -1,17 +1,13 @@
 version: '3.9'
 services:
   main:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: farzadjambor/carshenas:latest
     restart: always
     ports:
       - "84:80"
 
   development:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: sadeq76/carshenas:latest
     restart: always
     ports:
       - "83:80"
