@@ -1,12 +1,20 @@
 <script setup lang="ts">
-import TheLayout from '@/layouts/TheLayout.vue'
-import { RouterView } from 'vue-router'
-import { onMounted } from 'vue'
-import { registerServiceWorker } from '@/composable/notification'
+import TheLayout from "@/layouts/TheLayout.vue";
+import { RouterView } from "vue-router";
+import { onMounted } from "vue";
+import { registerServiceWorker } from "@/composable/notification";
+import useAppConfig from "@/composable/app-config";
+
+const { appVersion } = useAppConfig();
 
 onMounted(() => {
-  registerServiceWorker()
-})
+  console.log(`
+===============================
+🌟 Web App Version ${appVersion} 🌟
+===============================
+`);
+  registerServiceWorker();
+});
 </script>
 
 <template>
