@@ -1,38 +1,53 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import MenuFirstLevel from './MenuFirstLevel.vue'
-import MenuSecondLevel from './MenuSecondLevel.vue'
-import { useCategoryStore } from '@/stores/category'
-import type { Category } from '@/types/dto/category'
-import type { Nullable } from '@/types/utilities'
+import { computed, onMounted, ref, watch } from "vue";
+import MenuFirstLevel from "./MenuFirstLevel.vue";
+import MenuSecondLevel from "./MenuSecondLevel.vue";
+import { useCategoryStore } from "@/stores/category";
+import type { Category } from "@/types/dto/category";
+import type { Nullable } from "@/types/utilities";
 
-const categoryStore = useCategoryStore()
+const categoryStore = useCategoryStore();
 
-const isOpen = defineModel<boolean>()
-const selectedFirstLevel = ref<Nullable<number>>(null)
-const search = ref<Nullable<string>>(null)
+const isOpen = defineModel<boolean>();
+const selectedFirstLevel = ref<Nullable<number>>(null);
+const search = ref<Nullable<string>>(null);
 
-const component = computed(() => (selectedFirstLevel.value ? MenuSecondLevel : MenuFirstLevel))
+const component = computed(() =>
+  selectedFirstLevel.value ? MenuSecondLevel : MenuFirstLevel
+);
 
 const items = computed((): Category[] => {
-  if (search.value && search.value.length < 2)
-    return categoryStore.filteredCategories(categoryStore.categories, search.value)
-  if (!selectedFirstLevel.value) return categoryStore.categories
-  else {
+  if (search.value && search.value.length < 2) {
+    return categoryStore.filteredCategories(
+      categoryStore.categories,
+      search.value
+    );
+  }
+  if (!selectedFirstLevel.value) {
+    return categoryStore.categories;
+  } else {
     const target = categoryStore.categories.find(
       (category) => category.id === selectedFirstLevel.value
-    )!
-    return target.children ? target.children : []
+    )!;
+    return target.children ? target.children : [];
   }
-})
+});
 
-const onClick = (...args: unknown[]): void => {
-  selectedFirstLevel.value = args[0] as number
-}
+const onClick = (id: number | "back"): void => {
+  if (id === "back") {
+    selectedFirstLevel.value = null;
+  } else {
+    selectedFirstLevel.value = id;
+  }
+};
 
-watch(isOpen, () => (selectedFirstLevel.value = null))
+watch(isOpen, () => {
+  selectedFirstLevel.value = null;
+});
 
-onMounted(() => categoryStore.getCategories())
+onMounted(() => {
+  categoryStore.getCategories();
+});
 </script>
 
 <template>
@@ -57,7 +72,12 @@ onMounted(() => categoryStore.getCategories())
       />
     </div>
 
-    <component class="custom-margin" :is="component" :items @select="onClick" />
+    <component
+      class="custom-margin"
+      :is="component"
+      :items="items"
+      @select="onClick"
+    />
   </v-navigation-drawer>
 </template>
 

@@ -1,11 +1,7 @@
 <script lang="ts" setup>
 import type { Product, ProductFilter } from "@/types/dto/product";
 import { ref, onMounted, watch } from "vue";
-
-// Services
 import { getProductListService } from "@/services/carshenas/product";
-
-// Global components
 import CurrencyDisplay from "./CurrencyDisplay.vue";
 import ImageLoader from "./ImageLoader.vue";
 import ItemCounter from "@/components/ItemCounter.vue";

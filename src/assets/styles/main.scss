@@ -1,14 +1,17 @@
-@import './base/index';
-@import './utilities/index';
-
+@import "./base/index";
+@import "./utilities/index";
 
 body {
-  height: 100dvh;
+  max-height: 100dvh;
 }
 #app {
   height: 100dvh;
   overflow-y: auto;
   scroll-behavior: smooth;
+}
+main {
+  max-height: 100dvh;
+  overflow-y: scroll;
 }
 .headline-sm {
   font-size: 1.5rem;
@@ -46,4 +49,6 @@ body {
   flex-grow: 1;
 }
 
-
+.v-application__wrap {
+  position: relative;
+}

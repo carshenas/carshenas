@@ -320,7 +320,7 @@ const variantQuantity = computed({
   bottom: 0;
 }
 .tab-pdp {
-  top: 3.9rem;
+  top: 0rem;
   z-index: 10;
   margin: 1rem 0;
   border-radius: 0 !important;
