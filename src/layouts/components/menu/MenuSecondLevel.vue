@@ -3,7 +3,6 @@ import ImageLoader from "@/components/ImageLoader.vue";
 import type { Category } from "@/types/dto/category";
 
 defineProps<{ items: Category[] }>();
-
 const emit = defineEmits<{
   (e: "select", payload: "back"): void;
   (e: "close"): void;
@@ -26,7 +25,10 @@ const onClick = () => {
 
     <!-- Category List -->
     <template v-for="category in items" :key="category.id">
-      <v-list-group v-if="category.children" :value="category.name">
+      <v-list-group
+        v-if="category.children?.length != 0"
+        :value="category.name"
+      >
         <template v-slot:activator="{ props }">
           <v-list-item v-bind="props" :title="category.name">
             <template v-slot:prepend>
