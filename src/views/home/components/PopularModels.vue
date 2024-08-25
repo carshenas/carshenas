@@ -25,7 +25,7 @@ onMounted(() => getModels())
 <template>
   <div v-if="!loading" class="mt-6 d-flex overflow-auto">
     <a class="ml-4" v-for="model in models" :key="model.id" href="#">
-      <img :src="model.image" :alt="model.title" />
+      <img src="../../../assets/images/PopularModelCard.png" :alt="model.title" class="rounded-lg"/>
     </a>
   </div>
 
