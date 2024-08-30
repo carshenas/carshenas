@@ -1,7 +1,9 @@
 <template>
   <div id="spec" class="t-4 px-4 ga-8">
     <div class="d-flex align-center mb-4">
-      <h2 role="heading" class="text-no-wrap title-md">{{ $t('productDetail.details') }}</h2>
+      <h2 role="heading" class="text-no-wrap title-md">
+        {{ $t("product.details") }}
+      </h2>
       <div class="w-100 border h-0 mx-2"></div>
     </div>
     <table class="w-100 table-striped">
@@ -21,8 +23,8 @@
 
 <script setup lang="ts">
 const props = defineProps<{
-  spec: Record<string, any>
-}>()
+  spec: Record<string, any>;
+}>();
 </script>
 
 <style lang="scss" scoped>
@@ -33,5 +35,4 @@ const props = defineProps<{
 .table-striped tbody tr:nth-child(even) {
   background-color: #f9f9f9;
 }
-
 </style>

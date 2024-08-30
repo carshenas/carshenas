@@ -69,9 +69,9 @@ const hasColorVariants = computed<boolean>(() => {
 });
 
 const tabItems = ref([
-  { title: "productDetail.summery", href: "#summery" },
-  { title: "productDetail.details", href: "#spec" },
-  { title: "productDetail.comments", href: "#comments" },
+  { title: "product.summery", href: "#summery" },
+  { title: "product.details", href: "#spec" },
+  { title: "product.comments", href: "#comments" },
 ]);
 
 const minPrice = computed<number>(() => {
@@ -212,7 +212,7 @@ const variantQuantity = computed({
       <span>{{ product.score }} </span>
       <span>
         {{
-          $t("productDetail.scoreText", {
+          $t("product.scoreText", {
             count: product.votersCount,
           })
         }}
@@ -268,7 +268,7 @@ const variantQuantity = computed({
   >
     <div v-if="!isInCart">
       <v-btn @click="addToCart" prepend-icon="add" size="large">
-        {{ $t("productDetail.addToCart") }}
+        {{ $t("product.addToCart") }}
       </v-btn>
     </div>
 
@@ -288,7 +288,7 @@ const variantQuantity = computed({
       />
     </div>
     <v-snackbar v-model="snackbar" :timeout="3000" color="error" bottom right>
-      {{ $t("productDetail.alert") }}
+      {{ $t("product.alert") }}
     </v-snackbar>
 
     <CurrencyDisplay
