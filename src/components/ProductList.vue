@@ -22,7 +22,6 @@ const getProducts = async () => {
   try {
     const response = await getProductListService(props.filter);
     products.value = response.data.result;
-    console.log(response);
   } catch (e) {
     console.error(e);
   } finally {
