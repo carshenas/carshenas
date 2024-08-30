@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import product from "./product";
 import checkout from "./checkout";
 import user from "./user";
+import search from "./search";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -11,14 +12,7 @@ const router = createRouter({
       path: "/",
       component: () => import("@/views/home/IndexPage.vue"),
     },
-    {
-      name: "SearchPage",
-      path: "/search",
-      component: () => import("../views/search/IndexPage.vue"),
-      meta: {
-        layout: false,
-      },
-    },
+    search,
     product,
     checkout,
     user,

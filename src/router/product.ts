@@ -1,17 +1,14 @@
-import type { RouteRecordRaw } from 'vue-router'
+import type { RouteRecordRaw } from "vue-router";
 
 export default {
-  path: '/product',
+  name: "ProductsPage",
+  path: "/product",
+  component: () => import("@/views/product/list/IndexPage.vue"),
   children: [
     {
-      name: 'ProductsPage',
-      path: '/',
-      component: () => import('@/views/product/list/IndexPage.vue')
+      name: "ProductDetailPage",
+      path: ":id(\\d+)",
+      component: () => import("@/views/product/indexPage.vue"),
     },
-    {
-      name: 'ProductDetailPage',
-      path: '/:id(\\d+)',
-      component: () => import('@/views/product/indexPage.vue')
-    }
-  ]
-} as RouteRecordRaw
+  ],
+} as RouteRecordRaw;
