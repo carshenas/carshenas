@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import type { Color, Variant, Warranty } from '@/types/dto/product'
+import { ref, computed, watch } from "vue";
+import type { Color, Variant, Warranty } from "@/types/dto/product";
 
 // Define component props
 const props = defineProps<{
-  variants: Variant[]
-  selectedWarranty?: Warranty[] | null
-}>()
+  variants: Variant[];
+  selectedWarranty?: Warranty[] | null;
+}>();
 
 // Define event emitter
-const emit = defineEmits(['selectColor'])
+const emit = defineEmits(["selectColor"]);
 
 // Compute unique colors from variants, prioritizing those in the warranty
 const colors = computed<Color[]>(() => {
-  const seen = new Set<Color['code']>()
+  const seen = new Set<Color["code"]>();
   const allColors = props.variants.reduce((acc: Color[], variant: Variant) => {
     if (!seen.has(variant.color.code)) {
-      seen.add(variant.color.code)
-      acc.push(variant.color)
+      seen.add(variant.color.code);
+      acc.push(variant.color);
     }
-    return acc
-  }, [])
+    return acc;
+  }, []);
 
   // Sort colors: prioritize colors in the warranty
   return allColors.sort((a, b) =>
@@ -29,27 +29,28 @@ const colors = computed<Color[]>(() => {
       : !isColorInWarranty(a.code) && isColorInWarranty(b.code)
         ? 1
         : 0
-  )
-})
+  );
+});
 
 // Reactive reference to the selected color's code
-const selectedColor = ref<string>('')
+const selectedColor = ref<string>("");
 
 // Compute the name of the selected color
 const selectedColorTitle = computed(
-  () => colors.value.find((color) => color.code === selectedColor.value)?.name || ''
-)
+  () =>
+    colors.value.find((color) => color.code === selectedColor.value)?.name || ""
+);
 
 // Update the selected color and emit event
 const updateSelectedColor = (colorCode: string) => {
-  selectedColor.value = colorCode
-  emit('selectColor', colorCode)
-}
+  selectedColor.value = colorCode;
+  emit("selectColor", colorCode);
+};
 // Check if a color is in the selected warranty
 const isColorInWarranty = (colorCode: string): boolean =>
   props.selectedWarranty?.some((warranty) =>
     warranty.color.some((color) => color.code === colorCode)
-  ) ?? false
+  ) ?? false;
 
 // Watch for changes in selectedWarranty and update selectedColor if necessary
 watch(
@@ -58,23 +59,23 @@ watch(
     if (selectedWarranty && selectedColor.value) {
       const hasMatchingColor = selectedWarranty.some((warranty) =>
         warranty.color.some((color) => color.code === selectedColor.value)
-      )
+      );
       if (!hasMatchingColor) {
-        selectedColor.value = ''
-        emit('selectColor', '')
+        selectedColor.value = "";
+        emit("selectColor", "");
         document
-          .getElementsByName('radio')
-          .forEach((radio) => ((radio as HTMLInputElement).checked = false))
+          .getElementsByName("radio")
+          .forEach((radio) => ((radio as HTMLInputElement).checked = false));
       }
     }
   }
-)
+);
 </script>
 
 <template>
   <div class="d-flex flex-column ga-4 pa-4">
     <div class="d-flex">
-      <h2 class="title-md" role="heading">{{ $t('productDetail.color') }}</h2>
+      <h2 class="title-md" role="heading">{{ $t("product.color") }}</h2>
 
       <span>{{ selectedColorTitle }}</span>
     </div>
@@ -87,7 +88,7 @@ watch(
           'not-in-warranty':
             !props.selectedWarranty ||
             props.selectedWarranty.length === 0 ||
-            isColorInWarranty(color.code)
+            isColorInWarranty(color.code),
         }"
         :style="{
           opacity:
@@ -95,12 +96,17 @@ watch(
             props.selectedWarranty.length === 0 ||
             isColorInWarranty(color.code)
               ? 1
-              : 0.6
+              : 0.6,
         }"
         class="d-flex ga-2 list-item"
       >
         <label class="container">
-          <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.code)" />
+          <input
+            type="radio"
+            ref="radio"
+            name="radio"
+            @change="updateSelectedColor(color.code)"
+          />
 
           <span class="checkmark" :style="{ backgroundColor: color.code }">
             <v-icon class="d-none red" icon="done" size="x-small"></v-icon>
@@ -168,7 +174,7 @@ watch(
 }
 
 .checkmark:after {
-  content: '';
+  content: "";
   position: absolute;
   display: none;
 }

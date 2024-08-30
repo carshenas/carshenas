@@ -1,28 +1,44 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import product from './product'
-import checkout from './checkout'
-import user from './user'
+import { createRouter, createWebHistory } from "vue-router";
+import product from "./product";
+import checkout from "./checkout";
+import user from "./user";
+import search from "./search";
+import login from "./login";
+
+// user store
+import { useUserStore } from "@/stores/user";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      name: 'HomePage',
-      path: '/',
-      component: () => import('@/views/home/IndexPage.vue')
+      name: "HomePage",
+      path: "/",
+      component: () => import("@/views/home/IndexPage.vue"),
     },
-    {
-      name: 'SearchPage',
-      path: '/search',
-      component: () => import('../views/search/IndexPage.vue'),
-      meta: {
-        layout: false
-      }
-    },
+    search,
     product,
     checkout,
-    user
-  ]
-})
+    login,
+    user,
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFoundPage",
+      component: () => import("@/views/NotFoundPage.vue"),
+    },
+  ],
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  const isAuthenticated = userStore.isLoggedIn;
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Redirect to the login page if the user is not authenticated
+    next({ name: "AuthPage", query: { redirect: to.fullPath } });
+  } else {
+    next(); // Allow navigation
+  }
+});
+
+export default router;
