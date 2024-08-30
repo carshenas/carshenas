@@ -1,26 +1,37 @@
 <script setup lang="ts">
-import ImageLoader from '@/components/ImageLoader.vue'
-import MenuDrawer from './components/menu/MenuDrawer.vue'
-import { ref } from 'vue'
-import { useUserStore } from '@/stores/user'
-import { useCartStore } from '@/stores/cart'
-
-const cartStore = useCartStore()
-const userStore = useUserStore()
-const isMenuOpen = ref<boolean>(false)
-const isBasketOpen = ref<boolean>(false)
+import ImageLoader from "@/components/ImageLoader.vue";
+import MenuDrawer from "./components/menu/MenuDrawer.vue";
+import { ref, watch } from "vue";
+import { useUserStore } from "@/stores/user";
+import { useCartStore } from "@/stores/cart";
+import { useRoute } from "vue-router";
+const route = useRoute();
+const cartStore = useCartStore();
+const userStore = useUserStore();
+const isMenuOpen = ref<boolean>(false);
+const isBasketOpen = ref<boolean>(false);
 
 const openMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
+  isMenuOpen.value = !isMenuOpen.value;
 
-  if (isMenuOpen.value && isBasketOpen.value) isBasketOpen.value = false
-}
+  if (isMenuOpen.value && isBasketOpen.value) isBasketOpen.value = false;
+};
+
+watch(
+  () => route.fullPath,
+  () => {
+    isMenuOpen.value = false;
+  }
+);
 </script>
 
 <template>
   <div>
     <v-app-bar class="app-bar">
-      <v-app-bar-nav-icon :icon="isMenuOpen ? 'close' : 'menu'" @click="openMenu" />
+      <v-app-bar-nav-icon
+        :icon="isMenuOpen ? 'close' : 'menu'"
+        @click="openMenu"
+      />
 
       <v-app-bar-title class="font-weight-bold">
         <router-link class="d-flex align-center" to="/">
@@ -32,7 +43,7 @@ const openMenu = () => {
           />
 
           <span class="title-md text-secondary">
-            {{ $t('app.name') }}
+            {{ $t("app.name") }}
           </span>
         </router-link>
       </v-app-bar-title>

@@ -1,5 +1,18 @@
 export default {
-  title: 'Products {title}',
-  vehicleFilter: 'Vehicle filter',
-  noProducts: 'No products found'
-}
+  title: "Products {title}",
+  vehicleFilter: "Vehicle Filter",
+  noProducts: "No products found",
+  products: "Products",
+  product: "Product",
+  scoreText: "from {count} registered ratings",
+  color: "Color: ",
+  brands: "Brand",
+  warranty: "Warranty",
+  summery: "Brief Introduction",
+  details: "Specifications",
+  addToCart: "Add to Cart",
+  comments: "Comments",
+  newComment: "Submit Comment",
+  readMore: "Read More",
+  alert: "Please select",
+};

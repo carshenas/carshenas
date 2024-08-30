@@ -1,52 +1,55 @@
 <script setup lang="ts">
-import type { VForm } from 'vuetify/components'
-import { ref } from 'vue'
-import { createTicketService } from '@/services/carshenas/support'
+import type { VForm } from "vuetify/components";
+import { ref } from "vue";
+import { createTicketService } from "@/services/carshenas/support";
 
-const formRef = ref<VForm | null>(null)
-const isLoading = ref(false)
+const formRef = ref<VForm | null>(null);
+const isLoading = ref(false);
 const rules = {
-  required: (value: string) => !!value || ''
-}
-const files = ref<File[]>([])
-const message = ref('')
+  required: (value: string) => !!value || "",
+};
+const files = ref<File[]>([]);
+const message = ref("");
 
 const emit = defineEmits<{
-  (event: 'update:isFormVisible', value: boolean): void
-}>()
+  (event: "update:isFormVisible", value: boolean): void;
+}>();
 
 const handleSubmit = async () => {
-  const { valid: isValid } = await formRef.value!.validate()
+  const { valid: isValid } = await formRef.value!.validate();
   if (isValid) {
-    const formData = new FormData() // Create a new FormData object
-    formData.append('message', message.value)
+    const formData = new FormData(); // Create a new FormData object
+    formData.append("message", message.value);
     if (files.value.length > 0) {
       for (const file of files.value) {
-        formData.append('files[]', file) // Append each file with key 'files[]'
+        formData.append("files[]", file); // Append each file with key 'files[]'
       }
     }
     try {
-      isLoading.value = true
-      console.log('Form data to be submitted:', formData)
-      await createTicketService(formData)
-      emit('update:isFormVisible', false) // Hide the form upon successful submission
+      isLoading.value = true;
+      await createTicketService(formData);
+      emit("update:isFormVisible", false); // Hide the form upon successful submission
     } catch (error) {
-      console.error('Form submission failed:', error)
+      console.error("Form submission failed:", error);
     } finally {
-      isLoading.value = false
+      isLoading.value = false;
     }
   } else {
-    console.log('Form validation failed')
+    console.log("Form validation failed");
   }
-}
+};
 
 const props = defineProps<{
-  isFormVisible: boolean
-}>()
+  isFormVisible: boolean;
+}>();
 </script>
 
 <template>
-  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
+  <v-form
+    ref="formRef"
+    v-if="props.isFormVisible"
+    class="d-flex flex-column justify-space-between"
+  >
     <div>
       <v-textarea
         v-model="message"
@@ -77,8 +80,15 @@ const props = defineProps<{
       </v-file-input>
     </div>
     <div>
-      <v-btn block rounded="pill" color="primary" size="x-large" class="me-4" @click="handleSubmit">
-        {{ $t('shared.submit') }}
+      <v-btn
+        block
+        rounded="pill"
+        color="primary"
+        size="x-large"
+        class="me-4"
+        @click="handleSubmit"
+      >
+        {{ $t("shared.submit") }}
       </v-btn>
     </div>
   </v-form>

@@ -1,16 +1,27 @@
 :root {
   --app-max-width: 480px;
+  overflow: auto;
 }
 
 body {
   display: grid;
   place-items: center;
+  max-height: 100dvh;
+  overflow: auto;
 }
 
 #app {
-  overflow-x: hidden;
   width: 100%;
   max-width: 480px;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+main {
+  max-height: 100dvh;
+  overflow: auto;
 }
 
 .v-chip--variant-outlined {
@@ -61,4 +72,12 @@ hr {
 }
 .v-btn {
   letter-spacing: normal !important;
+}
+
+.warranty-radio label {
+  flex-grow: 1;
+}
+
+.v-application__wrap {
+  position: relative;
 }

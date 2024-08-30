@@ -1,169 +1,190 @@
 <script lang="ts" setup>
-import ImageLoader from '@/components/ImageLoader.vue'
-import ColorSelector from './components/ColorSelector.vue'
-import CurrencyDisplay from '@/components/CurrencyDisplay.vue'
-import CommentSection from './components/CommentSection.vue'
-import BrandsWarranty from './components/BrandsWarranty.vue'
-import ProductReview from './components/ProductReview.vue'
-import { useRoute } from 'vue-router'
-import { getProductDetailsService } from '@/services/carshenas/product'
-import { ref, computed, onMounted } from 'vue'
-import { useCartStore } from '@/stores/cart'
-import type { Variant, Warranty, Brand } from '@/types/dto/product'
-import SpecSection from './components/SpecSection.vue'
+import ImageLoader from "@/components/ImageLoader.vue";
+import ColorSelector from "./components/ColorSelector.vue";
+import CurrencyDisplay from "@/components/CurrencyDisplay.vue";
+import CommentSection from "./components/CommentSection.vue";
+import BrandsWarranty from "./components/BrandsWarranty.vue";
+import ProductReview from "./components/ProductReview.vue";
+import { useRoute } from "vue-router";
+import { getProductDetailsService } from "@/services/carshenas/product";
+import { ref, computed, onMounted } from "vue";
+import { useCartStore } from "@/stores/cart";
+import type { Variant, Warranty, Brand } from "@/types/dto/product";
+import SpecSection from "./components/SpecSection.vue";
 
-const route = useRoute()
-const product = ref<Record<string, any>>({})
-const spec = ref<Record<string, any>>({})
-const variants = ref<Variant[]>([])
-const selectedWarrantyPrice = ref<number | null>(null)
-const selectedColorCode = ref<string | null>(null)
-const selectedWarranty = ref<Warranty[] | null>(null)
-const selectedBrand = ref<Brand | null>(null)
-const selectedTab = ref(0)
-const isLoading = ref(true)
-const isInCart = ref(false)
-const cartStore = useCartStore()
-const snackbar = ref(false)
+const route = useRoute();
+const product = ref<Record<string, any>>({});
+const spec = ref<Record<string, any>>({});
+const variants = ref<Variant[]>([]);
+const selectedWarrantyPrice = ref<number | null>(null);
+const selectedColorCode = ref<string | null>(null);
+const selectedWarranty = ref<Warranty[] | null>(null);
+const selectedBrand = ref<Brand | null>(null);
+const selectedTab = ref(0);
+const isLoading = ref(true);
+const isInCart = ref(false);
+const cartStore = useCartStore();
+const snackbar = ref(false);
 
 const handleSelectedWarranty = (selectedWarrantyData: Warranty | null) => {
   if (selectedWarrantyData) {
-    selectedWarrantyPrice.value = Math.min(...selectedWarrantyData.price)
-    selectedWarranty.value = [selectedWarrantyData]
+    selectedWarrantyPrice.value = Math.min(...selectedWarrantyData.price);
+    selectedWarranty.value = [selectedWarrantyData];
   } else {
-    selectedWarrantyPrice.value = null
-    selectedWarranty.value = null
+    selectedWarrantyPrice.value = null;
+    selectedWarranty.value = null;
   }
-}
+};
 
 const handleSelectedBrand = (selectedBrandData: Brand) => {
-  selectedBrand.value = selectedBrandData
-}
+  selectedBrand.value = selectedBrandData;
+};
 
-const productId = Number(route.params.id)
+const productId = Number(route.params.id);
 
 onMounted(() => {
-  fetchProductDetails()
-})
+  fetchProductDetails();
+});
 
 const fetchProductDetails = async () => {
   try {
-    const response = await getProductDetailsService(productId)
-    product.value = response.data
-    spec.value = product.value.specification
-    variants.value = product.value.variants
+    const response = await getProductDetailsService(productId);
+    product.value = response.data;
+    spec.value = product.value.specification;
+    variants.value = product.value.variants;
   } catch (error) {
-    console.error('Failed to fetch product details:', error)
+    console.error("Failed to fetch product details:", error);
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const handleSelectColor = (colorCode: string) => {
-  selectedColorCode.value = colorCode
-}
+  selectedColorCode.value = colorCode;
+};
 
 // Check if there are variants with color defined
 const hasColorVariants = computed<boolean>(() => {
-  return variants.value.some((variant) => !!variant.color)
-})
+  return variants.value.some((variant) => !!variant.color);
+});
 
 const tabItems = ref([
-  { title: 'productDetail.summery', href: '#summery' },
-  { title: 'productDetail.details', href: '#spec' },
-  { title: 'productDetail.comments', href: '#comments' }
-])
+  { title: "product.summery", href: "#summery" },
+  { title: "product.details", href: "#spec" },
+  { title: "product.comments", href: "#comments" },
+]);
 
 const minPrice = computed<number>(() => {
-  let minPrice = Infinity
+  let minPrice = Infinity;
   product.value.variants?.forEach((variant: Variant) => {
     if (variant.price < minPrice) {
-      minPrice = variant.price
+      minPrice = variant.price;
     }
-  })
-  return minPrice !== Infinity ? minPrice : 0
-})
+  });
+  return minPrice !== Infinity ? minPrice : 0;
+});
 
 const selectedVariant = computed<Variant | null>(() => {
-  const warranty = selectedWarranty.value && selectedWarranty.value[0]
+  const warranty = selectedWarranty.value && selectedWarranty.value[0];
 
   return (
     variants.value.find((variant: Variant) => {
       const matchesColor =
-        !selectedColorCode.value || variant.color?.code === selectedColorCode.value
-      const matchesBrand = selectedBrand.value && variant.brand === selectedBrand.value.name
-      const matchesWarranty = warranty && variant.warranty === warranty.name
-      return matchesColor && matchesBrand && matchesWarranty
+        !selectedColorCode.value ||
+        variant.color?.code === selectedColorCode.value;
+      const matchesBrand =
+        selectedBrand.value && variant.brand === selectedBrand.value.name;
+      const matchesWarranty = warranty && variant.warranty === warranty.name;
+      return matchesColor && matchesBrand && matchesWarranty;
     }) || null
-  )
-})
+  );
+});
 
 const displayPrice = computed<number>(() => {
   if (selectedColorCode.value && selectedVariant.value) {
-    return selectedVariant.value.price
+    return selectedVariant.value.price;
   } else if (selectedWarrantyPrice.value !== null) {
-    return selectedWarrantyPrice.value
+    return selectedWarrantyPrice.value;
   } else {
-    return minPrice.value
+    return minPrice.value;
   }
-})
+});
 
 // Method to add a selected variant to the cart
 const addToCart = () => {
   if (selectedVariant.value) {
     if (selectedVariant.value.quantity && selectedVariant.value.quantity > 0) {
       // Variant is already in the cart, increment quantity
-      selectedVariant.value.quantity += 1
-      cartStore.updateCount(selectedVariant.value.id, selectedVariant.value.quantity)
+      selectedVariant.value.quantity += 1;
+      cartStore.updateCount(
+        selectedVariant.value.id,
+        selectedVariant.value.quantity
+      );
     } else {
       // Variant is not in the cart, add it with an initial quantity of 1
-      selectedVariant.value.quantity = 1
-      cartStore.addItem({ ...selectedVariant.value })
-      isInCart.value = true
+      selectedVariant.value.quantity = 1;
+      cartStore.addItem({ ...selectedVariant.value });
+      isInCart.value = true;
     }
-    console.log('Added to cart:', selectedVariant.value)
+    console.log("Added to cart:", selectedVariant.value);
   } else {
     // Show snackbar if no variant is selected
-    snackbar.value = true
-    console.warn('No variant selected!')
+    snackbar.value = true;
+    console.warn("No variant selected!");
   }
-}
+};
 
 const add = () => {
   if (selectedVariant.value) {
-    variantQuantity.value += 1
+    variantQuantity.value += 1;
   }
-}
+};
 
 const remove = () => {
   if (variantQuantity.value > 1) {
-    variantQuantity.value -= 1
+    variantQuantity.value -= 1;
   } else if (selectedVariant.value) {
-    cartStore.removeItem(selectedVariant.value.id)
-    isInCart.value = false
+    cartStore.removeItem(selectedVariant.value.id);
+    isInCart.value = false;
   }
-}
+};
 
 const variantQuantity = computed({
   get() {
-    return selectedVariant.value?.quantity || 0
+    return selectedVariant.value?.quantity || 0;
   },
   set(newQuantity: number) {
     if (selectedVariant.value) {
-      selectedVariant.value.quantity = newQuantity
-      cartStore.updateCount(selectedVariant.value.id, newQuantity)
+      selectedVariant.value.quantity = newQuantity;
+      cartStore.updateCount(selectedVariant.value.id, newQuantity);
     }
-  }
-})
+  },
+});
 </script>
 
 <template>
-  <v-carousel show-arrows="hover" hide-delimiter-background>
+  <v-carousel
+    v-if="product.images && product.images.length > 0"
+    show-arrows="hover"
+    hide-delimiter-background
+  >
     <v-carousel-item v-for="(image, index) in product.images" :key="index">
-      <ImageLoader :src="image" height="100%" width="100%" :alt="`${product.title} ${index + 1}`" />
+      <ImageLoader
+        :src="image"
+        height="100%"
+        width="100%"
+        :alt="`${product.title} ${index + 1}`"
+      />
     </v-carousel-item>
   </v-carousel>
-
+  <v-skeleton-loader
+    v-else
+    class="mx-auto"
+    max-width="300"
+    elevation="0"
+    type="image"
+    boilerplate
+  ></v-skeleton-loader>
   <h1 class="px-4 title-md">{{ product.name }}</h1>
 
   <v-tabs
@@ -191,8 +212,8 @@ const variantQuantity = computed({
       <span>{{ product.score }} </span>
       <span>
         {{
-          $t('productDetail.scoreText', {
-            count: product.votersCount
+          $t("product.scoreText", {
+            count: product.votersCount,
           })
         }}
       </span>
@@ -247,7 +268,7 @@ const variantQuantity = computed({
   >
     <div v-if="!isInCart">
       <v-btn @click="addToCart" prepend-icon="add" size="large">
-        {{ $t('productDetail.addToCart') }}
+        {{ $t("product.addToCart") }}
       </v-btn>
     </div>
 
@@ -267,7 +288,7 @@ const variantQuantity = computed({
       />
     </div>
     <v-snackbar v-model="snackbar" :timeout="3000" color="error" bottom right>
-      {{ $t('productDetail.alert') }}
+      {{ $t("product.alert") }}
     </v-snackbar>
 
     <CurrencyDisplay
@@ -280,7 +301,6 @@ const variantQuantity = computed({
 
 <style lang="scss" scoped>
 .v-carousel {
-  aspect-ratio: 16/9;
   width: 100%;
   height: auto !important;
 
@@ -300,7 +320,7 @@ const variantQuantity = computed({
   bottom: 0;
 }
 .tab-pdp {
-  top: 3.9rem;
+  top: 0rem;
   z-index: 10;
   margin: 1rem 0;
   border-radius: 0 !important;
