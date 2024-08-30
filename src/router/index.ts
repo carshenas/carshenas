@@ -3,6 +3,10 @@ import product from "./product";
 import checkout from "./checkout";
 import user from "./user";
 import search from "./search";
+import login from "./login";
+
+// user store
+import { useUserStore } from "@/stores/user";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +19,7 @@ const router = createRouter({
     search,
     product,
     checkout,
+    login,
     user,
     {
       path: "/:pathMatch(.*)*",
@@ -22,6 +27,18 @@ const router = createRouter({
       component: () => import("@/views/NotFoundPage.vue"),
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore();
+  const isAuthenticated = userStore.isLoggedIn;
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Redirect to the login page if the user is not authenticated
+    next({ name: "AuthPage", query: { redirect: to.fullPath } });
+  } else {
+    next(); // Allow navigation
+  }
 });
 
 export default router;

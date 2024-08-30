@@ -4,15 +4,19 @@ import i18n from "@/plugins/i18n";
 const { t } = i18n.global;
 
 export default {
-  name: "UserProfilePage",
   path: "/user",
-  component: () => import("@/views/user/profile/IndexPage.vue"),
-  meta: { layout: "SimpleHeader", title: t("user.title") },
+  meta: {
+    requiresAuth: true,
+  },
   children: [
     {
-      name: "AuthPage",
-      path: "authentication",
-      component: () => import("@/views/user/auth/IndexPage.vue"),
+      name: "UserProfilePage",
+      path: "",
+      component: () => import("@/views/user/profile/IndexPage.vue"),
+      meta: {
+        title: t("user.title"),
+        layout: "SimpleHeader",
+      },
     },
     {
       name: "UserAddressPage",
@@ -26,7 +30,7 @@ export default {
     },
     {
       name: "UserSupportPage",
-      path: "car-support",
+      path: "support",
       component: () => import("@/views/user/support/IndexPage.vue"),
     },
     {
