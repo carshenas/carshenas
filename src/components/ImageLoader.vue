@@ -63,7 +63,11 @@ watch(
 </script>
 
 <template>
-  <picture v-if="props.src" ref="picture">
+  <picture
+    v-if="props.src"
+    ref="picture"
+    :style="`width: ${props.width}; height: ${props.height};`"
+  >
     <source
       v-for="image in images"
       :key="image.type"
