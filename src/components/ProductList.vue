@@ -1,10 +1,18 @@
 <script lang="ts" setup>
-import type { Product, ProductFilter } from "@/types/dto/product";
+import type {
+  Product,
+  ProductFilter,
+  Variant,
+  Color,
+} from "@/types/dto/product";
 import { ref, onMounted, watch } from "vue";
 import { getProductListService } from "@/services/carshenas/product";
 import CurrencyDisplay from "./CurrencyDisplay.vue";
 import ImageLoader from "./ImageLoader.vue";
 import ItemCounter from "@/components/ItemCounter.vue";
+import { useCartStore } from "@/stores/cart";
+
+const cartStore = useCartStore();
 
 const props = defineProps<{
   items?: Product[];
@@ -13,6 +21,7 @@ const props = defineProps<{
   hasCounter?: boolean;
   manual?: boolean;
 }>();
+
 const _loading = ref<boolean>(false);
 const products = ref<Product[]>(props.items || []);
 
@@ -37,6 +46,41 @@ watch(
 onMounted(() => {
   !props.manual ? getProducts() : undefined;
 });
+
+const getDefaultVariant = (product: Product): Variant => {
+  return {
+    id: product.id,
+    price: product.price,
+    stock: product.stock,
+    quantity: 1,
+    is_unlimited: false, // You might want to adjust this based on your business logic
+    specification: {}, // Add default or empty specification
+    brand: "", // Add default brand or extract from product if available
+    warranty: "", // Add default warranty or extract from product if available
+    color: { name: "", code: "" }, // Add default color or extract from product if available
+    image: product.image || null,
+  };
+};
+
+const handleItemCounter = (product: Product, quantity: number) => {
+  const variant = getDefaultVariant(product);
+  const existingItem = cartStore.items.find((item) => item.id === variant.id);
+
+  if (existingItem) {
+    if (quantity === 0) {
+      cartStore.removeItem(variant.id);
+    } else {
+      cartStore.updateCount(variant.id, quantity);
+    }
+  } else if (quantity > 0) {
+    cartStore.addItem({ ...variant, quantity });
+  }
+};
+
+const getCartQuantity = (productId: number): number => {
+  const item = cartStore.items.find((item) => item.id === productId);
+  return item ? item.quantity : 0;
+};
 </script>
 
 <template>
@@ -72,11 +116,12 @@ onMounted(() => {
             <h2 class="title-sm">{{ product.title }}</h2>
 
             <v-btn
-              v-if="props.hasCounter"
+              v-if="props.hasCounter && getCartQuantity(product.id) > 0"
               density="compact"
               icon="delete"
               variant="plain"
               class="px-0"
+              @click="handleItemCounter(product, 0)"
             />
           </div>
 
@@ -92,8 +137,11 @@ onMounted(() => {
 
             <ItemCounter
               v-if="props.hasCounter"
-              v-model="product.quantity"
-              :max="product.stock"
+              :variant="getDefaultVariant(product)"
+              :quantity="getCartQuantity(product.id)"
+              @update:quantity="
+                (quantity) => handleItemCounter(product, quantity)
+              "
             />
 
             <v-btn

@@ -1,39 +1,72 @@
 <script lang="ts" setup>
-import vNumberInput from '@/directives/v-number-input'
-import { watchEffect } from 'vue'
+import { ref, computed } from "vue";
+import { useCartStore } from "@/stores/cart";
+import type { Variant } from "@/types/dto/product";
 
-const modelValue = defineModel<number>('modelValue', { default: 1 })
-const props = defineProps<{ max: number }>()
+const props = defineProps<{
+  variant: Variant;
+}>();
 
-const add = () => modelValue.value++
-const remove = () => modelValue.value--
+const cartStore = useCartStore();
+console.log(cartStore);
+const isInCart = computed(() => {
+  return cartStore.items.some((item) => item.id === props.variant.id);
+});
 
-watchEffect(() => {
-  modelValue.value > 1 || (modelValue.value = 1)
-  modelValue.value < props.max || (modelValue.value = props.max)
-})
+const quantity = computed({
+  get: () => {
+    const item = cartStore.items.find((item) => item.id === props.variant.id);
+    return item ? item.quantity : 0;
+  },
+  set: (value: number) => {
+    cartStore.updateCount(props.variant.id, value);
+  },
+});
+
+const addToCart = () => {
+  cartStore.addItem({ ...props.variant, quantity: 1 });
+};
+
+const add = () => {
+  quantity.value += 1;
+};
+
+const remove = () => {
+  if (quantity.value > 1) {
+    quantity.value -= 1;
+  } else {
+    cartStore.removeItem(props.variant.id);
+  }
+};
 </script>
-
 <template>
-  <v-responsive max-width="108">
-    <v-text-field
-      v-number-input
-      v-model.number="modelValue"
-      :clearable="false"
-      variant="outlined"
-      density="compact"
-      hide-details
-      class="centered-input"
-      prepend-inner-icon="add"
-      append-inner-icon="remove"
-      @click:prepend-inner="add"
-      @click:append-inner="remove"
-    />
-  </v-responsive>
+  <div>
+    <div v-if="!isInCart">
+      <v-btn @click="addToCart" prepend-icon="add" size="large">
+        {{ $t("product.addToCart") }}
+      </v-btn>
+    </div>
+
+    <div v-else>
+      <v-text-field
+        v-model.number="quantity"
+        v-number-input
+        :clearable="false"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="centered-input"
+        prepend-inner-icon="add"
+        append-inner-icon="remove"
+        @click:prepend-inner="add"
+        @click:append-inner="remove"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.centered-input:deep(input) {
-  text-align: center;
+.centered-input {
+  width: 120px;
 }
 </style>
