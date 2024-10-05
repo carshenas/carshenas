@@ -50,8 +50,14 @@ const fetchProductDetails = async () => {
   try {
     const response = await getProductDetailsService(productId);
     product.value = response.data;
+    console.log(product.value);
+    // Ensure variants are deeply populated with required data
+    variants.value = (product.value.variants || []).map((variant: Variant) => ({
+      ...variant,
+      images: product.value.images, // Example of copying overall product data
+      title: product.value.name,
+    }));
     spec.value = product.value.specification;
-    variants.value = product.value.variants;
   } catch (error) {
     console.error("Failed to fetch product details:", error);
   } finally {
@@ -117,19 +123,6 @@ const showSnackbar = (message: string) => {
   snackbarMessage.value = message;
   snackbar.value = true;
 };
-
-const handleItemCounterAction = () => {};
-const variantQuantity = computed({
-  get() {
-    return selectedVariant.value?.quantity || 0;
-  },
-  set(newQuantity: number) {
-    if (selectedVariant.value) {
-      selectedVariant.value.quantity = newQuantity;
-      cartStore.updateCount(selectedVariant.value.id, newQuantity);
-    }
-  },
-});
 </script>
 
 <template>
@@ -238,7 +231,12 @@ const variantQuantity = computed({
   >
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant" />
     <div v-else>
-      <v-btn @click="showSnackbar" prepend-icon="add" size="large">
+      <v-btn
+        rounded="xs"
+        @click="showSnackbar"
+        prepend-icon="add"
+        color="#fd9d9c"
+      >
         {{ $t("product.addToCart") }}
       </v-btn>
     </div>

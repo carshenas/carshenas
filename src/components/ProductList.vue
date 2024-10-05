@@ -5,7 +5,7 @@ import type {
   Variant,
   Color,
 } from "@/types/dto/product";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { getProductListService } from "@/services/carshenas/product";
 import CurrencyDisplay from "./CurrencyDisplay.vue";
 import ImageLoader from "./ImageLoader.vue";
@@ -25,9 +25,15 @@ const props = defineProps<{
 const _loading = ref<boolean>(false);
 const products = ref<Product[]>(props.items || []);
 
-const getProducts = async () => {
-  _loading.value = true;
+// Fetch products only if items are not provided
+const shouldFetchProducts = computed(
+  () => !props.items || props.items.length === 0
+);
 
+const getProducts = async () => {
+  if (!shouldFetchProducts.value) return;
+
+  _loading.value = true;
   try {
     const response = await getProductListService(props.filter);
     products.value = response.data.result;
@@ -40,46 +46,38 @@ const getProducts = async () => {
 
 watch(
   () => props.filter,
-  () => getProducts()
+  () => {
+    getProducts();
+  }
 );
 
 onMounted(() => {
-  !props.manual ? getProducts() : undefined;
+  if (!props.manual) {
+    getProducts();
+  }
 });
 
-const getDefaultVariant = (product: Product): Variant => {
-  return {
-    id: product.id,
-    price: product.price,
-    stock: product.stock,
-    quantity: 1,
-    is_unlimited: false, // You might want to adjust this based on your business logic
-    specification: {}, // Add default or empty specification
-    brand: "", // Add default brand or extract from product if available
-    warranty: "", // Add default warranty or extract from product if available
-    color: { name: "", code: "" }, // Add default color or extract from product if available
-    image: product.image || null,
-  };
-};
+// Function to get the default variant for a product
 
 const handleItemCounter = (product: Product, quantity: number) => {
-  const variant = getDefaultVariant(product);
-  const existingItem = cartStore.items.find((item) => item.id === variant.id);
-
+  const existingItem = cartStore.items.find((item) => item.id === product.id);
   if (existingItem) {
     if (quantity === 0) {
-      cartStore.removeItem(variant.id);
+      cartStore.removeItem(existingItem.id);
     } else {
-      cartStore.updateCount(variant.id, quantity);
+      cartStore.updateCount(existingItem.id, quantity);
     }
-  } else if (quantity > 0) {
-    cartStore.addItem({ ...variant, quantity });
   }
 };
 
 const getCartQuantity = (productId: number): number => {
   const item = cartStore.items.find((item) => item.id === productId);
   return item ? item.quantity : 0;
+};
+
+const getCartVariant = (productId: number): Variant | null => {
+  const item = cartStore.items.find((item) => item.id === productId);
+  return item || null; // Ensure explicit null handling
 };
 </script>
 
@@ -103,7 +101,7 @@ const getCartQuantity = (productId: number): number => {
       <v-row>
         <v-col cols="4" class="d-flex align-center">
           <ImageLoader
-            :src="product.image"
+            :src="product.images[0]"
             :alt="product.title"
             width="86"
             height="86"
@@ -136,8 +134,8 @@ const getCartQuantity = (productId: number): number => {
             />
 
             <ItemCounter
-              v-if="props.hasCounter"
-              :variant="getDefaultVariant(product)"
+              v-if="props.hasCounter && getCartVariant(product.id)"
+              :variant="getCartVariant(product.id)!"
               :quantity="getCartQuantity(product.id)"
               @update:quantity="
                 (quantity) => handleItemCounter(product, quantity)
@@ -160,12 +158,14 @@ const getCartQuantity = (productId: number): number => {
   </v-list>
 </template>
 
-<style lang="scss" scoped>
-.product {
-  border-bottom: 1px solid rgb(238, 238, 238);
+<style scoped>
+.centered-input {
+  width: 120px;
 }
+</style>
 
-.product:nth-child(2n) {
-  background-color: rgba(238, 238, 238, 0.384);
+<style scoped>
+.centered-input {
+  width: 120px;
 }
 </style>

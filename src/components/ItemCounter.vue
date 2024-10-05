@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useCartStore } from "@/stores/cart";
 import type { Variant } from "@/types/dto/product";
 
@@ -8,41 +8,46 @@ const props = defineProps<{
 }>();
 
 const cartStore = useCartStore();
-console.log(cartStore);
-const isInCart = computed(() => {
-  return cartStore.items.some((item) => item.id === props.variant.id);
-});
 
+// Use store's getter to determine if the item is in the cart
+const isInCart = computed(() => cartStore.isItemInCart(props.variant.id));
+
+// Using store's getter to access item quantity
 const quantity = computed({
-  get: () => {
-    const item = cartStore.items.find((item) => item.id === props.variant.id);
-    return item ? item.quantity : 0;
-  },
+  get: () => cartStore.getItemQuantity(props.variant.id),
   set: (value: number) => {
     cartStore.updateCount(props.variant.id, value);
   },
 });
 
+// Function to add item to cart
 const addToCart = () => {
-  cartStore.addItem({ ...props.variant, quantity: 1 });
+  const variantWithQuantity = {
+    ...props.variant,
+    quantity: 1,
+  };
+  cartStore.addItem(variantWithQuantity);
 };
 
+// Using store's actions for updating quantities
 const add = () => {
-  quantity.value += 1;
+  cartStore.updateCount(props.variant.id, quantity.value + 1);
 };
 
 const remove = () => {
-  if (quantity.value > 1) {
-    quantity.value -= 1;
+  const currentQuantity = quantity.value;
+  if (currentQuantity > 1) {
+    cartStore.updateCount(props.variant.id, currentQuantity - 1);
   } else {
     cartStore.removeItem(props.variant.id);
   }
 };
 </script>
+
 <template>
   <div>
     <div v-if="!isInCart">
-      <v-btn @click="addToCart" prepend-icon="add" size="large">
+      <v-btn @click="addToCart" rounded="xs" prepend-icon="add" >
         {{ $t("product.addToCart") }}
       </v-btn>
     </div>
@@ -50,7 +55,6 @@ const remove = () => {
     <div v-else>
       <v-text-field
         v-model.number="quantity"
-        v-number-input
         :clearable="false"
         variant="outlined"
         density="compact"
