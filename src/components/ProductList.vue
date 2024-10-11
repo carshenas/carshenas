@@ -25,6 +25,7 @@ const props = defineProps<{
 const _loading = ref<boolean>(false);
 const products = ref<Product[]>(props.items || []);
 
+console.log(props.items);
 // Fetch products only if items are not provided
 const shouldFetchProducts = computed(
   () => !props.items || props.items.length === 0
@@ -44,6 +45,7 @@ const getProducts = async () => {
   }
 };
 
+console.log(products);
 watch(
   () => props.filter,
   () => {
@@ -101,7 +103,11 @@ const getCartVariant = (productId: number): Variant | null => {
       <v-row>
         <v-col cols="4" class="d-flex align-center">
           <ImageLoader
-            :src="product.images[0]"
+            :src="
+              product.images && product.images.length > 0
+                ? product.images[0]
+                : product.image || 'placeholder.jpg'
+            "
             :alt="product.title"
             width="86"
             height="86"

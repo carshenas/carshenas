@@ -1,6 +1,5 @@
-export interface Product {
+export interface ProductBase {
   id: number;
-  images: string[]; // Update to support multiple images
   title: string;
   description: string;
   price: number;
@@ -8,11 +7,23 @@ export interface Product {
   stock: number;
 }
 
+export interface ProductWithImage extends ProductBase {
+  image: string;
+  images?: never; // Explicitly state that this can't coexist with images
+}
+
+export interface ProductWithImages extends ProductBase {
+  images: string[];
+  image?: never; // Explicitly state that this can't coexist with image
+}
+
+export type Product = ProductWithImage | ProductWithImages;
+
 export interface ProductFilter {
   title?: string;
 }
 
-export interface Variant extends Product {
+export interface Variant extends ProductWithImages {
   is_unlimited: boolean;
   specification: Record<string, any>;
   brand: string;
