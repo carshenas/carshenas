@@ -1,10 +1,18 @@
 <script lang="ts" setup>
-import type { Product, ProductFilter } from "@/types/dto/product";
-import { ref, onMounted, watch } from "vue";
+import type {
+  Product,
+  ProductFilter,
+  Variant,
+  Color,
+} from "@/types/dto/product";
+import { ref, onMounted, watch, computed } from "vue";
 import { getProductListService } from "@/services/carshenas/product";
 import CurrencyDisplay from "./CurrencyDisplay.vue";
 import ImageLoader from "./ImageLoader.vue";
 import ItemCounter from "@/components/ItemCounter.vue";
+import { useCartStore } from "@/stores/cart";
+
+const cartStore = useCartStore();
 
 const props = defineProps<{
   items?: Product[];
@@ -13,12 +21,20 @@ const props = defineProps<{
   hasCounter?: boolean;
   manual?: boolean;
 }>();
+
 const _loading = ref<boolean>(false);
 const products = ref<Product[]>(props.items || []);
 
-const getProducts = async () => {
-  _loading.value = true;
+console.log(props.items);
+// Fetch products only if items are not provided
+const shouldFetchProducts = computed(
+  () => !props.items || props.items.length === 0
+);
 
+const getProducts = async () => {
+  if (!shouldFetchProducts.value) return;
+
+  _loading.value = true;
   try {
     const response = await getProductListService(props.filter);
     products.value = response.data.result;
@@ -29,14 +45,42 @@ const getProducts = async () => {
   }
 };
 
+console.log(products);
 watch(
   () => props.filter,
-  () => getProducts()
+  () => {
+    getProducts();
+  }
 );
 
 onMounted(() => {
-  !props.manual ? getProducts() : undefined;
+  if (!props.manual) {
+    getProducts();
+  }
 });
+
+// Function to get the default variant for a product
+
+const handleItemCounter = (product: Product, quantity: number) => {
+  const existingItem = cartStore.items.find((item) => item.id === product.id);
+  if (existingItem) {
+    if (quantity === 0) {
+      cartStore.removeItem(existingItem.id);
+    } else {
+      cartStore.updateCount(existingItem.id, quantity);
+    }
+  }
+};
+
+const getCartQuantity = (productId: number): number => {
+  const item = cartStore.items.find((item) => item.id === productId);
+  return item ? item.quantity : 0;
+};
+
+const getCartVariant = (productId: number): Variant | null => {
+  const item = cartStore.items.find((item) => item.id === productId);
+  return item || null; // Ensure explicit null handling
+};
 </script>
 
 <template>
@@ -59,7 +103,11 @@ onMounted(() => {
       <v-row>
         <v-col cols="4" class="d-flex align-center">
           <ImageLoader
-            :src="product.image"
+            :src="
+              product.images && product.images.length > 0
+                ? product.images[0]
+                : product.image || 'placeholder.jpg'
+            "
             :alt="product.title"
             width="86"
             height="86"
@@ -72,11 +120,12 @@ onMounted(() => {
             <h2 class="title-sm">{{ product.title }}</h2>
 
             <v-btn
-              v-if="props.hasCounter"
+              v-if="props.hasCounter && getCartQuantity(product.id) > 0"
               density="compact"
               icon="delete"
               variant="plain"
               class="px-0"
+              @click="handleItemCounter(product, 0)"
             />
           </div>
 
@@ -91,9 +140,12 @@ onMounted(() => {
             />
 
             <ItemCounter
-              v-if="props.hasCounter"
-              v-model="product.quantity"
-              :max="product.stock"
+              v-if="props.hasCounter && getCartVariant(product.id)"
+              :variant="getCartVariant(product.id)!"
+              :quantity="getCartQuantity(product.id)"
+              @update:quantity="
+                (quantity) => handleItemCounter(product, quantity)
+              "
             />
 
             <v-btn
@@ -112,12 +164,14 @@ onMounted(() => {
   </v-list>
 </template>
 
-<style lang="scss" scoped>
-.product {
-  border-bottom: 1px solid rgb(238, 238, 238);
+<style scoped>
+.centered-input {
+  width: 120px;
 }
+</style>
 
-.product:nth-child(2n) {
-  background-color: rgba(238, 238, 238, 0.384);
+<style scoped>
+.centered-input {
+  width: 120px;
 }
 </style>
