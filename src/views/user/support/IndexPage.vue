@@ -35,7 +35,6 @@ const refreshTicketList = async () => {
   }
 };
 
-
 watch(currentPage, async () => {
   await refreshTicketList();
 });

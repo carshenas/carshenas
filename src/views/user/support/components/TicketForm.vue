@@ -13,7 +13,7 @@ const message = ref("");
 
 const emit = defineEmits<{
   (event: "update:isFormVisible", value: boolean): void;
-  (event: "ticketCreated"): void;  // New event to notify parent
+  (event: "ticketCreated"): void;  
 }>();
 
 const handleSubmit = async () => {
@@ -48,7 +48,11 @@ const props = defineProps<{
 
 
 <template>
-  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
+  <v-form
+    ref="formRef"
+    v-if="props.isFormVisible"
+    class="d-flex flex-column justify-space-between"
+  >
     <div>
       <v-textarea v-model="message" :label="$t('support.textLabel')" row-height="30" rows="4" variant="filled" auto-grow
         shaped :rules="[rules.required]" class="support-input"></v-textarea>

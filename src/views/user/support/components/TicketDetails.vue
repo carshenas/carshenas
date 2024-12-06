@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, watch } from 'vue'
 import { updateTicketService } from '@/services/carshenas/support'
-import type { TicketMessages } from '@/types/dto/tickets'
+import type { TicketMessages, Message } from '@/types/dto/tickets'
 
 const props = defineProps<{
   ticket: TicketMessages | null
 }>()
 
 const messageInput = ref<string>('')
+const messages = ref<Message[] | null>(props.ticket ? props.ticket.messages : null)
 
-// Assuming 'props.ticket' is reactive, if not, consider ref/reactive.
-const updateTicketMessages = (newMessages) => {
-  if (props.ticket) {
-    // Directly mutate props.ticket.messages if props.ticket is reactive
-    props.ticket.messages = newMessages
-  }
-}
+// Watch for changes in the ticket prop
+watch(() => props.ticket, (newTicket) => {
+  messages.value = newTicket ? newTicket.messages : null
+}, { immediate: true })
 
 const sendMessage = async () => {
   if (!props.ticket || !props.ticket.id) {
@@ -30,11 +28,10 @@ const sendMessage = async () => {
 
     const response = await updateTicketService(props.ticket.id, payload)
 
-    console.log('Ticket updated successfully:', response)
-
-    // Access the data correctly from the response object
     if (response && response.data && response.data.messages) {
-      updateTicketMessages(response.data.messages)
+      messages.value = response.data.messages
+      // Optionally emit an event if the parent needs to know about the update
+      // emit('update-ticket', response.data.messages)
     }
 
     messageInput.value = ''
@@ -44,11 +41,9 @@ const sendMessage = async () => {
 }
 </script>
 
-
-
 <template>
-  <div class="d-flex flex-column h-100 justify-end" v-if="props.ticket">
-    <div v-for="(message, index) in props.ticket.messages" :key="index" :class="{
+  <div class="d-flex flex-column h-100 justify-end" v-if="messages">
+    <div v-for="(message, index) in messages" :key="index" :class="{
       'justify-end': message.is_answer,
       'justify-start': !message.is_answer,
       'bg-answer': message.is_answer
