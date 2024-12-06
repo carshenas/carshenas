@@ -13,6 +13,7 @@ const message = ref("");
 
 const emit = defineEmits<{
   (event: "update:isFormVisible", value: boolean): void;
+  (event: "ticketCreated"): void;  // New event to notify parent
 }>();
 
 const handleSubmit = async () => {
@@ -27,8 +28,9 @@ const handleSubmit = async () => {
     }
     try {
       isLoading.value = true;
-      await createTicketService(formData);
+      await createTicketService(formData);  // Create the ticket via the service
       emit("update:isFormVisible", false); // Hide the form upon successful submission
+      emit("ticketCreated"); // Notify parent to refresh the ticket list
     } catch (error) {
       console.error("Form submission failed:", error);
     } finally {
@@ -44,32 +46,15 @@ const props = defineProps<{
 }>();
 </script>
 
+
 <template>
-  <v-form
-    ref="formRef"
-    v-if="props.isFormVisible"
-    class="d-flex flex-column justify-space-between"
-  >
+  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
     <div>
-      <v-textarea
-        v-model="message"
-        :label="$t('support.textLabel')"
-        row-height="30"
-        rows="4"
-        variant="filled"
-        auto-grow
-        shaped
-        :rules="[rules.required]"
-        class="support-input"
-      ></v-textarea>
+      <v-textarea v-model="message" :label="$t('support.textLabel')" row-height="30" rows="4" variant="filled" auto-grow
+        shaped :rules="[rules.required]" class="support-input"></v-textarea>
     </div>
     <div>
-      <v-file-input
-        v-model="files"
-        :label="$t('support.fileLabel')"
-        placeholder="Upload your documents"
-        multiple
-      >
+      <v-file-input v-model="files" :label="$t('support.fileLabel')" placeholder="Upload your documents" multiple>
         <template v-slot:selection="{ fileNames }">
           <template v-for="fileName in fileNames" :key="fileName">
             <v-chip class="me-2" color="primary" size="small" label>
@@ -80,14 +65,7 @@ const props = defineProps<{
       </v-file-input>
     </div>
     <div>
-      <v-btn
-        block
-        rounded="pill"
-        color="primary"
-        size="x-large"
-        class="me-4"
-        @click="handleSubmit"
-      >
+      <v-btn block rounded="pill" color="primary" size="x-large" class="me-4" @click="handleSubmit">
         {{ $t("shared.submit") }}
       </v-btn>
     </div>

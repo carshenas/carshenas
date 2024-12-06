@@ -28,13 +28,13 @@ const refreshTicketList = async () => {
   try {
     const offset = (currentPage.value - 1) * itemsPerPage.value;
     const response = await getTicketListService(itemsPerPage.value, offset);
-
-    tickets.value = response.data.result;
-    totalPages.value = Math.ceil(response.data.count / itemsPerPage.value);
+    tickets.value = response.data.result;  // Update the tickets list
+    totalPages.value = Math.ceil(response.data.count / itemsPerPage.value);  // Update total pages
   } catch (error) {
     console.error("Error fetching ticket list:", error);
   }
 };
+
 
 watch(currentPage, async () => {
   await refreshTicketList();
@@ -85,48 +85,27 @@ const goBack = () => {
     <div class="d-flex flex-column ga-4 flex-grow-1">
       <!-- Button to create a new ticket -->
       <div v-if="!selectedTicket && !isFormVisible">
-        <v-btn
-          block
-          class="justify-space-between"
-          rounded="lg"
-          color="primary"
-          size="x-large"
-          append-icon="add"
-          @click="toggleFormVisibility"
-        >
+        <v-btn block class="justify-space-between" rounded="lg" color="primary" size="x-large" append-icon="add"
+          @click="toggleFormVisibility">
           {{ $t("user.newTicket") }}
         </v-btn>
       </div>
 
       <!-- List of tickets -->
-      <div
-        class="d-flex flex-column ga-4"
-        v-if="!selectedTicket && !isFormVisible"
-      >
-        <TicketCards
-          v-for="(ticket, index) in tickets"
-          :key="index"
-          :ticket="ticket"
-          @ticketSelected="handleTicketSelected"
-        />
+      <div class="d-flex flex-column-reverse ga-4" v-if="!selectedTicket && !isFormVisible">
+        <TicketCards v-for="(ticket, index) in tickets" :key="index" :ticket="ticket"
+          @ticketSelected="handleTicketSelected" />
       </div>
 
       <!-- Ticket details -->
       <TicketDetails v-if="selectedTicket" :ticket="selectedTicket" />
 
       <!-- Ticket form -->
-      <TicketForm
-        v-bind:isFormVisible="isFormVisible"
-        v-on:update:isFormVisible="isFormVisible = $event"
-      />
+      <TicketForm v-bind:isFormVisible="isFormVisible" v-on:update:isFormVisible="isFormVisible = $event"
+        v-on:ticketCreated="refreshTicketList" />
     </div>
 
-    <v-pagination
-      v-model="currentPage"
-      :length="totalPages"
-      :total-visible="5"
-      @input="refreshTicketList"
-    />
+    <v-pagination v-model="currentPage" :length="totalPages" :total-visible="5" @input="refreshTicketList" />
   </section>
 </template>
 
