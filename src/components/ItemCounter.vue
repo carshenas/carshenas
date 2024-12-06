@@ -1,39 +1,76 @@
 <script lang="ts" setup>
-import vNumberInput from '@/directives/v-number-input'
-import { watchEffect } from 'vue'
+import { computed } from "vue";
+import { useCartStore } from "@/stores/cart";
+import type { Variant } from "@/types/dto/product";
 
-const modelValue = defineModel<number>('modelValue', { default: 1 })
-const props = defineProps<{ max: number }>()
+const props = defineProps<{
+  variant: Variant;
+}>();
 
-const add = () => modelValue.value++
-const remove = () => modelValue.value--
+const cartStore = useCartStore();
 
-watchEffect(() => {
-  modelValue.value > 1 || (modelValue.value = 1)
-  modelValue.value < props.max || (modelValue.value = props.max)
-})
+// Use store's getter to determine if the item is in the cart
+const isInCart = computed(() => cartStore.isItemInCart(props.variant.id));
+
+// Using store's getter to access item quantity
+const quantity = computed({
+  get: () => cartStore.getItemQuantity(props.variant.id),
+  set: (value: number) => {
+    cartStore.updateCount(props.variant.id, value);
+  },
+});
+
+// Function to add item to cart
+const addToCart = () => {
+  const variantWithQuantity = {
+    ...props.variant,
+    quantity: 1,
+  };
+  cartStore.addItem(variantWithQuantity);
+};
+
+// Using store's actions for updating quantities
+const add = () => {
+  cartStore.updateCount(props.variant.id, quantity.value + 1);
+};
+
+const remove = () => {
+  const currentQuantity = quantity.value;
+  if (currentQuantity > 1) {
+    cartStore.updateCount(props.variant.id, currentQuantity - 1);
+  } else {
+    cartStore.removeItem(props.variant.id);
+  }
+};
 </script>
 
 <template>
-  <v-responsive max-width="108">
-    <v-text-field
-      v-number-input
-      v-model.number="modelValue"
-      :clearable="false"
-      variant="outlined"
-      density="compact"
-      hide-details
-      class="centered-input"
-      prepend-inner-icon="add"
-      append-inner-icon="remove"
-      @click:prepend-inner="add"
-      @click:append-inner="remove"
-    />
-  </v-responsive>
+  <div>
+    <div v-if="!isInCart">
+      <v-btn @click="addToCart" rounded="xs" prepend-icon="add" >
+        {{ $t("product.addToCart") }}
+      </v-btn>
+    </div>
+
+    <div v-else>
+      <v-text-field
+        v-model.number="quantity"
+        :clearable="false"
+        variant="outlined"
+        density="compact"
+        hide-details
+        class="centered-input"
+        prepend-inner-icon="add"
+        append-inner-icon="remove"
+        @click:prepend-inner="add"
+        @click:append-inner="remove"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
-.centered-input:deep(input) {
-  text-align: center;
+.centered-input {
+  width: 120px;
 }
 </style>

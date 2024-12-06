@@ -45,7 +45,7 @@ const onNext = () => step.value++
 
     <v-divider thickness="8" color="divider" class="border-opacity-100" />
 
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 overflow-auto">
       <component :is="component" @next="onNext" />
     </div>
   </div>

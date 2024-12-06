@@ -1,5 +1,5 @@
 import carshenasService from '@/services'
-import type { Ticket, TicketMessages } from '@/types/dto/tickets'
+import type { Message, Ticket, TicketMessages } from '@/types/dto/tickets'
 import type { Pagination } from '@/types/dto/pagination'
 
 export const getTicketListService = (limit: number, offset: number) => {
@@ -18,10 +18,11 @@ export const createTicketService = (body: FormData) =>
     body
   })
 
-export const updateTicketService = (id: number, data: { message: string }) => {
-  const formData = new FormData()
-  formData.append('message', data.message)
-  return carshenasService.put<string>(`/support/${id}/`, {
-    body: formData
-  })
-}
+  export const updateTicketService = (id: number, data: { message: string }) => {
+    const formData = new FormData()
+    formData.append('message', data.message)
+    return carshenasService.put<{ messages: Message[] }>(`/support/${id}/`, {
+      body: formData
+    })
+  }
+  
