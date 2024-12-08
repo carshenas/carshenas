@@ -16,7 +16,5 @@ fi
 
 docker logout
 
-echo "Recreating ..."
 cd carshenas-frontend
 docker compose up --force-recreate "$image" -d
-echo "Recreated."

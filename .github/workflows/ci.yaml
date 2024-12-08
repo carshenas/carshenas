@@ -57,7 +57,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           command_timeout: 5m
-          script: carshenas-frontend/deploy.sh main
+          script: carshenas/deploy.sh main
         if: github.ref == 'refs/heads/main'
 
       - name: Run Command for Development Branch
@@ -67,5 +67,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           command_timeout: 5m
-          script: carshenas-frontend/deploy.sh development
+          script: carshenas/deploy.sh development
         if: github.ref == 'refs/heads/development'
