@@ -67,11 +67,11 @@ onMounted(() => getMostViewedCategories());
           style='cursor:pointer' code='pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64'></a>
       <div class="d-flex flex-column gap-2">
         <div>
-          <span class="mr-2"> تماس:</span>
+          <span class="ml-2"> تماس:</span>
           <a href="tel:09012529729">09012529729</a>
         </div>
         <div>
-          <span class="mr-2"> ایمیل:</span>
+          <span class="ml-2"> ایمیل:</span>
           <a href="mailto:carshenas.shop@gmail.com">carshenas.shop@gmail.com</a>
         </div>
       </div>
