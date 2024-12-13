@@ -60,11 +60,21 @@ onMounted(() => getMostViewedCategories());
         <CategoryList :items :loading manual class="mt-4" />
       </section>
     </div>
-    <footer class="mt-12 pt-6 pb-6 px-4 ">
+    <footer class="d-flex justify-space-between mt-12 pt-6 pb-6 px-4 ">
       <a class="pa-1 bg-red-lighten-5" referrerpolicy='origin' target='_blank'
         href='https://trustseal.enamad.ir/?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64'><img referrerpolicy='origin'
           src='https://trustseal.enamad.ir/logo.aspx?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64' alt=''
           style='cursor:pointer' code='pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64'></a>
+      <div class="d-flex flex-column gap-2">
+        <div>
+          <span class="ml-2"> تماس:</span>
+          <a href="tel:09012529729">09012529729</a>
+        </div>
+        <div>
+          <span class="ml-2"> ایمیل:</span>
+          <a href="mailto:carshenas.shop@gmail.com">carshenas.shop@gmail.com</a>
+        </div>
+      </div>
     </footer>
     <!-- <section class="my-12">
       <div class="d-flex justify-space-between align-center">
