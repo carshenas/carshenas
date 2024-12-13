@@ -13,21 +13,21 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
-
+      #      Login Production (Farzad)
       - name: Log in to Docker Hub For Production
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.FARZAD_DOCKER_USERNAME }}
           password: ${{ secrets.FARZAD_DOCKER_PASSWORD }}
         if: github.ref == 'refs/heads/main'
-
+      #      Login Development (Farhad)
       - name: Log in to Docker Hub For Development
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.FARHAD_DOCKER_USERNAME }}
           password: ${{ secrets.FARHAD_DOCKER_PASSWORD }}
         if: github.ref == 'refs/heads/development'
-
+      #      Build & Push Production
       - name: Build and push Docker image For Production
         uses: docker/build-push-action@v2
         with:
@@ -35,7 +35,7 @@ jobs:
           push: true
           tags: ${{ secrets.FARZAD_DOCKER_USERNAME }}/carshenas:latest
         if: github.ref == 'refs/heads/main'
-
+      #      Build & Push Development
       - name: Build and push Docker image For Development
         uses: docker/build-push-action@v2
         with:
@@ -43,13 +43,19 @@ jobs:
           push: true
           tags: ${{ secrets.FARHAD_DOCKER_USERNAME }}/carshenas:latest
         if: github.ref == 'refs/heads/development'
+      #      Get SHA of Production
+      - name: Get image SHA digest
+        run: |
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ secrets.FARZAD_DOCKER_USERNAME }}/carshenas:latest)
+          echo "digest=$DIGEST" >> $GITHUB_ENV
+        if: github.ref == 'refs/heads/main'
+      #      Get SHA of Development
+      - name: Get image SHA digest
+        run: |
+          DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' ${{ secrets.FARHAD_DOCKER_USERNAME }}/carshenas:latest)
+          echo "digest=$DIGEST" >> $GITHUB_ENV
+        if: github.ref == 'refs/heads/development'
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: [build]
-    timeout-minutes: 5
-    steps:
       - name: Run Command for Main Branch
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -57,7 +63,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           command_timeout: 5m
-          script: carshenas-frontend/deploy.sh main
+          script: carshenas/deploy.sh main ${{ env.digest }}
         if: github.ref == 'refs/heads/main'
 
       - name: Run Command for Development Branch
@@ -67,5 +73,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           command_timeout: 5m
-          script: carshenas-frontend/deploy.sh development
+          script: carshenas/deploy.sh development ${{ env.digest }}
         if: github.ref == 'refs/heads/development'
