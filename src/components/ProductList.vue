@@ -3,7 +3,6 @@ import type {
   Product,
   ProductFilter,
   Variant,
-  Color,
 } from "@/types/dto/product";
 import { ref, onMounted, watch, computed } from "vue";
 import { getProductListService } from "@/services/carshenas/product";
@@ -59,8 +58,7 @@ onMounted(() => {
   }
 });
 
-// Function to get the default variant for a product
-
+console.log(products)
 const handleItemCounter = (product: Product, quantity: number) => {
   const existingItem = cartStore.items.find((item) => item.id === product.id);
   if (existingItem) {
@@ -85,78 +83,39 @@ const getCartVariant = (productId: number): Variant | null => {
 
 <template>
   <div v-if="_loading || props.loading">
-    <v-skeleton-loader
-      v-for="n in 4"
-      :key="n"
-      class="mt-2"
-      height="100"
-      type="ossein"
-    />
+    <v-skeleton-loader v-for="n in 4" :key="n" class="mt-2" height="100" type="ossein" />
   </div>
 
   <v-list v-else>
-    <v-list-item
-      v-for="product in products"
-      :key="product.id"
-      class="product py-2 px-4"
-    >
+    <v-list-item v-for="product in products" :key="product.id" class="product py-2 px-4">
       <v-row>
         <v-col cols="4" class="d-flex align-center">
-          <ImageLoader
-            :src="
-              product.images && product.images.length > 0
-                ? product.images[0]
-                : product.image || 'placeholder.jpg'
-            "
-            :alt="product.title"
-            width="86"
-            height="86"
-            aspectRatio="1"
-          />
+          <ImageLoader :src="product.images && product.images.length > 0
+            ? product.images[0]
+            : product.image || 'placeholder.jpg'
+            " :alt="product.name" width="86" height="86" aspectRatio="1" />
         </v-col>
 
         <v-col cols="8" class="d-flex flex-column">
           <div class="d-flex justify-space-between align-center">
-            <h2 class="title-sm">{{ product.title }}</h2>
+            <h2 class="title-sm">{{ product.name }}</h2>
 
-            <v-btn
-              v-if="props.hasCounter && getCartQuantity(product.id) > 0"
-              density="compact"
-              icon="delete"
-              variant="plain"
-              class="px-0"
-              @click="handleItemCounter(product, 0)"
-            />
+            <v-btn v-if="props.hasCounter && getCartQuantity(product.id) > 0" density="compact" icon="delete"
+              variant="plain" class="px-0" @click="handleItemCounter(product, 0)" />
           </div>
 
           <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
 
           <div class="mt-2 flex-grow-1 d-flex justify-space-between align-end">
-            <CurrencyDisplay
-              :value="product.price"
-              value-class="text-primary font-weight-bold"
-              unit-class="body-sm text-outline"
-              class="d-flex justify-end body-md py-1"
-            />
+            <CurrencyDisplay :value="product.price" value-class="text-primary font-weight-bold"
+              unit-class="body-sm text-outline" class="d-flex justify-end body-md py-1" />
 
-            <ItemCounter
-              v-if="props.hasCounter && getCartVariant(product.id)"
-              :variant="getCartVariant(product.id)!"
-              :quantity="getCartQuantity(product.id)"
-              @update:quantity="
-                (quantity) => handleItemCounter(product, quantity)
-              "
-            />
+            <ItemCounter v-if="props.hasCounter && getCartVariant(product.id)" :variant="getCartVariant(product.id)!"
+              :quantity="getCartQuantity(product.id)" @update:quantity="(quantity) => handleItemCounter(product, quantity)
+                " />
 
-            <v-btn
-              v-else
-              :text="$t('shared.more')"
-              variant="plain"
-              class="px-0"
-              append-icon="chevron_left"
-              density="compact"
-              :to="{ name: 'ProductDetailPage', params: { id: product.id } }"
-            ></v-btn>
+            <v-btn v-else :text="$t('shared.more')" variant="plain" class="px-0" append-icon="chevron_left"
+              density="compact" :to="{ name: 'ProductDetailPage', params: { id: product.id } }"></v-btn>
           </div>
         </v-col>
       </v-row>
