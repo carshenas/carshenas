@@ -50,7 +50,6 @@ const fetchProductDetails = async () => {
   try {
     const response = await getProductDetailsService(productId);
     product.value = response.data;
-    console.log(product.value);
     variants.value = (product.value.variants || []).map((variant: Variant) => ({
       ...variant,
       images: product.value.images, // Example of copying overall product data
@@ -62,9 +61,7 @@ const fetchProductDetails = async () => {
   } finally {
     isLoading.value = false;
   }
-};
-console.log(product)
-const handleSelectColor = (colorCode: string) => {
+};const handleSelectColor = (colorCode: string) => {
   selectedColorCode.value = colorCode;
 };
 
@@ -181,7 +178,7 @@ const showSnackbar = (message: string) => {
         {{ $t("product.addToCart") }}
       </v-btn>
     </div>
-    <v-snackbar v-model="snackbar" :timeout="3000" color="error" bottom right>
+    <v-snackbar v-model="snackbar" :timeout="1000" color="error" bottom right>
       {{ $t("product.alert") }}
     </v-snackbar>
 

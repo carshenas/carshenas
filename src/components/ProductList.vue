@@ -24,8 +24,6 @@ const props = defineProps<{
 const _loading = ref<boolean>(false);
 const products = ref<Product[]>(props.items || []);
 
-console.log(props.items);
-// Fetch products only if items are not provided
 const shouldFetchProducts = computed(
   () => !props.items || props.items.length === 0
 );
@@ -44,7 +42,6 @@ const getProducts = async () => {
   }
 };
 
-console.log(products);
 watch(
   () => props.filter,
   () => {
@@ -58,7 +55,6 @@ onMounted(() => {
   }
 });
 
-console.log(products)
 const handleItemCounter = (product: Product, quantity: number) => {
   const existingItem = cartStore.items.find((item) => item.id === product.id);
   if (existingItem) {
