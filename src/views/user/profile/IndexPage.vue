@@ -2,36 +2,52 @@
 import { computed } from 'vue'
 import EditProfileBottomSheet from './components/EditProfileBottomSheet.vue'
 import { useUserStore } from '@/stores/user'
-import i18n from '@/plugins/i18n'
+import { useI18n } from 'vue-i18n'
 import type { RouteLocationRaw } from 'vue-router'
 import { useRouter } from 'vue-router'
+import { useSnackbar } from '@/stores/snackbar'
 
 const { user, wipeUserData } = useUserStore()
-const { t } = i18n.global
+const { t } = useI18n()
 const router = useRouter() // Use Vue Router to navigate
 
 const name = computed(() =>
-  user.firstName || user.lastName ? `${user.firstName} ${user.lastName}` : t('shared.noName')
+  user.firstName || user.lastName
+    ? `${user.firstName} ${user.lastName}`
+    : t('shared.noName')
 )
 
-const items: { title: string; 'prepend-icon': string; to: RouteLocationRaw }[] = [
-  { title: t('user.orders'), 'prepend-icon': 'source', to: { name: 'UserOrderPage' } },
-  { title: t('user.addresses'), 'prepend-icon': 'home', to: { name: 'UserAddressPage' } },
-  {
-    title: t('user.support'),
-    'prepend-icon': 'support_agent',
-    to: { name: 'UserSupportPage' }
-  },
-  {
-    title: t('user.notification'),
-    'prepend-icon': 'notifications',
-    to: { name: 'UserNotificationPage' }
-  }
-]
+const items: { title: string; 'prepend-icon': string; to: RouteLocationRaw }[] =
+  [
+    {
+      title: t('user.orders'),
+      'prepend-icon': 'source',
+      to: { name: 'UserOrderPage' }
+    },
+    {
+      title: t('user.addresses'),
+      'prepend-icon': 'home',
+      to: { name: 'UserAddressPage' }
+    },
+    {
+      title: t('user.support'),
+      'prepend-icon': 'support_agent',
+      to: { name: 'UserSupportPage' }
+    },
+    {
+      title: t('user.notification'),
+      'prepend-icon': 'notifications',
+      to: { name: 'UserNotificationPage' }
+    }
+  ]
+
+const snackbarStore = useSnackbar()
 
 const handleLogout = () => {
-  wipeUserData() // Wipe user data from store and local storage
-  router.push({ name: 'HomePage' }) // Navigate to the main page (assuming 'HomePage' is the name of your main page route)
+  wipeUserData()
+  router.push({ name: 'HomePage' })
+
+  // snackbarStore.show(t('message.loginSuccessfully'))
 }
 </script>
 
@@ -40,7 +56,9 @@ const handleLogout = () => {
     <div class="d-flex justify-space-between align-start">
       <div>
         <h1 class="title-md">{{ name }}</h1>
-        <p class="label-md" style="letter-spacing: 0.2rem">{{ user.phoneNumber }}</p>
+        <p class="label-md" style="letter-spacing: 0.2rem">
+          {{ user.phoneNumber }}
+        </p>
       </div>
 
       <EditProfileBottomSheet />
