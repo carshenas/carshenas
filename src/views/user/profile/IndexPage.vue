@@ -47,7 +47,7 @@ const handleLogout = () => {
   wipeUserData()
   router.push({ name: 'HomePage' })
 
-  // snackbarStore.show(t('message.loginSuccessfully'))
+  snackbarStore.show(t('message.logoutSuccessfully'))
 }
 </script>
 
