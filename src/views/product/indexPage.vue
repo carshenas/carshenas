@@ -51,7 +51,6 @@ const fetchProductDetails = async () => {
     const response = await getProductDetailsService(productId);
     product.value = response.data;
     console.log(product.value);
-    // Ensure variants are deeply populated with required data
     variants.value = (product.value.variants || []).map((variant: Variant) => ({
       ...variant,
       images: product.value.images, // Example of copying overall product data
@@ -64,7 +63,7 @@ const fetchProductDetails = async () => {
     isLoading.value = false;
   }
 };
-
+console.log(product)
 const handleSelectColor = (colorCode: string) => {
   selectedColorCode.value = colorCode;
 };
@@ -126,45 +125,17 @@ const showSnackbar = (message: string) => {
 </script>
 
 <template>
-  <v-carousel
-    v-if="product.images && product.images.length > 0"
-    show-arrows="hover"
-    hide-delimiter-background
-  >
+  <v-carousel v-if="product.images && product.images.length > 0" show-arrows="hover" hide-delimiter-background>
     <v-carousel-item v-for="(image, index) in product.images" :key="index">
-      <ImageLoader
-        :src="image"
-        height="100%"
-        width="100%"
-        :alt="`${product.title} ${index + 1}`"
-      />
+      <ImageLoader :src="image" height="100%" width="100%" :alt="`${product.title} ${index + 1}`" />
     </v-carousel-item>
   </v-carousel>
-  <v-skeleton-loader
-    v-else
-    class="mx-auto"
-    max-width="300"
-    elevation="0"
-    type="image"
-    boilerplate
-  ></v-skeleton-loader>
+  <v-skeleton-loader v-else class="mx-auto" max-width="300" elevation="0" type="image" boilerplate></v-skeleton-loader>
   <h1 class="px-4 title-md">{{ product.name }}</h1>
 
-  <v-tabs
-    v-model="selectedTab"
-    bg-color="white"
-    align-tabs="center"
-    class="position-sticky tab-pdp"
-    slider-color="primary"
-    comfortable
-  >
-    <v-tab
-      v-for="(tab, index) in tabItems"
-      :key="index"
-      :href="tab.href"
-      rounded="5"
-      color="red-darken-3"
-    >
+  <v-tabs v-model="selectedTab" bg-color="white" align-tabs="center" class="position-sticky tab-pdp"
+    slider-color="primary" comfortable>
+    <v-tab v-for="(tab, index) in tabItems" :key="index" :href="tab.href" rounded="5" color="red-darken-3">
       {{ $t(tab.title) }}
     </v-tab>
   </v-tabs>
@@ -184,59 +155,29 @@ const showSnackbar = (message: string) => {
   </div>
 
   <div>
-    <v-skeleton-loader
-      v-if="isLoading"
-      class="mx-auto"
-      max-width="300"
-      type="avatar"
-    ></v-skeleton-loader>
+    <v-skeleton-loader v-if="isLoading" class="mx-auto" max-width="300" type="avatar"></v-skeleton-loader>
     <div v-else>
-      <ColorSelector
-        v-if="hasColorVariants"
-        :variants="variants"
-        @selectColor="handleSelectColor"
-        :selectedWarranty="selectedWarranty"
-      />
+      <ColorSelector v-if="hasColorVariants" :variants="variants" @selectColor="handleSelectColor"
+        :selectedWarranty="selectedWarranty" />
     </div>
   </div>
 
   <div>
-    <v-skeleton-loader
-      v-if="isLoading"
-      class="mx-auto"
-      max-width="300"
-      type="article"
-    ></v-skeleton-loader>
-    <BrandsWarranty
-      v-else
-      :variants="variants"
-      :selectedColorCode="selectedColorCode"
-      @updateWarranty="handleSelectedWarranty"
-      @updateBrand="handleSelectedBrand"
-    />
+    <v-skeleton-loader v-if="isLoading" class="mx-auto" max-width="300" type="article"></v-skeleton-loader>
+    <BrandsWarranty v-else :variants="variants" :selectedColorCode="selectedColorCode"
+      @updateWarranty="handleSelectedWarranty" @updateBrand="handleSelectedBrand" />
   </div>
 
   <ProductReview :desc="product.description" />
 
   <SpecSection :spec="spec" v-if="Object.keys(spec).length" />
 
-  <CommentSection
-    :comments="product.feedbacks"
-    :id="product.id"
-    @feedbackSubmitted="fetchProductDetails"
-  />
+  <CommentSection :comments="product.feedbacks" :id="product.id" @feedbackSubmitted="fetchProductDetails" />
 
-  <div
-    class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white"
-  >
+  <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant" />
     <div v-else>
-      <v-btn
-        rounded="xs"
-        @click="showSnackbar"
-        prepend-icon="add"
-        color="#fd9d9c"
-      >
+      <v-btn rounded="xs" @click="showSnackbar" prepend-icon="add" color="#fd9d9c">
         {{ $t("product.addToCart") }}
       </v-btn>
     </div>
@@ -244,11 +185,7 @@ const showSnackbar = (message: string) => {
       {{ $t("product.alert") }}
     </v-snackbar>
 
-    <CurrencyDisplay
-      :value="displayPrice"
-      value-class="text-primary font-weight-bold"
-      class="d-flex justify-end"
-    />
+    <CurrencyDisplay :value="displayPrice" value-class="text-primary font-weight-bold" class="d-flex justify-end" />
   </div>
 </template>
 
@@ -262,6 +199,7 @@ const showSnackbar = (message: string) => {
     height: 100%;
   }
 }
+
 .text-summery {
   text-align: justify;
   font-size: 14px;
@@ -272,12 +210,14 @@ const showSnackbar = (message: string) => {
 .bottom-0 {
   bottom: 0;
 }
+
 .tab-pdp {
   top: 0rem;
   z-index: 10;
   margin: 1rem 0;
   border-radius: 0 !important;
 }
+
 .tab-pdp .v-tab--selected {
   color: #fb4f4e;
 }

@@ -8,11 +8,7 @@
     </div>
     <table class="w-100 table-striped">
       <tbody>
-        <tr
-          v-for="(value, key, index) in props.spec"
-          :key="index"
-          :class="index % 2 === 0 ? 'spec-even-bg' : ''"
-        >
+        <tr v-for="(value, key, index) in props.spec" :key="index" :class="index % 2 === 0 ? 'spec-even-bg' : ''">
           <td class="px-2 py-2">{{ key }}:</td>
           <td class="px-2 py-2">{{ value }}</td>
         </tr>
@@ -25,6 +21,7 @@
 const props = defineProps<{
   spec: Record<string, any>;
 }>();
+
 </script>
 
 <style lang="scss" scoped>

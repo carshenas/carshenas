@@ -1,6 +1,6 @@
 export interface ProductBase {
   id: number;
-  title: string;
+  name: string;
   description: string;
   price: number;
   quantity: number;
@@ -9,12 +9,12 @@ export interface ProductBase {
 
 export interface ProductWithImage extends ProductBase {
   image: string;
-  images?: never; // Explicitly state that this can't coexist with images
+  images?: never; 
 }
 
 export interface ProductWithImages extends ProductBase {
   images: string[];
-  image?: never; // Explicitly state that this can't coexist with image
+  image?: never;
 }
 
 export type Product = ProductWithImage | ProductWithImages;
