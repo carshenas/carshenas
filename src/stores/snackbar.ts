@@ -1,7 +1,8 @@
-import i18n from '@/plugins/i18n'
 import { defineStore } from 'pinia'
 import { nextTick, ref, watch } from 'vue'
+import i18n from '@/plugins/i18n'
 
+const { t } = i18n.global
 type OnClick = (dismiss: () => void) => void
 interface SnackbarAction {
   text?: string
@@ -36,8 +37,6 @@ type MergedConfig = Omit<SnackbarConfig, 'action'> & { action?: SnackbarAction }
 interface NormalizedSnackbar extends Snackbar {
   config: MergedConfig
 }
-
-const { t } = i18n.global
 
 const mergeConfig = (config?: SnackbarConfig): MergedConfig => {
   let action: SnackbarAction | undefined = undefined

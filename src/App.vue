@@ -24,8 +24,8 @@ onMounted(() => {
 
     <v-main>
       <RouterView />
-    </v-main>
 
-    <GlobalSnackbar />
+      <GlobalSnackbar />
+    </v-main>
   </v-app>
 </template>
