@@ -1,97 +1,103 @@
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive, ref } from 'vue'
 
 // components
-import FirstStep from "./components/FirstStep.vue";
-import SecondStep from "./components/SecondStep.vue";
-import type { VForm } from "vuetify/components";
-import { useRoute, useRouter } from "vue-router";
+import FirstStep from './components/FirstStep.vue'
+import SecondStep from './components/SecondStep.vue'
+import type { VForm } from 'vuetify/components'
+import { useRoute, useRouter } from 'vue-router'
 
 // Services
-import { getOTPService, validateOTPService } from "@/services/carshenas/auth";
-import type { NullableNumber, NullableString } from "@/types/global";
-import type { GetOTPBody, ValidateOTPBody } from "@/types/dto/auth";
-import { useUserStore } from "@/stores/user";
-import useOnBack from "@/composable/on-back";
+import { getOTPService, validateOTPService } from '@/services/carshenas/auth'
+import type { NullableNumber, NullableString } from '@/types/global'
+import type { GetOTPBody, ValidateOTPBody } from '@/types/dto/auth'
+import { useUserStore } from '@/stores/user'
+import useOnBack from '@/composable/on-back'
+import { useSnackbar } from '@/stores/snackbar'
+import { useI18n } from 'vue-i18n'
 
-const router = useRouter();
-const route = useRoute();
-const userStore = useUserStore();
-const step = ref<0 | 1>(0);
-const form = ref<VForm>();
+const router = useRouter()
+const route = useRoute()
+const userStore = useUserStore()
+const step = ref<0 | 1>(0)
+const form = ref<VForm>()
 
 const props = reactive<{
-  phoneNumber: NullableString;
-  otpExpireTime: NullableNumber;
+  phoneNumber: NullableString
+  otpExpireTime: NullableNumber
 }>({
   phoneNumber: null,
-  otpExpireTime: null,
-});
+  otpExpireTime: null
+})
 
-const loading = ref<boolean>(false);
+const loading = ref<boolean>(false)
 const next = async () => {
-  const { valid: isValid } = await form.value!.validate();
+  const { valid: isValid } = await form.value!.validate()
 
-  if (!isValid) return;
+  if (!isValid) return
 
-  step.value ? sendOTP() : getOTP();
-};
+  step.value ? sendOTP() : getOTP()
+}
 
-const activeComponent = ref();
+const activeComponent = ref()
 const getOTP = async () => {
-  loading.value = true;
+  loading.value = true
   try {
     const phoneNumber =
-      props.phoneNumber || activeComponent.value.getPhoneNumber();
-    const body = new FormData();
+      props.phoneNumber || activeComponent.value.getPhoneNumber()
+    const body = new FormData()
 
-    body.append("phone_number", phoneNumber);
-    const response = await getOTPService(body as GetOTPBody);
+    body.append('phone_number', phoneNumber)
+    const response = await getOTPService(body as GetOTPBody)
 
-    props.phoneNumber = phoneNumber;
-    props.otpExpireTime = response.data.otpExp;
-    step.value++;
+    props.phoneNumber = phoneNumber
+    props.otpExpireTime = response.data.otpExp
+    step.value++
   } catch (e) {
-    console.error(e);
+    console.error(e)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
+const { t } = useI18n()
+const snackbarStore = useSnackbar()
 const sendOTP = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const otp = activeComponent.value.getOTP();
+    const otp = activeComponent.value.getOTP()
 
-    const body = new FormData();
+    const body = new FormData()
 
-    body.append("phone_number", props.phoneNumber || "");
-    body.append("otp", otp);
-    const response = await validateOTPService(body as ValidateOTPBody);
+    body.append('phone_number', props.phoneNumber || '')
+    body.append('otp', otp)
+    const response = await validateOTPService(body as ValidateOTPBody)
 
-    userStore.user.token = response.data.access;
-    userStore.user.phoneNumber = props.phoneNumber;
+    userStore.user.token = response.data.access
+    userStore.user.phoneNumber = props.phoneNumber
 
-    userStore.updateStoredData();
+    userStore.updateStoredData()
 
     if (route.query.redirect)
-      return router.replace(route.query.redirect as string);
+      return router.replace(route.query.redirect as string)
 
-    router.replace({ name: "HomePage" });
+    router.replace({ name: 'HomePage' })
+
+    snackbarStore.show(t('message.loginSuccessfully'))
   } catch (e) {
-    console.error(e);
+    console.error(e)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 useOnBack((_, _2, next) => {
-  if (!step.value) next();
+  if (!step.value) next()
   else {
-    next(false);
-    step.value--;
+    next(false)
+    step.value--
   }
-});
+})
 </script>
 
 <template>

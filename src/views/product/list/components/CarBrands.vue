@@ -29,7 +29,8 @@ const getVehicles = async () => {
 
 const filteredItems = computed((): Brand[] | Vehicle[] => {
   const items = models.value?.length ? models.value : brands.value
-  if (search.value) return items?.filter((brand) => brand.name.includes(search.value!)) || []
+  if (search.value)
+    return items?.filter((brand) => brand.name.includes(search.value!)) || []
   else return items || []
 })
 
@@ -48,7 +49,12 @@ onMounted(getVehicles)
     <div class="mt-2 mb-4 d-flex justify-space-between">
       {{ $t('shared.brands') }}
 
-      <v-btn variant="icon" icon="close" density="comfortable" @click="emit('close')" />
+      <v-btn
+        variant="plain"
+        icon="close"
+        density="comfortable"
+        @click="emit('close')"
+      />
     </div>
 
     <v-text-field
@@ -63,7 +69,7 @@ onMounted(getVehicles)
   </v-card-title>
 
   <v-card-text class="pa-0">
-    <v-list lines="false">
+    <v-list :lines="false">
       <v-list-item
         v-for="item in filteredItems"
         :key="item.id"
