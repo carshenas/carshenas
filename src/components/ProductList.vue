@@ -20,7 +20,6 @@ const props = defineProps<{
 const _loading = ref<boolean>(false)
 const products = ref<Product[]>(props.items || [])
 
-// Fetch products only if items are not provided
 const shouldFetchProducts = computed(
   () => !props.items || props.items.length === 0
 )

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Category, CategoryFilter } from '@/types/dto/category'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 // Services
 import { getCategoryListService } from '@/services/carshenas/category'
@@ -13,10 +13,25 @@ const props = defineProps<{
   loading?: boolean
   filter?: CategoryFilter
   manual?: boolean
+  rows?: number // Optional prop to limit the number of rows
 }>()
+
 const _loading = ref<boolean>(false)
 const categories = ref<Category[]>()
 
+// Compute the limited categories based on the rows prop
+const limitedCategories = computed(() => {
+  if (!categories.value && props.items) {
+    return props.rows
+      ? props.items.slice(0, props.rows * 4) // Limit by rows * 4 (4 categories per row)
+      : props.items
+  }
+  return props.rows
+    ? categories.value?.slice(0, props.rows * 4) // Limit by rows * 4
+    : categories.value
+})
+
+console.log(limitedCategories.value)
 const getCategories = async () => {
   _loading.value = true
 
@@ -32,22 +47,17 @@ const getCategories = async () => {
 }
 
 onMounted(() => {
-  !props.manual ? getCategories() : undefined
+  if (!props.manual) {
+    getCategories()
+  }
 })
 </script>
 
 <template>
-  <v-row class=" align-start" v-if="!_loading && !props.loading" no-gutters>
-    <v-col
-      v-for="category in categories || props.items"
-      :key="category.id"
-      cols="3"
-      class=" d-flex justify-center "
-    >
-      <router-link
-        class="category w-100 d-flex flex-column justify-center align-center"
-        :to="{ name: 'ProductsPage', query: { category: category.id } }"
-      >
+  <v-row class="align-start" v-if="!_loading && !props.loading" no-gutters>
+    <v-col v-for="category in limitedCategories" :key="category.id" cols="3" class="d-flex justify-center">
+      <router-link class="category w-100 d-flex flex-column justify-center align-center"
+        :to="{ name: 'ProductsPage', query: { category: category.id } }">
         <div class="icon w-100 bg-primary rounded-circle d-flex justify-center align-center">
           <ImageLoader :src="category.image" :alt="category.name" width="32" />
         </div>
@@ -72,6 +82,7 @@ onMounted(() => {
   .icon {
     aspect-ratio: 1;
   }
+
   .title {
     font-size: 0.8rem;
     font-weight: 500;
