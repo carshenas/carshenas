@@ -104,7 +104,8 @@ const goBack = () => {
         v-on:ticketCreated="refreshTicketList" />
     </div>
 
-    <v-pagination v-model="currentPage" :length="totalPages" :total-visible="5" @input="refreshTicketList" />
+    <v-pagination v-if="totalPages > 1" v-model="currentPage" :length="totalPages" :total-visible="5"
+      @input="refreshTicketList" />
   </section>
 </template>
 

@@ -10,6 +10,7 @@ import checkout from './checkout'
 import product from './product'
 import pageNotFound from './page-not-found'
 import message from './message'
+import support from './support'
 
 export default {
   app,
@@ -23,5 +24,6 @@ export default {
   validation,
   checkout,
   pageNotFound,
-  message
+  message,
+  support
 }
