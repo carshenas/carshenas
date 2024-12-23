@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { ref } from 'vue'
 import CategoryList from '@/components/CategoryList.vue'
-import { RouterLink, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
 import SearchSuggestions from './components/SearchSuggestions.vue'
 import { useDatabaseStore } from '@/stores/database'
@@ -10,37 +10,32 @@ import { generateNumericId } from '@/helpers/general'
 import type { Category } from '@/types/dto/category'
 import { debounce } from 'lodash'
 import type { Product } from '@/types/dto/product'
-import { useCategoryStore } from '@/stores/category'
-import { getProductListService } from '@/services/carshenas/product'
+import { getSearchResultsService } from '@/services/carshenas/search'
 
 const router = useRouter()
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
-const categoryStore = useCategoryStore()
-const search = ref<string>()
-
 const products = ref<Product[]>()
+const categories = ref<Category[]>()
+const search = ref<string>();
 
-const categories = computed((): Category[] => {
-  return search.value
-    ? categoryStore.filteredCategories(categoryStore.categories, search.value)
-    : []
-})
-
-const getProducts = async () => {
+const fetchSearchResults = async () => {
   try {
-    const params = { title: search.value }
+    if (!search.value || search.value.length < 1) {
+      products.value = []
+      categories.value = []
+      return
+    }
 
-    const response = await getProductListService(params)
-    products.value = response.data.result
+    const response = await getSearchResultsService(search.value)
+    console.log(response.data)
+    products.value = response.data.products || []
+    categories.value = response.data.categories || []
   } catch (e) {
-    console.error(e)
+    console.error('Error fetching search results:', e)
   }
 }
 
-const onInput = debounce(() => {
-  if (!search.value || search.value.length < 2) return
-  getProducts()
-}, 1000)
+const onInput = debounce(fetchSearchResults, 1000)
 
 openDatabase('search', undefined, (db: IDBDatabase) => {
   db.createObjectStore('suggestions', { keyPath: 'id' })
@@ -59,22 +54,14 @@ onBeforeRouteLeave(async (to, from, next) => {
 <template>
   <div class="h-100 d-flex flex-column bar-padding">
     <div class="fixed-bar pa-4">
-      <v-text-field
-        v-model="search"
-        :placeholder="$t('shared.search')"
-        variant="outlined"
-        rounded
-        hide-details
-        prepend-inner-icon="arrow_forward_ios"
-        append-inner-icon="search"
-        @input="onInput"
-        @click:prepend-inner="router.back()"
-      />
+      <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
+        prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" @input="onInput"
+        @click:prepend-inner="router.back()" />
     </div>
 
     <SearchSuggestions class="px-4" :title="search" @select="search = $event" />
 
-    <template v-if="search && search.length > 2 && (products?.length || categories.length)">
+    <template v-if="search && search.length > 1 && (products?.length || categories?.length)">
       <div v-if="categories?.length">
         <h2 class="title-sm mt-6 px-4">
           {{
@@ -84,7 +71,7 @@ onBeforeRouteLeave(async (to, from, next) => {
           }}
         </h2>
 
-        <CategoryList :items="categories" class="mt-6 px-4" manual />
+        <CategoryList :rows="1" :items="categories" class="mt-6 px-4" manual />
       </div>
 
       <div v-if="products?.length" class="mt-6 w-100 d-flex px-4">
@@ -98,9 +85,9 @@ onBeforeRouteLeave(async (to, from, next) => {
 
         <v-spacer />
 
-        <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
+        <!-- <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
           {{ $t('search.viewAll') }}
-        </RouterLink>
+        </RouterLink> -->
       </div>
 
       <ProductList v-if="products?.length" :items="products" class="mt-6" manual />
