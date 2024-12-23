@@ -5,11 +5,12 @@ export interface ProductBase {
   price: number;
   quantity: number;
   stock: number;
+  out_of_stock?: boolean;
 }
 
 export interface ProductWithImage extends ProductBase {
   image: string;
-  images?: never; 
+  images?: never;
 }
 
 export interface ProductWithImages extends ProductBase {

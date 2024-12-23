@@ -78,7 +78,7 @@ const handleSubmit = async () => {
               :label="$t('user.address')"
               variant="outlined"
               :rules="[requiredRule]"
-              :placeholder="latLngString"
+              :placeholder="latLngString?.toString()"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -120,7 +120,14 @@ const handleSubmit = async () => {
         </v-row>
       </div>
       <div>
-        <v-btn block rounded="pill" color="primary" size="x-large" hide-details type="submit">
+        <v-btn
+          block
+          rounded="pill"
+          color="primary"
+          size="x-large"
+          hide-details
+          type="submit"
+        >
           {{ $t('shared.submit') }}
         </v-btn>
       </div>

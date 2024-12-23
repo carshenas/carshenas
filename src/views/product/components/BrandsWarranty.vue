@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed, defineEmits, watch } from "vue";
+import { ref, computed, defineEmits, watch, onMounted } from "vue";
 import CurrencyDisplay from "@/components/CurrencyDisplay.vue";
 import type { Brand, Variant, Warranty } from "@/types/dto/product";
 
@@ -42,6 +42,7 @@ const brands = computed<Brand[]>(() => {
   return Object.values(brandMap);
 });
 
+console.log(brands)
 function hasSelectedColor(brand: Brand): boolean {
   if (!props.selectedColorCode) {
     return true;
@@ -52,6 +53,17 @@ function hasSelectedColor(brand: Brand): boolean {
     );
   });
 }
+onMounted(() => {
+  const singleBrand = sortedBrands.value.length === 1 ? sortedBrands.value[0] : null;
+
+  if (singleBrand && singleBrand.warranties.length === 1) {
+    selectedBrandName.value = singleBrand.name;
+    selectedWarrantyName.value = singleBrand.warranties[0].name;
+    selectedWarranty.value = singleBrand.warranties[0];
+
+    emitWarranty(selectedWarranty.value, singleBrand);
+  }
+});
 
 function sortBrands(brands: Brand[]): Brand[] {
   return brands.slice().sort((a, b) => {
@@ -160,7 +172,7 @@ watch(showBottomSheet, (newVal) => {
 </script>
 
 <template>
-  <div class="d-flex flex-column t-4 px-4 ga-8">
+  <div class="d-flex flex-column mt-4 t-4 px-4">
     <div class="d-flex align-center">
       <h2 class="title-md" role="heading">{{ $t("product.brands") }}</h2>
       <div class="w-100 border h-0 mx-2"></div>
@@ -168,32 +180,19 @@ watch(showBottomSheet, (newVal) => {
 
     <v-container>
       <transition-group name="list" tag="div" class="d-flex flex-wrap">
-        <v-card
-          v-for="brand in sortedBrands"
-          :key="brand.name"
-          class="d-flex flex-column w-100 my-2"
-          @click="selectBrand(brand.name)"
-          variant="tonal"
-          :color="
-            selectedBrandName === brand.name ? 'primary' : 'grey-darken-2'
-          "
-          :style="{ opacity: hasSelectedColor(brand) ? 1 : 0.5 }"
-        >
+        <v-card v-for="brand in sortedBrands" :key="brand.name" class="d-flex flex-column w-100 my-2"
+          @click="selectBrand(brand.name)" variant="tonal" :color="selectedBrandName === brand.name ? 'primary' : 'grey-darken-2'
+            " :style="{ opacity: hasSelectedColor(brand) ? 1 : 0.5 }">
           <v-card-text>
             <div class="font-weight-bold">{{ brand.name }}</div>
-            <div
-              v-if="selectedBrandName === brand.name && selectedWarrantyName"
-              class="text-caption font-weight-thin"
-            >
+            <div v-if="selectedBrandName === brand.name && selectedWarrantyName" class="text-caption font-weight-thin">
               <span class="">{{ selectedWarrantyName }}</span>
               <v-icon icon="edit" class="mr-4" size="18"></v-icon>
             </div>
-            <div
-              v-else-if="
-                selectedBrandName === brand.name &&
-                selectedBrandWarranties.length === 1
-              "
-            >
+            <div v-else-if="
+              selectedBrandName === brand.name &&
+              selectedBrandWarranties.length === 1
+            ">
               <span>{{ selectedBrandWarranties[0].name }}</span>
             </div>
           </v-card-text>
@@ -205,39 +204,21 @@ watch(showBottomSheet, (newVal) => {
           <v-card-title>{{ selectedBrandTitle }}</v-card-title>
           <v-card-text>
             <v-radio-group dir="rtl" v-model="selectedWarrantyName">
-              <v-radio
-                class="d-flex justify-space-between warranty-radio"
-                v-for="warranty in selectedBrandWarranties"
-                :key="warranty.name"
-                :value="warranty.name"
-                color="primary"
-                :style="{
+              <v-radio class="d-flex justify-space-between warranty-radio" v-for="warranty in selectedBrandWarranties"
+                :key="warranty.name" :value="warranty.name" color="primary" :style="{
                   opacity: hasWarrantySelectedColor(warranty) ? 1 : 0.5,
-                }"
-              >
+                }">
                 <template v-slot:label>
-                  <div
-                    class="d-flex justify-space-between w-100 warranty-child"
-                    dir="rtl"
-                  >
+                  <div class="d-flex justify-space-between w-100 warranty-child" dir="rtl">
                     <span>{{ warranty.name }}</span>
-                    <CurrencyDisplay
-                      :value="Math.min(...warranty.price)"
-                      value-class="text-primary font-weight-bold"
-                    />
+                    <CurrencyDisplay :value="Math.min(...warranty.price)" value-class="text-primary font-weight-bold" />
                   </div>
                 </template>
               </v-radio>
             </v-radio-group>
           </v-card-text>
           <v-card-actions>
-            <v-btn
-              variant="flat"
-              size="large"
-              block
-              @click="confirmWarrantySelection"
-              >تایید</v-btn
-            >
+            <v-btn variant="flat" size="large" block @click="confirmWarrantySelection">تایید</v-btn>
           </v-card-actions>
         </v-card>
       </v-bottom-sheet>
@@ -250,9 +231,11 @@ watch(showBottomSheet, (newVal) => {
   border-color: var(--v-primary-base);
   background-color: var(--v-primary-lighten5);
 }
+
 .warranty-radio label {
   flex-grow: 1 !important;
 }
+
 .warranty-child {
   flex-grow: 1;
   display: flex;
@@ -263,11 +246,13 @@ watch(showBottomSheet, (newVal) => {
 .list-leave-active {
   transition: all 0.5s;
 }
+
 .list-enter,
 .list-leave-to {
   opacity: 0;
   transform: translateY(30px);
 }
+
 .list-move {
   transition: transform 0.3s;
 }

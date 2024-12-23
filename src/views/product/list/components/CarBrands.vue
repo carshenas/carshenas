@@ -3,10 +3,12 @@ import ImageLoader from '@/components/ImageLoader.vue'
 import { getVehicleService } from '@/services/carshenas/vehicle'
 import type { Brand, Vehicle } from '@/types/dto/brands'
 import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const brands = ref<Brand[]>()
 const models = ref<Vehicle[]>()
+const router = useRouter()
+const route = useRoute()
 const loading = ref<boolean>(false)
 const search = ref<string>()
 const emit = defineEmits<{
@@ -29,14 +31,14 @@ const getVehicles = async () => {
 
 const filteredItems = computed((): Brand[] | Vehicle[] => {
   const items = models.value?.length ? models.value : brands.value
-  if (search.value) return items?.filter((brand) => brand.name.includes(search.value!)) || []
+  if (search.value)
+    return items?.filter((brand) => brand.name.includes(search.value!)) || []
   else return items || []
 })
 
 const handleClick = (item: any) => {
   if (item.vehicles) return (models.value = item.vehicles)
-
-  useRouter().push({ query: { ...useRoute().query, vehicle_id: item.id } })
+  else router.push({ query: { ...route.query, vehicle: item.id } })
   emit('close')
 }
 
@@ -48,7 +50,12 @@ onMounted(getVehicles)
     <div class="mt-2 mb-4 d-flex justify-space-between">
       {{ $t('shared.brands') }}
 
-      <v-btn variant="icon" icon="close" density="comfortable" @click="emit('close')" />
+      <v-btn
+        variant="plain"
+        icon="close"
+        density="comfortable"
+        @click="emit('close')"
+      />
     </div>
 
     <v-text-field
@@ -63,7 +70,7 @@ onMounted(getVehicles)
   </v-card-title>
 
   <v-card-text class="pa-0">
-    <v-list lines="false">
+    <v-list :lines="false">
       <v-list-item
         v-for="item in filteredItems"
         :key="item.id"
