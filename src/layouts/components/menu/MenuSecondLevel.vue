@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import ImageLoader from "@/components/ImageLoader.vue";
-import type { Category } from "@/types/dto/category";
+import ImageLoader from '@/components/ImageLoader.vue'
+import type { Category } from '@/types/dto/category'
 
-defineProps<{ items: Category[] }>();
+defineProps<{ items: Category[] }>()
 const emit = defineEmits<{
-  (e: "select", payload: "back"): void;
-  (e: "close"): void;
-}>();
+  (e: 'select', payload: 'back'): void
+  (e: 'close'): void
+}>()
 
 const onClick = () => {
-  emit("select", "back");
-  emit("close");
-};
+  emit('select', 'back')
+  emit('close')
+}
 </script>
 
 <template>
@@ -42,6 +42,7 @@ const onClick = () => {
             </template>
           </v-list-item>
         </template>
+
         <router-link
           :to="{ name: 'ProductsPage', query: { category: category.id } }"
           @click="emit('close')"

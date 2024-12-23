@@ -3,10 +3,12 @@ import ImageLoader from '@/components/ImageLoader.vue'
 import { getVehicleService } from '@/services/carshenas/vehicle'
 import type { Brand, Vehicle } from '@/types/dto/brands'
 import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 const brands = ref<Brand[]>()
 const models = ref<Vehicle[]>()
+const router = useRouter()
+const route = useRoute()
 const loading = ref<boolean>(false)
 const search = ref<string>()
 const emit = defineEmits<{
@@ -36,8 +38,7 @@ const filteredItems = computed((): Brand[] | Vehicle[] => {
 
 const handleClick = (item: any) => {
   if (item.vehicles) return (models.value = item.vehicles)
-
-  useRouter().push({ query: { ...useRoute().query, vehicle_id: item.id } })
+  else router.push({ query: { ...route.query, vehicle: item.id } })
   emit('close')
 }
 
