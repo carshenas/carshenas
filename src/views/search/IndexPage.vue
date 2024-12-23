@@ -42,12 +42,20 @@ const onInput = debounce(() => {
   getProducts()
 }, 1000)
 
+const updateSearch = (e: string) => {
+  search.value = e
+  getProducts()
+}
+
 openDatabase('search', undefined, (db: IDBDatabase) => {
   db.createObjectStore('suggestions', { keyPath: 'id' })
 })
 
 onBeforeRouteLeave(async (to, from, next) => {
-  if ((to.name === 'ProductsPage' || to.name === 'ProductDetail') && search.value) {
+  if (
+    (to.name === 'ProductsPage' || to.name === 'ProductDetail') &&
+    search.value
+  ) {
     const searchDb = await getDb('search')
     const suggestions = getStore(searchDb, 'suggestions')
     add(suggestions, { title: search.value, id: generateNumericId() })
@@ -72,20 +80,32 @@ onBeforeRouteLeave(async (to, from, next) => {
       />
     </div>
 
-    <SearchSuggestions class="px-4" :title="search" @select="search = $event" />
+    <SearchSuggestions
+      class="px-4"
+      :title="search"
+      @select="updateSearch"
+      style="height: 68px"
+    />
 
-    <template v-if="search && search.length > 2 && (products?.length || categories.length)">
-      <div v-if="categories?.length">
-        <h2 class="title-sm mt-6 px-4">
-          {{
-            $t('search.searchInCategory', {
-              item: search
-            })
-          }}
-        </h2>
+    <template
+      v-if="
+        search && search.length > 2 && (products?.length || categories.length)
+      "
+    >
+      <h2 v-if="categories?.length" class="title-sm mt-6 px-4">
+        {{
+          $t('search.searchInCategory', {
+            item: search
+          })
+        }}
+      </h2>
 
-        <CategoryList :items="categories" class="mt-6 px-4" manual />
-      </div>
+      <CategoryList
+        v-if="categories?.length"
+        :items="categories"
+        class="mt-6 px-4"
+        manual
+      />
 
       <div v-if="products?.length" class="mt-6 w-100 d-flex px-4">
         <h2 class="title-sm">
@@ -103,11 +123,21 @@ onBeforeRouteLeave(async (to, from, next) => {
         </RouterLink>
       </div>
 
-      <ProductList v-if="products?.length" :items="products" class="mt-6" manual />
+      <ProductList
+        v-if="products?.length"
+        :items="products"
+        class="mt-6"
+        manual
+      />
     </template>
 
-    <div v-else-if="!search || search.length < 2" class="flex-grow-1 d-flex align-center">
-      <span class="w-100 text-center"> {{ $t('search.whatProductAreYouLookingFor') }} </span>
+    <div
+      v-else-if="!search || search.length < 2"
+      class="flex-grow-1 d-flex align-center"
+    >
+      <span class="w-100 text-center">
+        {{ $t('search.whatProductAreYouLookingFor') }}
+      </span>
     </div>
 
     <div v-else class="flex-grow-1 d-flex align-center">
