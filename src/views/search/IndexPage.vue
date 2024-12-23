@@ -37,12 +37,20 @@ const fetchSearchResults = async () => {
 
 const onInput = debounce(fetchSearchResults, 1000)
 
+const updateSearch = (e: string) => {
+  search.value = e
+  // getProducts()
+}
+
 openDatabase('search', undefined, (db: IDBDatabase) => {
   db.createObjectStore('suggestions', { keyPath: 'id' })
 })
 
 onBeforeRouteLeave(async (to, from, next) => {
-  if ((to.name === 'ProductsPage' || to.name === 'ProductDetail') && search.value) {
+  if (
+    (to.name === 'ProductsPage' || to.name === 'ProductDetail') &&
+    search.value
+  ) {
     const searchDb = await getDb('search')
     const suggestions = getStore(searchDb, 'suggestions')
     add(suggestions, { title: search.value, id: generateNumericId() })
@@ -59,7 +67,7 @@ onBeforeRouteLeave(async (to, from, next) => {
         @click:prepend-inner="router.back()" />
     </div>
 
-    <SearchSuggestions class="px-4" :title="search" @select="search = $event" />
+    <SearchSuggestions class="px-4" :title="search" @select="updateSearch" style="height: 68px" />
 
     <template v-if="search && search.length > 1 && (products?.length || categories?.length)">
       <div v-if="categories?.length">
@@ -94,7 +102,9 @@ onBeforeRouteLeave(async (to, from, next) => {
     </template>
 
     <div v-else-if="!search || search.length < 2" class="flex-grow-1 d-flex align-center">
-      <span class="w-100 text-center"> {{ $t('search.whatProductAreYouLookingFor') }} </span>
+      <span class="w-100 text-center">
+        {{ $t('search.whatProductAreYouLookingFor') }}
+      </span>
     </div>
 
     <div v-else class="flex-grow-1 d-flex align-center">

@@ -17,7 +17,7 @@ const emits = defineEmits<{
 
 const { getDb, getStore, getAll } = useDatabaseStore()
 
-const suggestions = ref<SearchSuggestion[]>([])
+const suggestions = ref<string[]>([])
 const loading = ref<boolean>(false)
 
 const getSuggestions = async () => {
@@ -26,14 +26,16 @@ const getSuggestions = async () => {
     const db = await getDb('search')
     const suggestionsStore = getStore(db, 'suggestions')
     const result = await getAll<SearchSuggestion>(suggestionsStore)
-    suggestions.value = result
+    suggestions.value = Array.from(new Set(result.map((item) => item.title)))
   } catch (e) {
     throw new Error(e as string)
   }
 }
 
-const filteredSuggestions = computed((): SearchSuggestion[] => {
-  return suggestions.value.filter((suggest) => suggest.title.indexOf(props.title) > -1)
+const filteredSuggestions = computed((): string[] => {
+  return suggestions.value.filter(
+    (suggest) => suggest.indexOf(props.title) > -1
+  )
 })
 
 onMounted(() => getSuggestions())
@@ -42,13 +44,13 @@ onMounted(() => getSuggestions())
 <template>
   <v-chip-group column class="mt-4 pa-0">
     <v-chip
-      v-for="suggestion in filteredSuggestions"
-      :key="suggestion.id"
+      v-for="(suggestion, index) in filteredSuggestions"
+      :key="index"
       variant="outlined"
       rounded
-      @click="emits('select', suggestion.title)"
+      @click="emits('select', suggestion)"
     >
-      {{ suggestion.title }}
+      {{ suggestion }}
     </v-chip>
   </v-chip-group>
 </template>
