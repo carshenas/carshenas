@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import ProductList from '@/components/ProductList.vue'
-import { useGetFilterFromURL } from '@/composable/filter'
 import type { ProductFilter } from '@/types/dto/product'
 import BrandFilterBottomSheet from './components/BrandFilterBottomSheet.vue'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
-const filter = computed((): ProductFilter => useGetFilterFromURL())
+const route = useRoute()
+const filter = computed((): ProductFilter => route.query)
 </script>
 
 <template>
