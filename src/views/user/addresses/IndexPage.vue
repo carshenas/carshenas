@@ -10,7 +10,7 @@ const showInfo = ref(false)
 const bottomSheetVisible = ref(false)
 const selectedPosition = ref<LatLng>({ lat: 0, lng: 0 })
 const selectedAddress = ref<string | null>(null)
-
+const loading = ref(false)
 const addressList = ref<Address[]>([])
 
 onMounted(async () => {
@@ -30,7 +30,9 @@ const handleShowInfoUpdate = (value: boolean) => {
   showInfo.value = value
 }
 
+
 const handleAddressSubmit = async (newAddress: SendAddress) => {
+  loading.value = true
   try {
     await sendAddressService(newAddress)
     showInfo.value = false
@@ -39,16 +41,21 @@ const handleAddressSubmit = async (newAddress: SendAddress) => {
     addressList.value = updatedList.data as unknown as Address[]
   } catch (error) {
     console.error('Error submitting address:', error)
+  } finally {
+    loading.value = false
   }
 }
 
 const handleDeleteAddress = async (id: number) => {
+  loading.value = true
   try {
     await delAddress(id)
     const updatedList = await getAddressList()
     addressList.value = updatedList.data as unknown as Address[]
   } catch (error) {
     console.error('Error deleting address:', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -67,32 +74,17 @@ const handleLatLngStringUpdate = (latLngString: string) => {
     <div class="d-flex flex-column ga-4">
       <v-bottom-sheet v-model="bottomSheetVisible">
         <template v-slot:activator="{ props }">
-          <v-btn
-            block
-            v-bind="props"
-            class="justify-space-between"
-            rounded="lg"
-            color="primary"
-            size="x-large"
-            append-icon="add"
-          >
+          <v-btn block v-bind="props" class="justify-space-between" rounded="lg" color="primary" size="x-large"
+            append-icon="add">
             {{ $t('user.newAddress') }}
           </v-btn>
         </template>
         <v-card class="d-flex flex-column ga-4" :title="$t('user.newAddress')">
-          <NewAddressMap
-            :showInfo="showInfo"
-            @update:position="handleMapPositionUpdate"
-            @update:showInfo="handleShowInfoUpdate"
-            @update:latLngString="handleLatLngStringUpdate"
-          />
+          <NewAddressMap :showInfo="showInfo" @update:position="handleMapPositionUpdate"
+            @update:showInfo="handleShowInfoUpdate" @update:latLngString="handleLatLngStringUpdate" />
 
-          <NewAddressInfo
-            v-if="showInfo"
-            :latLngString="selectedAddress"
-            :position="selectedPosition"
-            @submit="handleAddressSubmit"
-          />
+          <NewAddressInfo v-if="showInfo" :latLngString="selectedAddress" :loading="loading"
+            :position="selectedPosition" @submit="handleAddressSubmit" />
         </v-card>
       </v-bottom-sheet>
 
