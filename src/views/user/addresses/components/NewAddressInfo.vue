@@ -7,6 +7,7 @@ import type { VForm } from 'vuetify/components'
 const props = defineProps<{
   position: LatLng
   latLngString: string | null
+  loading: boolean
 }>()
 
 const emit = defineEmits<{
@@ -64,72 +65,42 @@ const handleSubmit = async () => {
 
 <template>
   <v-container>
-    <v-form
-      ref="formRef"
-      class="flex-grow-1 d-flex flex-column justify-space-between"
-      @submit.prevent="handleSubmit"
-    >
+    <v-form ref="formRef" class="flex-grow-1 d-flex flex-column justify-space-between" @submit.prevent="handleSubmit">
       <div>
         <v-row no-gutters>
           <v-col>
-            <v-text-field
-              v-model="address"
-              class="pa-1 mt-4"
-              :label="$t('user.address')"
-              variant="outlined"
-              :rules="[requiredRule]"
-              :placeholder="latLngString?.toString()"
-            ></v-text-field>
+            <v-text-field v-model="address" class="pa-1 mt-4" :label="$t('user.address')" variant="outlined"
+              :rules="[requiredRule]" :placeholder="latLngString?.toString()"></v-text-field>
           </v-col>
         </v-row>
 
         <v-row no-gutters>
           <v-col cols="3">
-            <v-text-field
-              type="tel"
-              v-model="plaque"
-              class="pa-1"
-              :label="$t('user.plaque')"
-              variant="outlined"
-              :rules="[positiveInteger]"
-            ></v-text-field>
+            <v-text-field type="tel" v-model="plaque" class="pa-1" :label="$t('user.plaque')" variant="outlined"
+              :rules="[positiveInteger]"></v-text-field>
           </v-col>
 
           <v-col cols="3">
-            <v-text-field
-              type="tel"
-              v-model="unit"
-              class="pa-1"
-              :label="$t('user.unit')"
-              variant="outlined"
-              :rules="[positiveInteger]"
-            ></v-text-field>
+            <v-text-field type="tel" v-model="unit" class="pa-1" :label="$t('user.unit')" variant="outlined"
+              :rules="[positiveInteger]"></v-text-field>
           </v-col>
 
           <v-col>
-            <v-text-field
-              v-model="postal_code"
-              type="tel"
-              class="pa-1"
-              :label="$t('user.postal_code')"
-              variant="outlined"
-              :rules="[postal_codeValidation]"
-              maxlength="10"
-            ></v-text-field>
+            <v-text-field v-model="postal_code" type="tel" class="pa-1" :label="$t('user.postal_code')"
+              variant="outlined" :rules="[postal_codeValidation]" maxlength="10"></v-text-field>
           </v-col>
         </v-row>
       </div>
       <div>
-        <v-btn
-          block
-          rounded="pill"
-          color="primary"
-          size="x-large"
-          hide-details
-          type="submit"
-        >
-          {{ $t('shared.submit') }}
+        <v-btn block rounded="pill" color="primary" size="x-large" hide-details type="submit" :disabled="loading">
+          <template v-if="loading">
+            <v-progress-circular indeterminate size="20" color="white" />
+          </template>
+          <template v-else>
+            {{ $t('shared.submit') }}
+          </template>
         </v-btn>
+
       </div>
     </v-form>
   </v-container>

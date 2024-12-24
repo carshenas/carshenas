@@ -5,6 +5,7 @@ import { createTicketService } from '@/services/carshenas/support'
 
 const formRef = ref<VForm | null>(null)
 const isLoading = ref(false)
+const loadingMessage = ref('') // Loading message state
 const rules = {
   required: (value: string) => !!value || ''
 }
@@ -19,22 +20,27 @@ const emit = defineEmits<{
 const handleSubmit = async () => {
   const { valid: isValid } = await formRef.value!.validate()
   if (isValid) {
-    const formData = new FormData() // Create a new FormData object
+    const formData = new FormData()
     formData.append('message', message.value)
     if (files.value.length > 0) {
       for (const file of files.value) {
-        formData.append('files[]', file) // Append each file with key 'files[]'
+        formData.append('files[]', file)
       }
     }
     try {
       isLoading.value = true
-      await createTicketService(formData) // Create the ticket via the service
-      emit('update:isFormVisible', false) // Hide the form upon successful submission
-      emit('ticketCreated') // Notify parent to refresh the ticket list
+      loadingMessage.value = 'در حال ثبت درخواست'
+      await createTicketService(formData)
+      emit('update:isFormVisible', false)
+      emit('ticketCreated')
     } catch (error) {
       console.error('Form submission failed:', error)
+      loadingMessage.value = 'مشکلی پیش آمد'
     } finally {
-      isLoading.value = false
+      setTimeout(() => {
+        isLoading.value = false
+        loadingMessage.value = ''
+      }, 2000)
     }
   }
 }
@@ -45,31 +51,21 @@ const props = defineProps<{
 </script>
 
 <template>
-  <v-form
-    ref="formRef"
-    v-if="props.isFormVisible"
-    class="d-flex flex-column justify-space-between"
-  >
+  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
+    <!-- Loading overlay -->
+    <v-overlay :model-value="isLoading" class="align-center justify-center">
+      <v-card color="white" width="300" height="150" class="d-flex flex-column align-center justify-center">
+        <v-progress-circular indeterminate color="primary" size="40"></v-progress-circular>
+        <span class="mt-4">{{ loadingMessage }}</span>
+      </v-card>
+    </v-overlay>
+
     <div>
-      <v-textarea
-        v-model="message"
-        :label="$t('support.textLabel')"
-        row-height="30"
-        rows="4"
-        variant="filled"
-        auto-grow
-        shaped
-        :rules="[rules.required]"
-        class="support-input"
-      ></v-textarea>
+      <v-textarea v-model="message" :label="$t('support.textLabel')" row-height="30" rows="4" variant="filled" auto-grow
+        shaped :rules="[rules.required]" class="support-input"></v-textarea>
     </div>
     <div>
-      <v-file-input
-        v-model="files"
-        :label="$t('support.fileLabel')"
-        placeholder="Upload your documents"
-        multiple
-      >
+      <v-file-input v-model="files" :label="$t('support.fileLabel')" placeholder="Upload your documents" multiple>
         <template v-slot:selection="{ fileNames }">
           <template v-for="fileName in fileNames" :key="fileName">
             <v-chip class="me-2" color="primary" size="small" label>
@@ -80,19 +76,14 @@ const props = defineProps<{
       </v-file-input>
     </div>
     <div>
-      <v-btn
-        block
-        rounded="pill"
-        color="primary"
-        size="x-large"
-        class="me-4"
-        @click="handleSubmit"
-      >
+      <v-btn block rounded="pill" color="primary" size="x-large" class="me-4" :disabled="isLoading"
+        @click="handleSubmit">
         {{ $t('shared.submit') }}
       </v-btn>
     </div>
   </v-form>
 </template>
+
 <style scoped>
 .justify-start {
   justify-content: flex-start;
@@ -104,5 +95,13 @@ const props = defineProps<{
 
 textarea {
   padding-top: 2rem !important;
+}
+
+.loading-overlay {
+  z-index: 1000;
+}
+
+.v-overlay__content {
+  background-color: rgba(255, 255, 255, 0.9);
 }
 </style>

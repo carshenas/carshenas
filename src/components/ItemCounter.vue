@@ -47,24 +47,15 @@ const remove = () => {
 <template>
   <div>
     <div v-if="!isInCart">
-      <v-btn @click="addToCart" rounded="xs" prepend-icon="add" >
+      <v-btn @click="addToCart" rounded="xs" prepend-icon="add">
         {{ $t("product.addToCart") }}
       </v-btn>
     </div>
 
     <div v-else>
-      <v-text-field
-        v-model.number="quantity"
-        :clearable="false"
-        variant="outlined"
-        density="compact"
-        hide-details
-        class="centered-input"
-        prepend-inner-icon="add"
-        append-inner-icon="remove"
-        @click:prepend-inner="add"
-        @click:append-inner="remove"
-      />
+      <v-text-field :value="quantity" readonly :clearable="false" variant="outlined" density="compact" hide-details
+        class="centered-input" prepend-inner-icon="add" append-inner-icon="remove" @click:prepend-inner="add"
+        @click:append-inner="remove" />
     </div>
   </div>
 </template>
