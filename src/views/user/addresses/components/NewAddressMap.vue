@@ -10,8 +10,9 @@ const zoom = ref(8)
 const center = ref<LatLng>({ lat: 35.6, lng: 51.3 })
 const selectedPosition = ref<LatLng>()
 const mapKey = ref(0)
-const latLngString = ref<string>('')
+const latLngString = ref<string>('') // Address string
 const isLoading = ref(false)
+const loadingMessage = ref<string>('') // Loading status message
 const { showInfo } = defineProps<{
   showInfo: boolean
 }>()
@@ -35,14 +36,19 @@ const handleMapClick = async (event: LeafletMouseEvent) => {
   const { lat, lng } = event.latlng
   try {
     isLoading.value = true
+    loadingMessage.value = 'در حال دریافت آدرس'
     const response = await getAddressService(lat, lng)
+
     latLngString.value = response.data.address
-    selectedPosition.value = { lat: event.latlng.lat, lng: event.latlng.lng }
-    center.value = { lat: event.latlng.lat, lng: event.latlng.lng }
+    loadingMessage.value = 'Address fetched successfully!'
+    selectedPosition.value = { lat, lng }
+    center.value = { lat, lng }
+
     emit('update:position', selectedPosition.value)
     emit('update:latLngString', latLngString.value)
   } catch (error) {
     console.error('Error:', error)
+    loadingMessage.value = 'مشکلی پیش آمده دوباره تلاش کنید'
   } finally {
     isLoading.value = false
   }
@@ -60,39 +66,33 @@ const handleEdit = () => {
 
 <template>
   <div class="position-relative">
-    <l-map
-      ref="map"
-      :key="mapKey"
-      v-model:zoom="zoom"
-      v-model:center="center"
-      @click="handleMapClick"
-      :useGlobalLeaflet="false"
-      :class="{ 'leaflet-height': !showInfo, 'leaflet-height-disable': showInfo }"
-      :style="{ 'pointer-events': showInfo || isLoading ? 'none' : 'auto' }"
-    >
-      <l-tile-layer
-        url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
-        layer-type="base"
-        name="Stadia Maps Basemap"
-      ></l-tile-layer>
+    <l-map ref="map" :key="mapKey" v-model:zoom="zoom" v-model:center="center" @click="handleMapClick"
+      :useGlobalLeaflet="false" :class="{ 'leaflet-height': !showInfo, 'leaflet-height-disable': showInfo }"
+      :style="{ 'pointer-events': showInfo || isLoading ? 'none' : 'auto' }">
+      <l-tile-layer url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png" layer-type="base"
+        name="Stadia Maps Basemap"></l-tile-layer>
 
       <l-marker v-if="selectedPosition" :lat-lng="selectedPosition" :icon="customIcon"></l-marker>
     </l-map>
+
+    <!-- Edit Button -->
     <v-btn v-if="showInfo" icon="edit" size="x-small" class="edit-btn" @click="handleEdit"> </v-btn>
   </div>
-  <v-container v-if="!showInfo">
+
+  <!-- Loading Message -->
+  <v-container v-if="isLoading" class="loading-container">
+    <p class="loading-text">{{ loadingMessage }}</p>
+  </v-container>
+
+  <!-- Address Display -->
+  <v-container v-if="!isLoading && !showInfo">
     <p>{{ latLngString }}</p>
   </v-container>
+
+  <!-- Submit Button -->
   <v-container v-if="!showInfo">
-    <v-btn
-      block
-      rounded="pill"
-      color="primary"
-      size="x-large"
-      hide-details
-      :disabled="!selectedPosition || isLoading"
-      @click="handleShowInfoUpdate"
-    >
+    <v-btn block rounded="pill" color="primary" size="x-large" hide-details :disabled="!selectedPosition || isLoading"
+      @click="handleShowInfoUpdate">
       {{ $t('shared.submit') }}
     </v-btn>
   </v-container>
@@ -106,10 +106,27 @@ const handleEdit = () => {
 .leaflet-height-disable {
   height: 150px !important;
 }
+
 .edit-btn {
   position: absolute;
   bottom: 1rem;
   right: 1rem;
   z-index: 1000;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  color: #666;
+  text-align: center;
 }
 </style>
