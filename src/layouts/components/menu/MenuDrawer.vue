@@ -17,23 +17,18 @@ const component = computed(() =>
 );
 
 const items = computed((): Category[] => {
+  if (search.value && search.value.length < 2) {
+    return categoryStore.filteredCategories(
+      categoryStore.categories,
+      search.value
+    );
+  }
   if (!selectedFirstLevel.value) {
-    if (search.value && search.value.length >= 2)
-      return categoryStore.filterByTitle(
-        categoryStore.categories,
-        search.value
-      );
     return categoryStore.categories;
   } else {
     const target = categoryStore.categories.find(
       (category) => category.id === selectedFirstLevel.value
     )!;
-    if (search.value && search.value.length > 2) {
-      return categoryStore.filterByTitle(
-        target.children ? target.children : [],
-        search.value
-      );
-    }
     return target.children ? target.children : [];
   }
 });
@@ -56,34 +51,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <v-navigation-drawer
-    v-model="isOpen"
-    :width="340"
-    location="start"
-    name="menu"
-    mobile-breakpoint="xxl"
-    disable-resize-watcher
-    disable-route-watcher
-    absolute
-    touchless
-  >
+  <v-navigation-drawer v-model="isOpen" :width="340" location="start" name="menu" mobile-breakpoint="xxl"
+    disable-resize-watcher disable-route-watcher absolute touchless>
     <div class="fixed-bar pa-4">
-      <v-text-field
-        v-model="search"
-        :placeholder="$t('shared.search')"
-        variant="outlined"
-        rounded
-        hide-details
-        append-inner-icon="search"
-      />
+      <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
+        append-inner-icon="search" />
     </div>
 
-    <component
-      class="custom-margin"
-      :is="component"
-      :items="items"
-      @select="onClick"
-    />
+    <component class="custom-margin" :is="component" :items="items" @select="onClick" />
   </v-navigation-drawer>
 </template>
 
