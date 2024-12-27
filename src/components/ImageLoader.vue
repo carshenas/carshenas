@@ -63,26 +63,37 @@ watch(
 </script>
 
 <template>
-  <picture
-    v-if="props.src"
-    ref="picture"
-    :style="`width: ${props.width}; height: ${props.height};`"
-  >
-    <source
-      v-for="image in images"
-      :key="image.type"
-      :srcset="image.src"
-      :type="image.type"
-    />
+  <picture v-if="props.src" ref="picture" :style="`width: ${props.width}; height: ${props.height};`">
+    <source v-for="image in images" :key="image.type" :srcset="image.src" :type="image.type" />
 
-    <img
-      :src="defaultImage"
-      :alt="props.alt"
-      :width="props.width"
-      :height="props.height"
-      :style="`aspect-ratio: ${props.aspectRatio};`"
-    />
+    <img :src="defaultImage" :alt="props.alt" :width="props.width" :height="props.height"
+      :style="`aspect-ratio: ${props.aspectRatio};`" />
   </picture>
 
   <v-icon v-else icon="hide_image" />
 </template>
+<style scoped>
+picture {
+  position: relative;
+  display: inline-block;
+}
+
+img {
+  /* filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg); */
+  mix-blend-mode: multiply;
+}
+
+picture::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  /* Background to target */
+  z-index: -1;
+  mix-blend-mode: screen;
+  /* Keeps white from multiplying blend locally */
+}
+</style>
