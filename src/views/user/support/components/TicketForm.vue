@@ -52,18 +52,13 @@ const props = defineProps<{
 
 <template>
   <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
-    <!-- Loading overlay -->
-    <v-overlay :model-value="isLoading" class="align-center justify-center">
-      <v-card color="white" width="300" height="150" class="d-flex flex-column align-center justify-center">
-        <v-progress-circular indeterminate color="primary" size="40"></v-progress-circular>
-        <span class="mt-4">{{ loadingMessage }}</span>
-      </v-card>
-    </v-overlay>
-
+    <!-- Message input -->
     <div>
       <v-textarea v-model="message" :label="$t('support.textLabel')" row-height="30" rows="4" variant="filled" auto-grow
         shaped :rules="[rules.required]" class="support-input"></v-textarea>
     </div>
+
+    <!-- File input -->
     <div>
       <v-file-input v-model="files" :label="$t('support.fileLabel')" placeholder="Upload your documents" multiple>
         <template v-slot:selection="{ fileNames }">
@@ -75,14 +70,24 @@ const props = defineProps<{
         </template>
       </v-file-input>
     </div>
+
+    <!-- Submit button -->
     <div>
       <v-btn block rounded="pill" color="primary" size="x-large" class="me-4" :disabled="isLoading"
         @click="handleSubmit">
-        {{ $t('shared.submit') }}
+        <!-- Show loading spinner when isLoading is true -->
+        <template v-if="isLoading">
+          <v-progress-circular indeterminate color="white" size="20" class="me-2"></v-progress-circular>
+          {{ $t('shared.loading') }}
+        </template>
+        <template v-else>
+          {{ $t('shared.submit') }}
+        </template>
       </v-btn>
     </div>
   </v-form>
 </template>
+
 
 <style scoped>
 .justify-start {

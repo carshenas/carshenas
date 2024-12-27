@@ -12,6 +12,7 @@ import { useCartStore } from '@/stores/cart'
 import type { Variant, Warranty, Brand } from '@/types/dto/product'
 import SpecSection from './components/SpecSection.vue'
 import ItemCounter from '@/components/ItemCounter.vue'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const product = ref<Record<string, any>>({})
@@ -25,7 +26,8 @@ const selectedTab = ref(0)
 const isLoading = ref(true)
 const cartStore = useCartStore()
 const snackbar = ref(false)
-
+const userStore = useUserStore();
+const isLoggedIn = userStore.isLoggedIn;
 const handleSelectedWarranty = (selectedWarrantyData: Warranty | null) => {
   if (selectedWarrantyData) {
     selectedWarrantyPrice.value = Math.min(...selectedWarrantyData.price)
@@ -66,7 +68,6 @@ const handleSelectColor = (colorCode: string) => {
   selectedColorCode.value = colorCode
 }
 
-// Check if there are variants with color defined
 const hasColorVariants = computed<boolean>(() => {
   return variants.value.some((variant) => !!variant.color)
 })
@@ -123,7 +124,8 @@ const showSnackbar = (message: string) => {
 </script>
 
 <template>
-  <v-carousel v-if="product.images && product.images.length > 0" show-arrows="hover" hide-delimiter-background class="gallery">
+  <v-carousel v-if="product.images && product.images.length > 0" show-arrows="hover" hide-delimiter-background
+    class="gallery">
     <v-carousel-item height="360" min-height="360" v-for="(image, index) in product.images" :key="index">
       <ImageLoader :src="image" height="360" width="100%" :alt="`${product.title} ${index + 1}`" />
     </v-carousel-item>
@@ -166,12 +168,15 @@ const showSnackbar = (message: string) => {
       @updateWarranty="handleSelectedWarranty" @updateBrand="handleSelectedBrand" />
   </div>
 
-  <ProductReview :desc="product.description" />
+  <ProductReview v-if="product.description !== ''" :desc="product.description" />
 
   <SpecSection :spec="spec" v-if="Object.keys(spec).length" />
 
-  <CommentSection :comments="product.feedbacks" :id="product.id" @feedbackSubmitted="fetchProductDetails" />
-
+  <CommentSection v-if="isLoggedIn" :comments="product.feedbacks" :id="product.id"
+    @feedbackSubmitted="fetchProductDetails" />
+  <div class="pa-4 text-center" v-else>
+    <span>برای ثبت نظر وارد شوید</span>
+  </div>
   <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant" />
     <div v-else>
@@ -188,9 +193,10 @@ const showSnackbar = (message: string) => {
 </template>
 
 <style lang="scss" scoped>
-.gallery{
+.gallery {
   height: 360px;
 }
+
 .v-carousel {
   width: 100%;
   height: auto !important;

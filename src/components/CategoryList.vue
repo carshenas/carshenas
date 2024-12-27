@@ -58,8 +58,8 @@ onMounted(() => {
     <v-col v-for="category in limitedCategories" :key="category.id" cols="3" class="d-flex justify-center">
       <router-link class="category w-100 d-flex flex-column justify-center align-center"
         :to="{ name: 'ProductsPage', query: { category: category.id } }">
-        <div class="icon w-100 bg-primary rounded-circle d-flex justify-center align-center">
-          <ImageLoader :src="category.image" :alt="category.name" width="32" />
+        <div class="icon w-100 bg-category rounded-circle d-flex justify-center align-center">
+          <ImageLoader :src="category.image" :alt="category.name" width="48" />
         </div>
 
         <span class="title mt-2 text-text w-100">{{ category.name }}</span>
@@ -75,6 +75,11 @@ onMounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.bg-category {
+  background: #ffeee4;
+}
+
+
 .category {
   text-decoration: none;
   max-width: 64px;
