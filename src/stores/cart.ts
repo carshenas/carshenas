@@ -31,6 +31,7 @@ export const useCartStore = defineStore("cart", () => {
         id: item.id,
         stock: item.stock,
         variant: {
+          name: item.variant.name,
           id: item.variant.id,
           price: item.variant.price,
           warranty: item.variant.warranty,
