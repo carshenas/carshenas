@@ -1,93 +1,156 @@
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
-import type { Variant } from "@/types/dto/product";
+import { ref, computed, watch } from "vue";
+import {
+  deleteBasketService,
+  getBasketService,
+  patchBasketService,
+} from "@/services/carshenas/basket";
+import type { BasketItem } from "@/types/dto/basket";
+
+const CART_STORAGE_KEY = "cart-items";
+
+// Load the cart from local storage
+const loadCartFromLocalStorage = (): BasketItem[] => {
+  const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+  return storedCart ? JSON.parse(storedCart) : [];
+};
+
+// Save the cart to local storage
+const saveCartToLocalStorage = (items: BasketItem[]) => {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+};
 
 export const useCartStore = defineStore("cart", () => {
-  const items = ref<Variant[]>([]);
-  const address = ref<string>("");
+  const items = ref<BasketItem[]>(loadCartFromLocalStorage());
 
-  const logCartChange = (action: string, details: any) => {
-    console.log(`Cart ${action}:`, details);
-    console.log("Current cart state:", JSON.parse(JSON.stringify(items.value)));
+  // Fetch cart items from the API
+  const fetchCart = async () => {
+    try {
+      const response = await getBasketService();
+      items.value = response.data.map((item: BasketItem) => ({
+        id: item.id,
+        stock: item.stock,
+        variant: {
+          id: item.variant.id,
+          price: item.variant.price,
+          warranty: item.variant.warranty,
+          color: item.variant.color,
+          image: item.variant.image || null,
+          images: item.variant.images || [], // Default to empty array
+          quantity: item.variant.quantity || 0, // Default to 0
+          out_of_stock: item.variant.out_of_stock || false, // Default to false
+          is_unlimited: item.variant.is_unlimited || false, // Default to false
+          specification: item.variant.specification || {}, // Default to empty object
+          brand: item.variant.brand || "", // Default to an empty string
+        },
+      }));
+      saveCartToLocalStorage(items.value); // Sync with local storage
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    }
   };
 
-  // Add item to cart
-  const addItem = (product: Variant) => {
-    items.value.push(product);
-    logCartChange("Item added", product);
-  };
+  const addItem = (newItem: BasketItem) => {
+    // Check if the variant already exists in the cart
+    const existingItem = items.value.find(
+      (item) => item.variant.id === newItem.variant.id
+    );
 
-  // Update item's quantity in cart
-  const updateCount = (id: number, quantity: number) => {
-    const index = items.value.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      const oldQuantity = items.value[index].quantity;
-      items.value[index].quantity = quantity;
-      logCartChange("Quantity updated", {
-        id,
-        oldQuantity,
-        newQuantity: quantity,
+    if (existingItem) {
+      // If the variant exists, increase the stock
+      existingItem.stock += newItem.stock;
+    } else {
+      // Add a new item to the cart
+      items.value.push({
+        id: newItem.id,
+        stock: newItem.stock,
+        variant: {
+          id: newItem.variant.id,
+          price: newItem.variant.price,
+          warranty: newItem.variant.warranty,
+          color: newItem.variant.color,
+          image: newItem.variant.image || null,
+          images: newItem.variant.images || [], // Default to empty array
+          quantity: newItem.variant.quantity || 0, // Default to 0
+          out_of_stock: newItem.variant.out_of_stock || false, // Default to false
+          is_unlimited: newItem.variant.is_unlimited || false, // Default to false
+          specification: newItem.variant.specification || {}, // Default to empty object
+          brand: newItem.variant.brand || "", // Default to an empty string
+        },
       });
-    } else {
-      console.warn(
-        `Attempted to update quantity for non-existent item with id ${id}`
-      );
+    }
+    saveCartToLocalStorage(items.value);
+  };
+
+  const updateQuantity = async (cartId: number, stock: number) => {
+    const item = items.value.find((item) => item.id === cartId);
+    console.log(item);
+    if (!item) return;
+    try {
+      await patchBasketService(cartId, { stock });
+      item.stock = stock;
+      saveCartToLocalStorage(items.value);
+    } catch (error) {
+      console.error("Failed to update item quantity:", error);
     }
   };
 
-  // Remove item from cart
-  const removeItem = (id: number) => {
-    const index = items.value.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      const removedItem = items.value[index];
+  const removeItem = async (cartId: number) => {
+    const index = items.value.findIndex((item) => item.id === cartId);
+    if (index === -1) return;
+
+    try {
+      await deleteBasketService(cartId);
       items.value.splice(index, 1);
-      logCartChange("Item removed", removedItem);
-    } else {
-      console.warn(`Attempted to remove non-existent item with id ${id}`);
+      saveCartToLocalStorage(items.value);
+    } catch (error) {
+      console.error("Failed to remove item:", error);
     }
   };
 
-  // Clear all items from the cart
-  const wipeItems = () => {
-    const oldItems = [...items.value];
-    items.value = [];
-    logCartChange("Cart wiped", { removedItems: oldItems });
+  const clearCart = async () => {
+    try {
+      const deletePromises = items.value.map((item) =>
+        deleteBasketService(item.id)
+      );
+      await Promise.all(deletePromises);
+      items.value = [];
+      saveCartToLocalStorage(items.value);
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+    }
   };
 
-  // Compute the total payable amount
   const payableAmount = computed(() =>
-    items.value.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    items.value.reduce(
+      (total, item) => total + (item.variant.price ?? 0) * item.stock,
+      0
+    )
   );
 
-  // Watch for changes in the payable amount
-  watch(payableAmount, (newValue, oldValue) => {
-    console.log("Payable amount changed:", { oldValue, newValue });
-  });
+  const isItemInCart = (variantId: number) =>
+    items.value.some((item) => item.variant.id === variantId);
 
-  // Initial cart state log
-  console.log(
-    "Cart store initialized:",
-    JSON.parse(JSON.stringify(items.value))
-  );
-
-  // Helper getter to check if item is in the cart
-  const isItemInCart = (id: number) => items.value.some(item => item.id === id);
-
-  // Get the quantity of a specific item in the cart
-  const getItemQuantity = (id: number) => {
-    const item = items.value.find(item => item.id === id);
-    return item ? item.quantity : 0;
+  const getItemQuantity = (variantId: number) => {
+    const item = items.value.find((item) => item.variant.id === variantId);
+    return item ? item.stock : 0;
   };
+
+  // Automatically save to localStorage whenever items change
+  watch(items, (newItems) => saveCartToLocalStorage(newItems), { deep: true });
+
+  // Fetch cart initially when the store is created
+  fetchCart();
 
   return {
     items,
     addItem,
-    updateCount,
+    updateQuantity,
     removeItem,
-    wipeItems,
-    address,
+    clearCart,
     payableAmount,
     isItemInCart,
-    getItemQuantity
+    getItemQuantity,
+    fetchCart,
   };
 });

@@ -1,10 +1,10 @@
 export interface ProductBase {
   id: number;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   price: number;
   quantity: number;
-  stock: number;
+  stock?: number;
   out_of_stock?: boolean;
 }
 
@@ -15,7 +15,7 @@ export interface ProductWithImage extends ProductBase {
 
 export interface ProductWithImages extends ProductBase {
   images: string[];
-  image?: never;
+  image?: string | null;
 }
 
 export type Product = ProductWithImage | ProductWithImages;
@@ -25,10 +25,10 @@ export interface ProductFilter {
 }
 
 export interface Variant extends ProductWithImages {
-  is_unlimited: boolean;
-  specification: Record<string, any>;
+  is_unlimited?: boolean;
+  specification?: Record<string, any>;
   brand: string;
-  warranty: string;
+  warranty?: string;
   color: Color;
 }
 

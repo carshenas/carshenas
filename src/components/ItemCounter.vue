@@ -2,42 +2,66 @@
 import { computed } from "vue";
 import { useCartStore } from "@/stores/cart";
 import type { Variant } from "@/types/dto/product";
+import { addToBasketService } from "@/services/carshenas/basket";
 
 const props = defineProps<{
   variant: Variant;
 }>();
 
+// Access the cart store
 const cartStore = useCartStore();
 
-// Use store's getter to determine if the item is in the cart
-const isInCart = computed(() => cartStore.isItemInCart(props.variant.id));
+// Check if the item is already in the cart
+const isInCart = computed(() =>
+  cartStore.items.some((item) => item.variant.id === props.variant.id)
+);
 
-// Using store's getter to access item quantity
+// Get and set the quantity of the item in the cart
 const quantity = computed({
-  get: () => cartStore.getItemQuantity(props.variant.id),
+  get: () => {
+    const item = cartStore.items.find(
+      (item) => item.variant.id === props.variant.id
+    );
+    return item ? item.stock : 0;
+  },
   set: (value: number) => {
-    cartStore.updateCount(props.variant.id, value);
+    if (value > 0) {
+      cartStore.updateQuantity(props.variant.id, value);
+    } else {
+      cartStore.removeItem(props.variant.id);
+    }
   },
 });
 
-// Function to add item to cart
-const addToCart = () => {
-  const variantWithQuantity = {
-    ...props.variant,
-    quantity: 1,
-  };
-  cartStore.addItem(variantWithQuantity);
+// Function to add item to the cart and call the API
+const addToCart = async () => {
+  try {
+    // Call the API to add the item to the backend cart
+    await addToBasketService({
+      variant: props.variant.id,
+      stock: 1,
+    });
+
+    // Add the item to the store
+    cartStore.addItem({
+      id: props.variant.id,
+      variant: props.variant,
+      stock: 1,
+    });
+  } catch (error) {
+    console.error("Failed to add to basket:", error);
+  }
 };
 
-// Using store's actions for updating quantities
+// Function to increment the quantity of an item in the cart
 const add = () => {
-  cartStore.updateCount(props.variant.id, quantity.value + 1);
+  cartStore.updateQuantity(props.variant.id, quantity.value + 1);
 };
 
+// Function to decrement the quantity of an item in the cart or remove it
 const remove = () => {
-  const currentQuantity = quantity.value;
-  if (currentQuantity > 1) {
-    cartStore.updateCount(props.variant.id, currentQuantity - 1);
+  if (quantity.value > 1) {
+    cartStore.updateQuantity(props.variant.id, quantity.value - 1);
   } else {
     cartStore.removeItem(props.variant.id);
   }
@@ -46,12 +70,14 @@ const remove = () => {
 
 <template>
   <div>
+    <!-- Show "Add to Cart" button if the item is not in the cart -->
     <div v-if="!isInCart">
       <v-btn @click="addToCart" rounded="xs" prepend-icon="add">
         {{ $t("product.addToCart") }}
       </v-btn>
     </div>
 
+    <!-- Show quantity controls if the item is in the cart -->
     <div v-else>
       <v-text-field :value="quantity" readonly :clearable="false" variant="outlined" density="compact" hide-details
         class="centered-input" prepend-inner-icon="add" append-inner-icon="remove" @click:prepend-inner="add"

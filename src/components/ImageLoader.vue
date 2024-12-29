@@ -12,7 +12,7 @@ const props = defineProps<{
   src: NullableString;
   width?: string;
   height?: string;
-  alt: string;
+  alt?: string;
   types?: ImageExtension[];
   aspectRatio?: string;
 }>();

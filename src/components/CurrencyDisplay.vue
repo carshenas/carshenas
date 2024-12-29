@@ -8,15 +8,16 @@ const appConfig = useAppConfig()
 
 const props = withDefaults(
   defineProps<{
-    value: NullableNumber | NullableString
+    value?: NullableNumber | NullableString
     valueClass?: string | string[]
     unitClass?: string | string[]
     showUnit?: boolean
   }>(),
   { showUnit: true }
 )
+
 const computedValue = computed(() => {
-  return toDisplayCurrency(props.value)
+  return props.value && toDisplayCurrency(props.value)
 })
 </script>
 

@@ -55,20 +55,33 @@ const handleItemCounter = (product: Product, quantity: number) => {
     if (quantity === 0) {
       cartStore.removeItem(existingItem.id)
     } else {
-      cartStore.updateCount(existingItem.id, quantity)
+      cartStore.updateQuantity(existingItem.id, quantity)
     }
   }
 }
-
+// const handleWipeItem = async (productId: number) => {
+//   try {
+//     const itemsToWipe = cartStore.items.filter(item => item.id === productId)
+//     if (itemsToWipe.length > 0) {
+//       await cartStore.clearCart(itemsToWipe.map(item => item.id))
+//     }
+//   } catch (error) {
+//     console.error('Failed to wipe items:', error)
+//   }
+// }
 const getCartQuantity = (productId: number): number => {
   const item = cartStore.items.find((item) => item.id === productId)
-  return item ? item.quantity : 0
+  return item ? item.stock : 0
 }
 
+// In your product list component
 const getCartVariant = (productId: number): Variant | null => {
-  const item = cartStore.items.find((item) => item.id === productId)
-  return item || null // Ensure explicit null handling
-}
+  const item = cartStore.items.find((item) => item.variant.id === productId);
+  if (!item) return null;
+
+  return item.variant;  // This is now safe because item.variant is already of type Variant
+};
+
 </script>
 
 <template>
@@ -81,8 +94,8 @@ const getCartVariant = (productId: number): Variant | null => {
       <v-row>
         <v-col cols="4" class="d-flex align-center">
           <ImageLoader :src="product.images && product.images.length > 0
-              ? product.images[0]
-              : product.image || 'placeholder.jpg'
+            ? product.images[0]
+            : product.image || 'placeholder.jpg'
             " :alt="product.name" width="86" height="86" aspectRatio="1" />
         </v-col>
 
@@ -91,7 +104,7 @@ const getCartVariant = (productId: number): Variant | null => {
             <h2 class="title-sm">{{ product.name }}</h2>
 
             <v-btn v-if="props.hasCounter && getCartQuantity(product.id) > 0" density="compact" icon="delete"
-              variant="plain" class="px-0" @click="handleItemCounter(product, 0)" />
+              variant="plain" class="px-0" />
           </div>
 
           <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
