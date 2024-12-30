@@ -1,7 +1,7 @@
-import type { NullableString } from './global'
+import type { Nullable } from './utilities'
 
 export default interface AppConfig {
-  appVersion: NullableString
+  appVersion: Nullable<string>
   baseCurrencyUnit: 'IRT' | 'IRR'
   displayCurrencyUnit: 'IRT' | 'IRR'
   websiteUrl: string
@@ -9,6 +9,6 @@ export default interface AppConfig {
   serverFilesRootPath: string
   staticFileServer: string
   thumbnailEnabled: boolean
-  thumbnailServer: NullableString
-  thumbnailServerRoot: NullableString
+  thumbnailServer: Nullable<string>
+  thumbnailServerRoot: Nullable<string>
 }

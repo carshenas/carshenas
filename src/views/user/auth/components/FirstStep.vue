@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import vMobileInput from '@/directives/v-mobile-input'
 import vFocus from '@/directives/v-focus'
-import { mobile, required } from '@/helpers/validation'
+import validator from '@/helpers/validator'
 import { useI18n } from 'vue-i18n'
-import type { ValidationParam, ValidationResult } from '@/types/validation'
 import { ref } from 'vue'
 
 defineProps<{
@@ -12,8 +11,8 @@ defineProps<{
 const { t } = useI18n()
 const phoneNumber = ref<string>()
 const rules = [
-  (v: ValidationParam): ValidationResult => required(v, t('shared.phone')),
-  (v: ValidationParam): ValidationResult => mobile(v, t('shared.phone'))
+  (v: any) => validator(v, 'required', t('shared.title')),
+  (v: any) => validator(v, 'mobile', t('shared.title'))
 ]
 
 const getPhoneNumber = () => phoneNumber.value

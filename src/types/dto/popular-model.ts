@@ -1,5 +1,5 @@
 export default interface PopularModel {
   id: number
-  title: string
+  name: string
   image: string
 }

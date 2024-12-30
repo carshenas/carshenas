@@ -1,16 +1,14 @@
-export type NullableString = string | null
-export type NullableNumber = number | null
-export type NullableBoolean = boolean | null
+import type { Nullable } from './utilities'
 
 export interface ElementData {
-	id: number
-	title: string
+  id: number
+  title: string
 }
 
 export interface ElementDescriptionData extends ElementData {
-	description: NullableString
+  description: Nullable<string>
 }
 
 export interface ElementImageDescriptionData extends ElementDescriptionData {
-	image: NullableString
+  image: Nullable<string>
 }

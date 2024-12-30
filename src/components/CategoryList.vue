@@ -31,7 +31,6 @@ const limitedCategories = computed(() => {
     : categories.value
 })
 
-console.log(limitedCategories.value)
 const getCategories = async () => {
   _loading.value = true
 
@@ -55,10 +54,19 @@ onMounted(() => {
 
 <template>
   <v-row class="align-start" v-if="!_loading && !props.loading" no-gutters>
-    <v-col v-for="category in limitedCategories" :key="category.id" cols="3" class="d-flex justify-center">
-      <router-link class="category w-100 d-flex flex-column justify-center align-center"
-        :to="{ name: 'ProductsPage', query: { category: category.id } }">
-        <div class="icon w-100 bg-category rounded-circle d-flex justify-center align-center">
+    <v-col
+      v-for="category in limitedCategories"
+      :key="category.id"
+      cols="3"
+      class="d-flex justify-center"
+    >
+      <router-link
+        class="category w-100 d-flex flex-column justify-center align-center"
+        :to="{ name: 'ProductsPage', query: { category: category.id } }"
+      >
+        <div
+          class="icon w-100 bg-category rounded-circle d-flex justify-center align-center"
+        >
           <ImageLoader :src="category.image" :alt="category.name" width="48" />
         </div>
 
@@ -78,7 +86,6 @@ onMounted(() => {
 .bg-category {
   background: #ffeee4;
 }
-
 
 .category {
   text-decoration: none;

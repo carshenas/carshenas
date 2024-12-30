@@ -37,7 +37,7 @@ onMounted(() => getModels())
     >
       <ImageLoader
         :src="model.image"
-        :alt="model.title"
+        :alt="model.name"
         class="rounded-lg pop-models"
         width="132"
         height="164"

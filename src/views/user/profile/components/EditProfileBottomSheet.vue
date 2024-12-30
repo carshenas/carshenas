@@ -2,7 +2,8 @@
 import { updateUserService } from '@/services/carshenas/user'
 import { useUserStore } from '@/stores/user'
 import type { User } from '@/types/dto/user'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import validator from '@/helpers/validator'
 
 const userStore = useUserStore()
 const model = ref<Pick<User, 'firstName' | 'lastName' | 'nationalCode'>>({
@@ -12,6 +13,7 @@ const model = ref<Pick<User, 'firstName' | 'lastName' | 'nationalCode'>>({
 })
 const isOpen = ref<boolean>(false)
 const loading = ref<boolean>(false)
+const isValid = ref<boolean>(false)
 
 const onSubmit = async () => {
   loading.value = true
@@ -21,19 +23,36 @@ const onSubmit = async () => {
     userStore.user.lastName = model.value.lastName
     userStore.user.nationalCode = model.value.nationalCode
     userStore.updateStoredData()
-    isOpen.value = false
+    close()
   } catch (e) {
     console.warn(e)
   } finally {
     loading.value = false
   }
 }
+
+const close = () => {
+  model.value = {
+    firstName: userStore.user.firstName,
+    lastName: userStore.user.lastName,
+    nationalCode: userStore.user.nationalCode
+  }
+  isOpen.value = false
+}
+
+const isModified = computed(() =>
+  model.value.firstName === userStore.user.firstName &&
+  model.value.lastName === userStore.user.lastName &&
+  model.value.nationalCode === userStore.user.nationalCode
+    ? false
+    : true
+)
 </script>
 
 <template>
-  <v-bottom-sheet v-model="isOpen">
+  <v-bottom-sheet v-model="isOpen" persistent>
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" icon="edit" variant="plain" />
+      <v-btn v-bind="props" icon="edit" variant="plain" density="compact" />
     </template>
 
     <v-card>
@@ -45,24 +64,42 @@ const onSubmit = async () => {
             variant="plain"
             icon="close"
             density="comfortable"
-            @click="isOpen = false"
+            @click="close()"
           />
         </div>
       </v-card-title>
 
       <v-card-text>
-        <v-form @submit.prevent="onSubmit">
+        <v-form v-model="isValid" @submit.prevent="onSubmit">
           <v-text-field
             v-model="model.firstName"
             :label="$t('user.firstName')"
+            class="mb-4"
           />
-          <v-text-field v-model="model.lastName" :label="$t('user.lastName')" />
+
+          <v-text-field
+            v-model="model.lastName"
+            :label="$t('user.lastName')"
+            class="mb-4"
+          />
+
           <v-text-field
             v-model="model.nationalCode"
             :label="$t('user.nationalCode')"
+            :rules="[
+              (v: any) => validator(v, 'nationalId', $t('user.nationalCode'))
+            ]"
+            maxLength="10"
+            class="mb-4"
           />
 
-          <v-btn :text="$t('shared.submit')" type="submit" :loading block />
+          <v-btn
+            :text="$t('shared.submit')"
+            :loading
+            :disabled="!isModified || !isValid"
+            type="submit"
+            block
+          />
         </v-form>
       </v-card-text>
     </v-card>

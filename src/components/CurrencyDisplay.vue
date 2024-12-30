@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import useAppConfig from '@/composable/app-config'
 import { toDisplayCurrency } from '@/helpers/currency'
-import type { NullableNumber, NullableString } from '@/types/global'
+import type { Nullable } from '@/types/utilities'
 import { computed } from 'vue'
 
 const appConfig = useAppConfig()
 
 const props = withDefaults(
   defineProps<{
-    value: NullableNumber | NullableString
+    value: Nullable<number> | Nullable<string>
     valueClass?: string | string[]
     unitClass?: string | string[]
     showUnit?: boolean
@@ -26,7 +26,11 @@ const computedValue = computed(() => {
       {{ computedValue }}
     </span>
 
-    <span v-if="props.showUnit" :class="['ms-1', props.unitClass]" data-test="unit">
+    <span
+      v-if="props.showUnit"
+      :class="['ms-1', props.unitClass]"
+      data-test="unit"
+    >
       {{ $t(`currency.${appConfig.displayCurrencyUnit}`) }}
     </span>
   </div>
