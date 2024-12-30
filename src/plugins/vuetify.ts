@@ -66,6 +66,7 @@ export default createVuetify({
       flat: true
     },
     VTextField: {
+      hideDetails: 'auto',
       variant: 'outlined'
     }
   }

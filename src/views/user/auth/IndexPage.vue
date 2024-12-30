@@ -9,12 +9,12 @@ import { useRoute, useRouter } from 'vue-router'
 
 // Services
 import { getOTPService, validateOTPService } from '@/services/carshenas/auth'
-import type { NullableNumber, NullableString } from '@/types/global'
 import type { GetOTPBody, ValidateOTPBody } from '@/types/dto/auth'
 import { useUserStore } from '@/stores/user'
 import useOnBack from '@/composable/on-back'
 import { useSnackbar } from '@/stores/snackbar'
 import { useI18n } from 'vue-i18n'
+import type { Nullable } from '@/types/utilities'
 
 const router = useRouter()
 const route = useRoute()
@@ -23,8 +23,8 @@ const step = ref<0 | 1>(0)
 const form = ref<VForm>()
 
 const props = reactive<{
-  phoneNumber: NullableString
-  otpExpireTime: NullableNumber
+  phoneNumber: Nullable<string>
+  otpExpireTime: Nullable<number>
 }>({
   phoneNumber: null,
   otpExpireTime: null
