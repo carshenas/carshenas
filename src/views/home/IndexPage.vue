@@ -70,7 +70,7 @@ onMounted(() => getMostViewedCategories());
           <span class="ml-2"> تماس:</span>
           <a href="tel:09012529729">09012529729</a>
         </div>
-        <div>
+        <div class='text-caption'>
           <span class="ml-2"> ایمیل:</span>
           <a href="mailto:carshenas.shop@gmail.com">carshenas.shop@gmail.com</a>
         </div>
