@@ -1,129 +1,146 @@
-<script setup lang="ts">
-import { ref } from 'vue'
-import CategoryList from '@/components/CategoryList.vue'
-import { useRouter } from 'vue-router'
-import ProductList from '@/components/ProductList.vue'
-import SearchSuggestions from './components/SearchSuggestions.vue'
-import { useDatabaseStore } from '@/stores/database'
-import { onBeforeRouteLeave } from 'vue-router'
-import { generateNumericId } from '@/helpers/general'
-import type { Category } from '@/types/dto/category'
-import { debounce } from 'lodash'
-import type { Product } from '@/types/dto/product'
-import { getSearchResultsService } from '@/services/carshenas/search'
+<script lang="ts" setup>
+import { computed, onBeforeUnmount, ref } from "vue";
+import { debounce } from "lodash";
+import { useCartStore } from "@/stores/cart";
+import type { Variant } from "@/types/dto/product";
+import { addToBasketService } from "@/services/carshenas/basket";
+import type { BasketItem } from "@/types/dto/basket";
 
-const router = useRouter()
-const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
-const products = ref<Product[]>()
-const categories = ref<Category[]>()
-const search = ref<string>();
+const props = defineProps<{
+  variant: Variant;
+}>();
 
-const fetchSearchResults = async () => {
-  try {
-    if (!search.value || search.value.length < 1) {
-      products.value = []
-      categories.value = []
-      return
+const cartStore = useCartStore();
+const localQuantity = ref(0);
+const pendingUpdate = ref(false);
+const queuedQuantity = ref(0);
+
+const findBasketItemId = computed(() => {
+  const item = cartStore.items.find(item => item.variant.id === props.variant.id);
+  return item?.id;
+});
+
+const isInCart = computed(() =>
+  cartStore.items.some((item) => item.variant.id === props.variant.id)
+);
+
+const quantity = computed({
+  get: () => {
+    if (pendingUpdate.value) {
+      return queuedQuantity.value;
     }
+    const item = cartStore.items.find(
+      (item) => item.variant.id === props.variant.id
+    );
+    return item ? item.stock : 0;
+  },
+  set: (value: number) => {
+    const basketItemId = findBasketItemId.value;
+    if (!basketItemId) return;
 
-    const response = await getSearchResultsService(search.value)
-    console.log(response.data)
-    products.value = response.data.products || []
-    categories.value = response.data.categories || []
-  } catch (e) {
-    console.error('Error fetching search results:', e)
+    queuedQuantity.value = value;
+    pendingUpdate.value = true;
+
+    if (value > 0) {
+      debouncedUpdateQuantity(basketItemId, value);
+    } else {
+      debouncedRemoveItem(basketItemId);
+    }
+  },
+});
+
+const addToCart = async () => {
+  try {
+    const basketItem = await addToBasketService({
+      variant: props.variant.id,
+      stock: 1,
+    });
+    cartStore.addItem({
+      id: basketItem.id,
+      variant: props.variant,
+      stock: basketItem.stock,
+    });
+    queuedQuantity.value = 1;
+  } catch (error) {
+    console.error("Failed to add to basket:", error);
   }
-}
+};
 
-const onInput = debounce(fetchSearchResults, 1000)
-
-const updateSearch = (e: string) => {
-  search.value = e
-  // getProducts()
-}
-
-openDatabase('search', undefined, (db: IDBDatabase) => {
-  db.createObjectStore('suggestions', { keyPath: 'id' })
-})
-
-onBeforeRouteLeave(async (to, from, next) => {
-  if (
-    (to.name === 'ProductsPage' || to.name === 'ProductDetail') &&
-    search.value
-  ) {
-    const searchDb = await getDb('search')
-    const suggestions = getStore(searchDb, 'suggestions')
-    add(suggestions, { title: search.value, id: generateNumericId() })
+const handleUpdateQuantity = async (basketItemId: number, newQuantity: number) => {
+  try {
+    await cartStore.updateQuantity(basketItemId, newQuantity);
+    localQuantity.value = newQuantity;
+  } catch (error) {
+    console.error("Failed to update quantity:", error);
+    queuedQuantity.value = quantity.value;
+  } finally {
+    pendingUpdate.value = false;
   }
-  next()
-})
+};
+
+const handleRemoveItem = async (basketItemId: number) => {
+  try {
+    await cartStore.removeItem(basketItemId);
+    queuedQuantity.value = 0;
+    localQuantity.value = 0;
+  } catch (error) {
+    console.error("Failed to remove item:", error);
+    queuedQuantity.value = quantity.value;
+  } finally {
+    pendingUpdate.value = false;
+  }
+};
+
+const debouncedUpdateQuantity = debounce(handleUpdateQuantity, 1500);
+const debouncedRemoveItem = debounce(handleRemoveItem, 1500);
+
+const add = () => {
+  const basketItemId = findBasketItemId.value;
+  if (basketItemId) {
+    queuedQuantity.value = (queuedQuantity.value || quantity.value) + 1;
+    pendingUpdate.value = true;
+    debouncedUpdateQuantity(basketItemId, queuedQuantity.value);
+  }
+};
+
+const remove = () => {
+  const basketItemId = findBasketItemId.value;
+  if (!basketItemId) return;
+
+  queuedQuantity.value = Math.max(0, (queuedQuantity.value || quantity.value) - 1);
+  pendingUpdate.value = true;
+
+  if (queuedQuantity.value > 0) {
+    debouncedUpdateQuantity(basketItemId, queuedQuantity.value);
+  } else {
+    debouncedRemoveItem(basketItemId);
+  }
+};
+
+onBeforeUnmount(() => {
+  debouncedUpdateQuantity.cancel();
+  debouncedRemoveItem.cancel();
+});
 </script>
 
 <template>
-  <div class="h-100 d-flex flex-column bar-padding">
-    <div class="fixed-bar pa-4">
-      <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
-        prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" @input="onInput"
-        @click:prepend-inner="router.back()" />
+  <div>
+    <div v-if="!isInCart">
+      <v-btn @click="addToCart" rounded="xs" prepend-icon="add">
+        {{ $t("product.addToCart") }}
+      </v-btn>
     </div>
-
-    <SearchSuggestions class="px-4" :title="search" @select="updateSearch" style="height: 68px" />
-
-    <template v-if="search && search.length > 1 && (products?.length || categories?.length)">
-      <div v-if="categories?.length">
-        <h2 class="title-sm mt-6 px-4">
-          {{
-            $t('search.searchInCategory', {
-              item: search
-            })
-          }}
-        </h2>
-
-        <CategoryList :rows="1" :items="categories" class="mt-6 px-4" manual />
-      </div>
-
-      <div v-if="products?.length" class="mt-6 w-100 d-flex px-4">
-        <h2 class="title-sm">
-          {{
-            $t('search.searchInProducts', {
-              item: search
-            })
-          }}
-        </h2>
-
-        <v-spacer />
-
-        <!-- <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
-          {{ $t('search.viewAll') }}
-        </RouterLink> -->
-      </div>
-
-      <ProductList v-if="products?.length" :items="products" class="mt-6" manual />
-    </template>
-
-    <div v-else-if="!search || search.length < 2" class="flex-grow-1 d-flex align-center">
-      <span class="w-100 text-center">
-        {{ $t('search.whatProductAreYouLookingFor') }}
-      </span>
-    </div>
-
-    <div v-else class="flex-grow-1 d-flex align-center">
-      <span class="w-100 text-center"> {{ $t('shared.nothingFound') }} </span>
+    <div v-else>
+      <v-text-field :value="quantity" readonly :clearable="false" variant="outlined" density="compact" hide-details
+        class="centered-input" prepend-inner-icon="add" append-inner-icon="remove" @click:prepend-inner="add"
+        @click:append-inner="remove">
+      </v-text-field>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-.bar-padding {
-  padding-top: 80px - 16px;
-}
-
-.fixed-bar {
-  position: fixed;
-  background-color: white;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
+<style scoped>
+.centered-input {
+  width: 120px;
 }
 </style>

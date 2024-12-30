@@ -1,93 +1,213 @@
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
-import type { Variant } from "@/types/dto/product";
+import { ref, computed, watch } from "vue";
+import {
+  deleteBasketService,
+  getBasketService,
+  patchBasketService,
+} from "@/services/carshenas/basket";
+import type { BasketItem } from "@/types/dto/basket";
+
+const CART_STORAGE_KEY = "cart-items";
+
+// Load the cart from local storage
+const loadCartFromLocalStorage = (): BasketItem[] => {
+  const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+  return storedCart ? JSON.parse(storedCart) : [];
+};
+
+// Save the cart to local storage
+const saveCartToLocalStorage = (items: BasketItem[]) => {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+};
 
 export const useCartStore = defineStore("cart", () => {
-  const items = ref<Variant[]>([]);
-  const address = ref<string>("");
+  const items = ref<BasketItem[]>(loadCartFromLocalStorage());
+  const isUpdating = ref(false);
+  const updateQueue = ref<{ cartId: number; stock: number }[]>([]);
 
-  const logCartChange = (action: string, details: any) => {
-    console.log(`Cart ${action}:`, details);
-    console.log("Current cart state:", JSON.parse(JSON.stringify(items.value)));
+  // Process the update queue
+  const processUpdateQueue = async () => {
+    if (isUpdating.value || updateQueue.value.length === 0) return;
+
+    isUpdating.value = true;
+    const update = updateQueue.value[0];
+
+    try {
+      const item = items.value.find((item) => item.id === update.cartId);
+      if (!item) throw new Error("Item not found");
+
+      await patchBasketService(update.cartId, { stock: update.stock });
+      item.stock = update.stock;
+      saveCartToLocalStorage(items.value);
+
+      // Remove the processed update from the queue
+      updateQueue.value.shift();
+    } catch (error) {
+      console.error("Failed to update item quantity:", error);
+      // In case of error, we might want to retry or handle it differently
+    } finally {
+      isUpdating.value = false;
+      // Process next update if any
+      if (updateQueue.value.length > 0) {
+        processUpdateQueue();
+      }
+    }
   };
 
-  // Add item to cart
-  const addItem = (product: Variant) => {
-    items.value.push(product);
-    logCartChange("Item added", product);
+  // Fetch cart items from the API
+  const fetchCart = async () => {
+    try {
+      const response = await getBasketService();
+      items.value = response.data.map((item: BasketItem) => ({
+        id: item.id,
+        stock: item.stock,
+        variant: {
+          name: item.variant.name,
+          id: item.variant.id,
+          price: item.variant.price,
+          warranty: item.variant.warranty,
+          color: item.variant.color,
+          image: item.variant.image || null,
+          images: item.variant.images || [],
+          quantity: item.variant.quantity || 0,
+          out_of_stock: item.variant.out_of_stock || false,
+          is_unlimited: item.variant.is_unlimited || false,
+          specification: item.variant.specification || {},
+          brand: item.variant.brand || "",
+        },
+      }));
+      saveCartToLocalStorage(items.value);
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    }
   };
 
-  // Update item's quantity in cart
-  const updateCount = (id: number, quantity: number) => {
-    const index = items.value.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      const oldQuantity = items.value[index].quantity;
-      items.value[index].quantity = quantity;
-      logCartChange("Quantity updated", {
-        id,
-        oldQuantity,
-        newQuantity: quantity,
+  const addItem = (newItem: BasketItem) => {
+    const existingItem = items.value.find(
+      (item) => item.variant.id === newItem.variant.id
+    );
+
+    if (existingItem) {
+      existingItem.stock += newItem.stock;
+    } else {
+      items.value.push({
+        id: newItem.id,
+        stock: newItem.stock,
+        variant: {
+          name: newItem.variant.name,
+          id: newItem.variant.id,
+          price: newItem.variant.price,
+          warranty: newItem.variant.warranty,
+          color: newItem.variant.color,
+          image: newItem.variant.image || null,
+          images: newItem.variant.images || [],
+          quantity: newItem.variant.quantity || 0,
+          out_of_stock: newItem.variant.out_of_stock || false,
+          is_unlimited: newItem.variant.is_unlimited || false,
+          specification: newItem.variant.specification || {},
+          brand: newItem.variant.brand || "",
+        },
       });
-    } else {
-      console.warn(
-        `Attempted to update quantity for non-existent item with id ${id}`
+    }
+    saveCartToLocalStorage(items.value);
+  };
+
+  const updateQuantity = async (cartId: number, stock: number) => {
+    // Add the update to the queue
+    updateQueue.value.push({ cartId, stock });
+
+    // If this is the only update, start processing
+    if (updateQueue.value.length === 1 && !isUpdating.value) {
+      processUpdateQueue();
+    }
+  };
+
+  const removeItem = async (cartId: number) => {
+    // Wait for any pending updates to complete
+    if (isUpdating.value) {
+      updateQueue.value = updateQueue.value.filter(
+        (update) => update.cartId !== cartId
       );
+      await new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+          if (!isUpdating.value) {
+            clearInterval(checkInterval);
+            resolve(true);
+          }
+        }, 100);
+      });
     }
-  };
 
-  // Remove item from cart
-  const removeItem = (id: number) => {
-    const index = items.value.findIndex((item) => item.id === id);
-    if (index !== -1) {
-      const removedItem = items.value[index];
+    const index = items.value.findIndex((item) => item.id === cartId);
+    if (index === -1) return;
+
+    try {
+      await deleteBasketService(cartId);
       items.value.splice(index, 1);
-      logCartChange("Item removed", removedItem);
-    } else {
-      console.warn(`Attempted to remove non-existent item with id ${id}`);
+      saveCartToLocalStorage(items.value);
+    } catch (error) {
+      console.error("Failed to remove item:", error);
     }
   };
 
-  // Clear all items from the cart
-  const wipeItems = () => {
-    const oldItems = [...items.value];
-    items.value = [];
-    logCartChange("Cart wiped", { removedItems: oldItems });
+  const clearCart = async () => {
+    // Wait for any pending updates to complete
+    if (isUpdating.value) {
+      await new Promise((resolve) => {
+        const checkInterval = setInterval(() => {
+          if (!isUpdating.value) {
+            clearInterval(checkInterval);
+            resolve(true);
+          }
+        }, 100);
+      });
+    }
+
+    updateQueue.value = []; // Clear the queue
+
+    try {
+      const deletePromises = items.value.map((item) =>
+        deleteBasketService(item.id)
+      );
+      await Promise.all(deletePromises);
+      items.value = [];
+      saveCartToLocalStorage(items.value);
+    } catch (error) {
+      console.error("Failed to clear cart:", error);
+    }
   };
 
-  // Compute the total payable amount
   const payableAmount = computed(() =>
-    items.value.reduce((acc, item) => acc + item.price * item.quantity, 0)
+    items.value.reduce(
+      (total, item) => total + (item.variant.price ?? 0) * item.stock,
+      0
+    )
   );
 
-  // Watch for changes in the payable amount
-  watch(payableAmount, (newValue, oldValue) => {
-    console.log("Payable amount changed:", { oldValue, newValue });
-  });
+  const isItemInCart = (variantId: number) =>
+    items.value.some((item) => item.variant.id === variantId);
 
-  // Initial cart state log
-  console.log(
-    "Cart store initialized:",
-    JSON.parse(JSON.stringify(items.value))
-  );
-
-  // Helper getter to check if item is in the cart
-  const isItemInCart = (id: number) => items.value.some(item => item.id === id);
-
-  // Get the quantity of a specific item in the cart
-  const getItemQuantity = (id: number) => {
-    const item = items.value.find(item => item.id === id);
-    return item ? item.quantity : 0;
+  const getItemQuantity = (variantId: number) => {
+    const item = items.value.find((item) => item.variant.id === variantId);
+    return item ? item.stock : 0;
   };
+
+  // Watch for changes and save to localStorage
+  watch(items, (newItems) => saveCartToLocalStorage(newItems), { deep: true });
+
+  // Fetch cart initially
+  fetchCart();
 
   return {
     items,
     addItem,
-    updateCount,
+    updateQuantity,
     removeItem,
-    wipeItems,
-    address,
+    clearCart,
     payableAmount,
     isItemInCart,
-    getItemQuantity
+    getItemQuantity,
+    fetchCart,
+    isUpdating, // Exposed for UI feedback if needed
   };
 });
