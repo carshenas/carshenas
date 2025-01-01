@@ -6,4 +6,4 @@ export const getProductListService = (parameters?: ProductFilter) =>
   carshenasService.get<Pagination<Product[]>>("/product", { parameters });
 
 export const getProductDetailsService = (id: number) =>
-  carshenasService.get<Product[]>(`/product/${id}`, {});
+  carshenasService.get<Product[]>(`/product/${id}/`, {});
