@@ -12,34 +12,19 @@ const onNext = () => step.value++
 
 <template>
   <div class="h-100 d-flex flex-column">
-    <v-stepper v-model="step" alt-labels editable>
+    <v-stepper class="h-fit" v-model="step" alt-labels editable>
       <v-stepper-header>
-        <v-stepper-item
-          :title="$t('checkout.cart')"
-          value="0"
-          color="primary"
-          edit-icon="local_mall"
-          :complete="step > 0"
-        ></v-stepper-item>
+        <v-stepper-item :title="$t('checkout.cart')" value="0" color="primary" edit-icon="local_mall"
+          :complete="step > 0"></v-stepper-item>
 
         <v-divider></v-divider>
 
-        <v-stepper-item
-          :title="$t('checkout.transport')"
-          value="1"
-          color="primary"
-          edit-icon="local_shipping"
-          :complete="step > 1"
-        ></v-stepper-item>
+        <v-stepper-item :title="$t('checkout.transport')" value="1" color="primary" edit-icon="local_shipping"
+          :complete="step > 1"></v-stepper-item>
 
         <v-divider></v-divider>
 
-        <v-stepper-item
-          :title="$t('checkout.pay')"
-          value="2"
-          color="primary"
-          edit-icon="credit_card"
-        ></v-stepper-item>
+        <v-stepper-item :title="$t('checkout.pay')" value="2" color="primary" edit-icon="credit_card"></v-stepper-item>
       </v-stepper-header>
     </v-stepper>
 
@@ -50,3 +35,10 @@ const onNext = () => step.value++
     </div>
   </div>
 </template>
+<style scoped>
+.h-fit {
+  max-height: 104px;
+  height: 104px;
+  min-height: 104px;
+}
+</style>

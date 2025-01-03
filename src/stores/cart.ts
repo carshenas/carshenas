@@ -1,5 +1,7 @@
+// stores/cart.ts
 import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
+import { debounce } from "lodash";
 import {
   deleteBasketService,
   getBasketService,
@@ -8,6 +10,7 @@ import {
 import type { BasketItem } from "@/types/dto/basket";
 
 const CART_STORAGE_KEY = "cart-items";
+const DEBOUNCE_DELAY = 500;
 
 // Load the cart from local storage
 const loadCartFromLocalStorage = (): BasketItem[] => {
@@ -23,38 +26,45 @@ const saveCartToLocalStorage = (items: BasketItem[]) => {
 export const useCartStore = defineStore("cart", () => {
   const items = ref<BasketItem[]>(loadCartFromLocalStorage());
   const isUpdating = ref(false);
-  const updateQueue = ref<{ cartId: number; stock: number }[]>([]);
+  const pendingUpdates = ref<Map<number, number>>(new Map());
 
-  // Process the update queue
-  const processUpdateQueue = async () => {
-    if (isUpdating.value || updateQueue.value.length === 0) return;
+  // Debounced function to process all pending updates
+  const processPendingUpdates = debounce(async () => {
+    if (isUpdating.value || pendingUpdates.value.size === 0) return;
 
     isUpdating.value = true;
-    const update = updateQueue.value[0];
+    const updates = Array.from(pendingUpdates.value.entries());
+    pendingUpdates.value.clear();
 
     try {
-      const item = items.value.find((item) => item.id === update.cartId);
-      if (!item) throw new Error("Item not found");
+      // Process all updates in parallel
+      await Promise.all(
+        updates.map(async ([cartId, stock]) => {
+          const item = items.value.find((item) => item.id === cartId);
+          if (!item) return;
 
-      await patchBasketService(update.cartId, { stock: update.stock });
-      item.stock = update.stock;
+          try {
+            await patchBasketService(cartId, { stock });
+            item.stock = stock;
+          } catch (error) {
+            console.error(`Failed to update item ${cartId}:`, error);
+            // Revert the local state if the update fails
+            pendingUpdates.value.set(cartId, item.stock);
+          }
+        })
+      );
+
       saveCartToLocalStorage(items.value);
-
-      // Remove the processed update from the queue
-      updateQueue.value.shift();
-    } catch (error) {
-      console.error("Failed to update item quantity:", error);
-      // In case of error, we might want to retry or handle it differently
     } finally {
       isUpdating.value = false;
-      // Process next update if any
-      if (updateQueue.value.length > 0) {
-        processUpdateQueue();
+      // If there are any new pending updates that came in during processing,
+      // trigger another process cycle
+      if (pendingUpdates.value.size > 0) {
+        processPendingUpdates();
       }
     }
-  };
+  }, DEBOUNCE_DELAY);
 
-  // Fetch cart items from the API
   const fetchCart = async () => {
     try {
       const response = await getBasketService();
@@ -112,31 +122,21 @@ export const useCartStore = defineStore("cart", () => {
     saveCartToLocalStorage(items.value);
   };
 
-  const updateQuantity = async (cartId: number, stock: number) => {
-    // Add the update to the queue
-    updateQueue.value.push({ cartId, stock });
+  const updateQuantity = (cartId: number, stock: number) => {
+    const item = items.value.find((item) => item.id === cartId);
+    if (!item) return;
 
-    // If this is the only update, start processing
-    if (updateQueue.value.length === 1 && !isUpdating.value) {
-      processUpdateQueue();
-    }
+    // Update local state immediately
+    item.stock = stock;
+    // Add to pending updates
+    pendingUpdates.value.set(cartId, stock);
+    // Trigger debounced update
+    processPendingUpdates();
   };
 
   const removeItem = async (cartId: number) => {
-    // Wait for any pending updates to complete
-    if (isUpdating.value) {
-      updateQueue.value = updateQueue.value.filter(
-        (update) => update.cartId !== cartId
-      );
-      await new Promise((resolve) => {
-        const checkInterval = setInterval(() => {
-          if (!isUpdating.value) {
-            clearInterval(checkInterval);
-            resolve(true);
-          }
-        }, 100);
-      });
-    }
+    // Remove any pending updates for this item
+    pendingUpdates.value.delete(cartId);
 
     const index = items.value.findIndex((item) => item.id === cartId);
     if (index === -1) return;
@@ -151,19 +151,8 @@ export const useCartStore = defineStore("cart", () => {
   };
 
   const clearCart = async () => {
-    // Wait for any pending updates to complete
-    if (isUpdating.value) {
-      await new Promise((resolve) => {
-        const checkInterval = setInterval(() => {
-          if (!isUpdating.value) {
-            clearInterval(checkInterval);
-            resolve(true);
-          }
-        }, 100);
-      });
-    }
-
-    updateQueue.value = []; // Clear the queue
+    // Clear all pending updates
+    pendingUpdates.value.clear();
 
     try {
       const deletePromises = items.value.map((item) =>
@@ -208,6 +197,6 @@ export const useCartStore = defineStore("cart", () => {
     isItemInCart,
     getItemQuantity,
     fetchCart,
-    isUpdating, // Exposed for UI feedback if needed
+    isUpdating,
   };
 });

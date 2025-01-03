@@ -11,11 +11,7 @@ defineProps<{
 </script>
 
 <template>
-  <button
-    class="c-btn bg-primary"
-    :class="{ top, left, bottom, right }"
-    :style="`--c-fab-delay: ${delay || 2}`"
-  >
+  <button class="c-btn bg-primary" :class="{ top, left, bottom, right }" :style="`--c-fab-delay: ${delay || 2}`">
     <div class="text">
       <span class="mr-4">
         {{ text }}
@@ -52,12 +48,15 @@ defineProps<{
   &.left {
     left: 1rem;
   }
+
   &.right {
     right: 1rem;
   }
+
   &.bottom {
-    bottom: 1rem;
+    bottom: 4rem;
   }
+
   &.top {
     top: 1rem;
   }
@@ -67,6 +66,7 @@ defineProps<{
   from {
     max-width: 500px;
   }
+
   to {
     max-width: 0;
   }
