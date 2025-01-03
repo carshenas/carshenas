@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useAddressManagement } from '@/composable/useAddressManager'
 import NewAddressInfo from '@/views/user/addresses/components/NewAddressInfo.vue'
 import NewAddressMap from '@/views/user/addresses/components//NewAddressMap.vue'
@@ -19,8 +19,16 @@ const {
   updateLatLngString,
   submitAddress,
 } = useAddressManagement()
-onMounted(fetchAddressList)
 
+onMounted(async () => {
+  await fetchAddressList()
+  // Find and select default address if it exists
+  const defaultAddress = addressList.value.find(address => address.isDefault)
+  if (defaultAddress) {
+    selectedAddressId.value = defaultAddress.id
+    isReceiveInPerson.value = false
+  }
+})
 
 const selectedAddressId = ref<number | null>(null)
 
@@ -28,6 +36,17 @@ const selectAddress = (addressId: number) => {
   selectedAddressId.value = addressId
   isReceiveInPerson.value = false
 }
+
+// Watch for changes in addressList to handle async loading
+watch(addressList, (newAddressList) => {
+  if (selectedAddressId.value === null) {
+    const defaultAddress = newAddressList.find(address => address.isDefault)
+    if (defaultAddress) {
+      selectedAddressId.value = defaultAddress.id
+      isReceiveInPerson.value = false
+    }
+  }
+})
 </script>
 
 <template>
@@ -55,25 +74,25 @@ const selectAddress = (addressId: number) => {
             <v-card v-for="address in addressList" :key="address.id" class="mb-2 pa-4"
               :class="{ 'border-primary': selectedAddressId === address.id && !isReceiveInPerson }" variant="outlined"
               rounded="lg" @click="selectAddress(address.id)">
-              <v-radio :value="address.id" :label="address.address" color="primary" hide-details>
-                <template v-slot:label>
-                  <div class="d-flex flex-column">
+              <v-radio :value="address.id" color="primary" hide-details>
+                <template #label>
+                  <div class="d-flex flex-column ga-2">
                     <span class="text-body-1">{{ address.address }}</span>
                     <span class="text-caption text-grey">
-                      {{ $t('common.postalCode') }}: {{ address.postal_code }}
+                      {{ address.postalCode }}
                     </span>
+
                   </div>
                 </template>
               </v-radio>
             </v-card>
           </v-radio-group>
         </div>
-
       </div>
 
       <!-- Address management bottom sheet -->
       <v-bottom-sheet v-model="bottomSheetVisible">
-        <template v-slot:activator="{ props }">
+        <template #activator="{ props }">
           <v-btn block v-bind="props" class="justify-space-between" rounded="lg" color="primary" size="x-large"
             append-icon="add">
             {{ $t('user.newAddress') }}
@@ -94,5 +113,13 @@ const selectAddress = (addressId: number) => {
 <style scoped>
 .border-primary {
   border: 2px solid rgb(var(--v-theme-primary));
+}
+
+.ga-2 {
+  gap: 0.5rem;
+}
+
+.ga-4 {
+  gap: 1rem;
 }
 </style>
