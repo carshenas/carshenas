@@ -2,10 +2,10 @@ export interface Address {
   id: number
   name: string
   address: string
-  postal_code: string
+  postalCode: string
   latitude: number
   longitude: number
-  is_default: boolean
+  isDefault: boolean
 }
 
 export interface SendAddress {
@@ -13,6 +13,6 @@ export interface SendAddress {
   address: string
   latitude: number
   longitude: number
-  postal_code: string
-  is_default: boolean
+  postalCode: string
+  isDefault: boolean
 }
