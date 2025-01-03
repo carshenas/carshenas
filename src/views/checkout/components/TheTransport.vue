@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PaymentCard from './PaymentCard.vue'
 import AddressCard from './AddressCard.vue'
-import DeliveryTime from './DeliveryTime.vue'
+// import DeliveryTime from './DeliveryTime.vue'
 
 const emit = defineEmits<{
   (e: 'next'): void
@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
     <v-divider thickness="8" color="divider" class="border-opacity-100" />
 
-    <DeliveryTime />
+    <!-- <DeliveryTime /> -->
 
     <v-divider thickness="8" color="divider" class="border-opacity-100" />
 
@@ -29,7 +29,6 @@ const emit = defineEmits<{
 <style scoped>
 .bottom-bar {
   background-color: white;
-  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;

@@ -1,67 +1,26 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import type { Address, SendAddress } from '@/types/dto/addresses'
-import type { LatLng } from '@/types/dto/the-map'
+import { onMounted } from 'vue'
+import type { SendAddress } from '@/types/dto/addresses'
 import NewAddressInfo from './components/NewAddressInfo.vue'
 import NewAddressMap from './components/NewAddressMap.vue'
-import { sendAddressService, getAddressList, delAddress } from '@/services/carshenas/address'
+import { useAddressManagement } from '@/composable/useAddressManager'
 
-const showInfo = ref(false)
-const bottomSheetVisible = ref(false)
-const selectedPosition = ref<LatLng>({ lat: 0, lng: 0 })
-const selectedAddress = ref<string | null>(null)
-const loading = ref(false)
-const addressList = ref<Address[]>([])
+const {
+  showInfo,
+  bottomSheetVisible,
+  selectedPosition,
+  selectedAddress,
+  loading,
+  addressList,
+  fetchAddressList,
+  updateMapPosition,
+  updateShowInfo,
+  updateLatLngString,
+  submitAddress,
+  deleteAddress
+} = useAddressManagement()
 
-onMounted(async () => {
-  try {
-    const response = await getAddressList()
-    addressList.value = response.data as unknown as Address[]
-  } catch (error) {
-    console.error('Error fetching address list:', error)
-  }
-})
-
-const handleMapPositionUpdate = (newPosition: LatLng) => {
-  selectedPosition.value = newPosition
-}
-
-const handleShowInfoUpdate = (value: boolean) => {
-  showInfo.value = value
-}
-
-
-const handleAddressSubmit = async (newAddress: SendAddress) => {
-  loading.value = true
-  try {
-    await sendAddressService(newAddress)
-    showInfo.value = false
-    bottomSheetVisible.value = false
-    const updatedList = await getAddressList()
-    addressList.value = updatedList.data as unknown as Address[]
-  } catch (error) {
-    console.error('Error submitting address:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleDeleteAddress = async (id: number) => {
-  loading.value = true
-  try {
-    await delAddress(id)
-    const updatedList = await getAddressList()
-    addressList.value = updatedList.data as unknown as Address[]
-  } catch (error) {
-    console.error('Error deleting address:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-const handleLatLngStringUpdate = (latLngString: string) => {
-  selectedAddress.value = latLngString
-}
+onMounted(fetchAddressList)
 </script>
 
 <template>
@@ -80,18 +39,18 @@ const handleLatLngStringUpdate = (latLngString: string) => {
           </v-btn>
         </template>
         <v-card class="d-flex flex-column ga-4" :title="$t('user.newAddress')">
-          <NewAddressMap :showInfo="showInfo" @update:position="handleMapPositionUpdate"
-            @update:showInfo="handleShowInfoUpdate" @update:latLngString="handleLatLngStringUpdate" />
+          <NewAddressMap :showInfo="showInfo" @update:position="updateMapPosition" @update:showInfo="updateShowInfo"
+            @update:latLngString="updateLatLngString" />
 
           <NewAddressInfo v-if="showInfo" :latLngString="selectedAddress" :loading="loading"
-            :position="selectedPosition" @submit="handleAddressSubmit" />
+            :position="selectedPosition" @submit="submitAddress" />
         </v-card>
       </v-bottom-sheet>
 
       <v-card class="mx-auto w-100 pa-2" v-for="(addr, index) in addressList" :key="index">
         <v-card-text>{{ addr.address }}</v-card-text>
         <div class="d-flex w-100 justify-space-between text-grey align-center">
-          <v-btn icon="delete" variant="text" @click="() => handleDeleteAddress(addr.id)" />
+          <v-btn icon="delete" variant="text" @click="() => deleteAddress(addr.id)" />
           <div>
             <span>{{ addr.postal_code }}</span>
             <v-icon icon="local_post_office" />
