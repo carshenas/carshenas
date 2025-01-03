@@ -52,7 +52,7 @@ onMounted(fetchAddressList)
         <div class="d-flex w-100 justify-space-between text-grey align-center">
           <v-btn icon="delete" variant="text" @click="() => deleteAddress(addr.id)" />
           <div>
-            <span>{{ addr.postal_code }}</span>
+            <span>{{ addr.postalCode}}</span>
             <v-icon icon="local_post_office" />
           </div>
         </div>

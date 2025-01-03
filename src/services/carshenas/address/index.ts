@@ -9,19 +9,19 @@ export const sendAddressService = (body: SendAddress) => {
   const formData = new FormData()
   formData.append('name', body.name)
   formData.append('address', body.address)
-  formData.append('postal_code', body.postal_code)
+  formData.append('postalCode', body.postalCode)
   formData.append('latitude', body.latitude.toString())
   formData.append('longitude', body.longitude.toString())
-  formData.append('is_default', body.is_default.toString())
+  formData.append('isDefault', body.isDefault.toString())
 
   return carshenasService.post<{
     id: number
     name: string
     address: string
-    postal_code: string
+    postalCode: string
     latitude: number
     longitude: number
-    is_default: boolean
+    isDefault: boolean
   }>('/user/location/', {
     body: formData
   })
