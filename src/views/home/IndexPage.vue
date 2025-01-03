@@ -5,7 +5,7 @@ import PopularModels from "./components/PopularModels.vue";
 import { onMounted, ref } from "vue";
 import { getMostViewedCategoriesService } from "@/services/carshenas/category";
 import type { Category } from "@/types/dto/category";
-
+import BrandFilterBottomSheet from '@/views/product/list/components/BrandFilterBottomSheet.vue'
 const items = ref<Category[]>();
 const loading = ref<boolean>();
 
@@ -76,6 +76,7 @@ onMounted(() => getMostViewedCategories());
         </div>
       </div>
     </footer>
+    <BrandFilterBottomSheet />
     <!-- <section class="my-12">
       <div class="d-flex justify-space-between align-center">
         <h2 class="title-sm">

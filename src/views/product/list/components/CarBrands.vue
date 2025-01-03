@@ -38,8 +38,12 @@ const filteredItems = computed((): Brand[] | Vehicle[] => {
 
 const handleClick = (item: any) => {
   if (item.vehicles) return (models.value = item.vehicles)
-  else router.push({ query: { ...route.query, vehicle: item.id } })
-  emit('close')
+  else {
+    router.push({
+      path: '/product',
+      query: { ...route.query, vehicle: item.id },
+    });
+  } emit('close')
 }
 
 onMounted(getVehicles)
@@ -50,43 +54,19 @@ onMounted(getVehicles)
     <div class="mt-2 mb-4 d-flex justify-space-between">
       {{ $t('shared.brands') }}
 
-      <v-btn
-        variant="plain"
-        icon="close"
-        density="comfortable"
-        @click="emit('close')"
-      />
+      <v-btn variant="plain" icon="close" density="comfortable" @click="emit('close')" />
     </div>
 
-    <v-text-field
-      v-model="search"
-      :placeholder="$t('shared.search')"
-      variant="outlined"
-      rounded
-      hide-details
-      prepend-inner-icon="arrow_forward_ios"
-      append-inner-icon="search"
-    />
+    <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
+      prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" />
   </v-card-title>
 
   <v-card-text class="pa-0">
     <v-list :lines="false">
-      <v-list-item
-        v-for="item in filteredItems"
-        :key="item.id"
-        :title="item.name"
-        append-icon="chevron_left"
-        class="py-4"
-        @click="handleClick(item)"
-      >
+      <v-list-item v-for="item in filteredItems" :key="item.id" :title="item.name" append-icon="chevron_left"
+        class="py-4" @click="handleClick(item)">
         <template #prepend>
-          <ImageLoader
-            class="ml-4"
-            :src="item.image"
-            width="24"
-            aspect-ratio="1"
-            :alt="item.name"
-          />
+          <ImageLoader class="ml-4" :src="item.image" width="24" aspect-ratio="1" :alt="item.name" />
         </template>
       </v-list-item>
     </v-list>
