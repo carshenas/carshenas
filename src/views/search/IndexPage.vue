@@ -27,7 +27,6 @@ const fetchSearchResults = async () => {
     }
 
     const response = await getSearchResultsService(search.value)
-    console.log(response.data)
     products.value = response.data.products || []
     categories.value = response.data.categories || []
   } catch (e) {

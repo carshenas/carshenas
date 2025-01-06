@@ -43,7 +43,6 @@ const brands = computed<Brand[]>(() => {
   return Object.values(brandMap);
 });
 
-console.log(brands)
 function hasSelectedColor(brand: Brand): boolean {
   if (!props.selectedColorCode) {
     return true;

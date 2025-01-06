@@ -1,46 +1,104 @@
-import type { FetcherOptions, FetchPath, FetchResponse } from './types'
-import { generateURL, mergeOptions } from './helpers'
+import type { FetcherOptions, FetchPath, FetchResponse } from "./types";
+import { generateURL, mergeOptions } from "./helpers";
+import { useUserStore } from "@/stores/user";
 
 const useFetch = async <R = unknown, D = unknown>(
   path: FetchPath,
   options?: FetcherOptions
 ): Promise<FetchResponse<R>> => {
-  const url = generateURL(path, { baseURL: options?.baseURL, parameters: options?.parameters })
-  const mergedOptions = mergeOptions(options)
+  const url = generateURL(path, {
+    baseURL: options?.baseURL,
+    parameters: options?.parameters,
+  });
+  const mergedOptions = mergeOptions(options);
 
   try {
-    const response = await fetch(url, mergedOptions)
-    return statusChecker<R>(response)
+    const response = await fetch(url, mergedOptions);
+    return statusChecker<R>(response, url.toString(), mergedOptions);
   } catch (e) {
-    throw new Error(e as string)
+    throw new Error(e as string);
   }
-}
+};
 
-const statusChecker = async <R>(response: Response) => {
+const statusChecker = async <R>(
+  response: Response,
+  originalUrl: string,
+  originalOptions: RequestInit
+): Promise<FetchResponse<R>> => {
   if (response.ok) {
-    return Promise.resolve(await formattedResponse<R>(response))
+    return Promise.resolve(await formattedResponse<R>(response));
+  }
+  if (response.status === 401) {
+    console.warn(
+      `401 Unauthorized at ${response.url}. Attempting to refresh token.`
+    );
+    const refreshed = await refreshAccessToken();
+    if (refreshed) {
+      const retriedResponse = await fetch(originalUrl, originalOptions);
+      if (retriedResponse.ok) {
+        return Promise.resolve(await formattedResponse<R>(retriedResponse));
+      }
+    }
   }
 
-  throw new Error()
-}
+  console.error(`Error Response: ${response.status} ${response.statusText}`);
+  throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+};
 
-const formattedResponse = async <R>(response: Response): Promise<FetchResponse<R>> => ({
+const refreshAccessToken = async (): Promise<boolean> => {
+  try {
+    const refreshUrl = "https://api.carshenas.shop/user/refresh/";
+    const userStore = useUserStore();
+    const refreshToken = userStore.user.refreshToken;
+    if (!refreshToken) {
+      console.error("No refresh token available in user store.");
+      return false;
+    }
+    const refreshOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    };
+    const response = await fetch(refreshUrl, refreshOptions);
+    if (response.ok) {
+      const { access, refresh } = await response.json();
+      userStore.user.token = access;
+      userStore.user.refreshToken = refresh;
+      userStore.updateStoredData();
+      return true;
+    } else {
+      console.error(
+        `Failed to refresh token: ${response.status} ${response.statusText}`
+      );
+      return false;
+    }
+  } catch (error) {
+    console.error("Error while refreshing token:", error);
+    return false;
+  }
+};
+
+const formattedResponse = async <R>(
+  response: Response
+): Promise<FetchResponse<R>> => ({
   data: (await normalizeResponseData(response)) as R,
   status: response.status,
   statusText: response.statusText,
-  headers: response.headers
-})
+  headers: response.headers,
+});
 
 const normalizeResponseData = async (response: Response) => {
   try {
-    return await response.json()
+    return await response.json();
   } catch {
     try {
-      return await response.text()
+      return await response.text();
     } catch {
-      return null
+      return null;
     }
   }
-}
+};
 
-export default useFetch
+export default useFetch;
