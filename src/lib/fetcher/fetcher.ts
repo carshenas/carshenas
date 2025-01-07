@@ -48,8 +48,8 @@ const statusChecker = async <R>(
 const refreshAccessToken = async (): Promise<boolean> => {
   try {
     const refreshUrl = "https://api.carshenas.shop/user/refresh/";
-    const userStore = useUserStore();
-    const refreshToken = userStore.user.refreshToken;
+    const { user, wipeUserData, updateStoredData } = useUserStore();
+    const refreshToken = user.refreshToken;
     if (!refreshToken) {
       console.error("No refresh token available in user store.");
       return false;
@@ -64,11 +64,12 @@ const refreshAccessToken = async (): Promise<boolean> => {
     const response = await fetch(refreshUrl, refreshOptions);
     if (response.ok) {
       const { access, refresh } = await response.json();
-      userStore.user.token = access;
-      userStore.user.refreshToken = refresh;
-      userStore.updateStoredData();
+      user.token = access;
+      user.refreshToken = refresh;
+      updateStoredData();
       return true;
     } else {
+      wipeUserData();
       console.error(
         `Failed to refresh token: ${response.status} ${response.statusText}`
       );
