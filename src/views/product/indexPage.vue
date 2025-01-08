@@ -8,7 +8,6 @@ import ProductReview from './components/ProductReview.vue'
 import { useRoute } from 'vue-router'
 import { getProductDetailsService } from '@/services/carshenas/product'
 import { ref, computed, onMounted } from 'vue'
-import { useCartStore } from '@/stores/cart'
 import type { Variant, Warranty, Brand } from '@/types/dto/product'
 import SpecSection from './components/SpecSection.vue'
 import ItemCounter from '@/components/ItemCounter.vue'
@@ -24,7 +23,6 @@ const selectedWarranty = ref<Warranty[] | null>(null)
 const selectedBrand = ref<Brand | null>(null)
 const selectedTab = ref(0)
 const isLoading = ref(true)
-const cartStore = useCartStore()
 const snackbar = ref(false)
 const userStore = useUserStore();
 const isLoggedIn = userStore.isLoggedIn;

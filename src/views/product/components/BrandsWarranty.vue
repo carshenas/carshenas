@@ -27,22 +27,22 @@ const brands = computed<Brand[]>(() => {
     const existingWarranty = brand.warranties.find(
       (warranty) => warranty.name === variant.warranty
     );
-    if (!existingWarranty) {
+    if (existingWarranty) {
+      existingWarranty.color.push(variant.color);
+      existingWarranty.price.push(variant.price);
+    } else if (variant.warranty) {
       brand.warranties.push({
         name: variant.warranty,
         price: [variant.price],
         color: [variant.color],
       });
-    } else {
-      existingWarranty.color.push(variant.color);
-      existingWarranty.price.push(variant.price);
     }
+
   });
 
   return Object.values(brandMap);
 });
 
-console.log(brands)
 function hasSelectedColor(brand: Brand): boolean {
   if (!props.selectedColorCode) {
     return true;

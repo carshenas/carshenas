@@ -15,8 +15,9 @@ const props = withDefaults(
   }>(),
   { showUnit: true }
 )
+
 const computedValue = computed(() => {
-  return toDisplayCurrency(props.value)
+  return props.value && toDisplayCurrency(props.value)
 })
 </script>
 

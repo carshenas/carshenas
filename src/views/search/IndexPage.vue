@@ -27,7 +27,6 @@ const fetchSearchResults = async () => {
     }
 
     const response = await getSearchResultsService(search.value)
-    console.log(response.data)
     products.value = response.data.products || []
     categories.value = response.data.categories || []
   } catch (e) {
@@ -60,7 +59,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <div class="h-100 d-flex flex-column bar-padding">
+  <div class="h-100 d-flex flex-column bar-padding position-relative	">
     <div class="fixed-bar pa-4">
       <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
         prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" @input="onInput"
@@ -122,8 +121,10 @@ onBeforeRouteLeave(async (to, from, next) => {
   position: fixed;
   background-color: white;
   top: 0;
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%); 
   z-index: 5;
+  max-width: 480px;
+  width: 100%; 
 }
 </style>

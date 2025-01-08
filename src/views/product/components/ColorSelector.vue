@@ -15,7 +15,7 @@ const emit = defineEmits(["selectColor"]);
 const colors = computed<Color[]>(() => {
   const seen = new Set<Color["code"]>();
   const allColors = props.variants.reduce((acc: Color[], variant: Variant) => {
-    if (!seen.has(variant.color.code)) {
+    if (variant.color && !seen.has(variant.color.code)) {
       seen.add(variant.color.code);
       acc.push(variant.color);
     }
@@ -81,32 +81,21 @@ watch(
     </div>
 
     <transition-group name="list" tag="div" class="d-flex flex-wrap ga-4">
-      <div
-        v-for="color in colors"
-        :key="color.code"
-        :class="{
-          'not-in-warranty':
-            !props.selectedWarranty ||
-            props.selectedWarranty.length === 0 ||
-            isColorInWarranty(color.code),
-        }"
-        :style="{
-          opacity:
-            !props.selectedWarranty ||
+      <div v-for="color in colors" :key="color.code" :class="{
+        'not-in-warranty':
+          !props.selectedWarranty ||
+          props.selectedWarranty.length === 0 ||
+          isColorInWarranty(color.code),
+      }" :style="{
+        opacity:
+          !props.selectedWarranty ||
             props.selectedWarranty.length === 0 ||
             isColorInWarranty(color.code)
-              ? 1
-              : 0.6,
-        }"
-        class="d-flex ga-2 list-item"
-      >
+            ? 1
+            : 0.6,
+      }" class="d-flex ga-2 list-item">
         <label class="container">
-          <input
-            type="radio"
-            ref="radio"
-            name="radio"
-            @change="updateSelectedColor(color.code)"
-          />
+          <input type="radio" ref="radio" name="radio" @change="updateSelectedColor(color.code)" />
 
           <span class="checkmark" :style="{ backgroundColor: color.code }">
             <v-icon class="d-none red" icon="done" size="x-small"></v-icon>
@@ -125,9 +114,11 @@ watch(
   opacity: 0;
   transform: translateX(30px);
 }
+
 .list-move {
   transition: transform 1s;
 }
+
 .not-in-warranty .checkmark {
   transition: all ease 1s;
   box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 0.5);
@@ -166,10 +157,11 @@ watch(
   border-radius: 100%;
 }
 
-.container:hover input ~ .checkmark {
+.container:hover input~.checkmark {
   background-color: #ccc;
 }
-.container input:checked ~ .checkmark {
+
+.container input:checked~.checkmark {
   border: 2px solid #000000;
 }
 
@@ -179,11 +171,11 @@ watch(
   display: none;
 }
 
-.container input:checked ~ .checkmark:after {
+.container input:checked~.checkmark:after {
   display: block;
 }
 
-.container input:checked ~ .checkmark i {
+.container input:checked~.checkmark i {
   color: black;
   display: block !important;
   font-size: 1.1rem;

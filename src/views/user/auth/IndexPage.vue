@@ -72,8 +72,8 @@ const sendOTP = async () => {
     body.append('phone_number', props.phoneNumber || '')
     body.append('otp', otp)
     const response = await validateOTPService(body as ValidateOTPBody)
-
     userStore.user.token = response.data.access
+    userStore.user.refreshToken = response.data.refresh
     userStore.user.phoneNumber = props.phoneNumber
 
     userStore.updateStoredData()
