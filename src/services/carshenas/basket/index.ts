@@ -1,6 +1,12 @@
 import carshenasService from "@/services";
 import type { BasketItem, BasketRequest } from "@/types/dto/basket";
 
+const credentialsHeader = {
+  headers: {
+    Credentials: "Include", 
+  },
+};
+
 export const addToBasketService = (
   data: BasketRequest
 ): Promise<BasketItem> => {
@@ -10,12 +16,15 @@ export const addToBasketService = (
   return carshenasService
     .post<BasketItem>("/basket/", {
       body: formData,
+      ...credentialsHeader, // Include credentials in headers
     })
     .then((response) => response.data); // Extract the data from the response
 };
 
 export const getBasketService = () => {
-  return carshenasService.get<BasketItem[]>("/basket/");
+  return carshenasService.get<BasketItem[]>("/basket/", {
+    ...credentialsHeader, // Include credentials in headers
+  });
 };
 
 export const patchBasketService = (itemId: number, data: BasketRequest) => {
@@ -24,9 +33,12 @@ export const patchBasketService = (itemId: number, data: BasketRequest) => {
 
   return carshenasService.patch(`/basket/${itemId}/`, {
     body: formData,
+    ...credentialsHeader, // Include credentials in headers
   });
 };
 
 export const deleteBasketService = (itemId: number) => {
-  return carshenasService.delete(`/basket/${itemId}/`);
+  return carshenasService.delete(`/basket/${itemId}/`, {
+    ...credentialsHeader, // Include credentials in headers
+  });
 };

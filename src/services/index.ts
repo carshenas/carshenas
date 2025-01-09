@@ -13,8 +13,7 @@ const baseURL = `${scheme}://${import.meta.env.VITE_API_SERVER}`
 const headers = new Headers()
 
 const carshenasFetchOptions = {
-  baseURL,
-  headers
+  baseURL
 }
 
 const handleParameters = (parameters?: FetcherOptions['parameters']) =>
@@ -39,6 +38,16 @@ const addAuthorizationHeader = () => {
   }
 }
 
+const mergeHeaders = (customHeaders?: HeadersInit) => {
+  const mergedHeaders = new Headers(headers)
+  if (customHeaders) {
+    Object.entries(customHeaders).forEach(([key, value]) => {
+      mergedHeaders.set(key, value)
+    })
+  }
+  return mergedHeaders
+}
+
 const carshenasService = {
   get: async <R>(url: string, options?: FetcherOptions) => {
     addAuthorizationHeader()
@@ -46,6 +55,7 @@ const carshenasService = {
     const result = await fetcher.get<DecamelizeObjectKeys<R>>(url, {
       ...options,
       parameters,
+      headers: mergeHeaders(options?.headers), 
       ...carshenasFetchOptions
     })
 
@@ -59,6 +69,7 @@ const carshenasService = {
       ...options,
       parameters,
       body,
+      headers: mergeHeaders(options?.headers), 
       ...carshenasFetchOptions
     })
 
@@ -72,6 +83,7 @@ const carshenasService = {
       ...options,
       parameters,
       body,
+      headers: mergeHeaders(options?.headers), 
       ...carshenasFetchOptions
     })
 
@@ -85,6 +97,7 @@ const carshenasService = {
       ...options,
       parameters,
       body,
+      headers: mergeHeaders(options?.headers), 
       ...carshenasFetchOptions
     })
 
@@ -96,11 +109,13 @@ const carshenasService = {
     const result = await fetcher.delete<DecamelizeObjectKeys<R>>(url, {
       ...options,
       parameters,
+      headers: mergeHeaders(options?.headers), 
       ...carshenasFetchOptions
     })
 
     return handleResponse(result)
   }
 }
+
 
 export default carshenasService
