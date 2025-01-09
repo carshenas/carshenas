@@ -1,10 +1,17 @@
+// basketService.ts
 import carshenasService from "@/services";
 import type { BasketItem, BasketRequest } from "@/types/dto/basket";
 
-const credentialsHeader = {
+// Credentials config only for GET requests
+const getRequestConfig = {
   headers: {
-    Credentials: "Include", 
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Credentials": "true",
+    Credentials: "include",
   },
+  withCredentials: true,
+  credentials: "include" as RequestCredentials,
 };
 
 export const addToBasketService = (
@@ -16,14 +23,13 @@ export const addToBasketService = (
   return carshenasService
     .post<BasketItem>("/basket/", {
       body: formData,
-      ...credentialsHeader, // Include credentials in headers
     })
-    .then((response) => response.data); // Extract the data from the response
+    .then((response) => response.data);
 };
 
 export const getBasketService = () => {
   return carshenasService.get<BasketItem[]>("/basket/", {
-    ...credentialsHeader, // Include credentials in headers
+    ...getRequestConfig,
   });
 };
 
@@ -33,12 +39,9 @@ export const patchBasketService = (itemId: number, data: BasketRequest) => {
 
   return carshenasService.patch(`/basket/${itemId}/`, {
     body: formData,
-    ...credentialsHeader, // Include credentials in headers
   });
 };
 
 export const deleteBasketService = (itemId: number) => {
-  return carshenasService.delete(`/basket/${itemId}/`, {
-    ...credentialsHeader, // Include credentials in headers
-  });
+  return carshenasService.delete(`/basket/${itemId}/`);
 };
