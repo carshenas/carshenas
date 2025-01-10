@@ -9,6 +9,7 @@ const getRequestConfig = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Credentials": "true",
     Credentials: "include",
+    "Access-Control-Allow-Origin": "*",
   },
   withCredentials: true,
   credentials: "include" as RequestCredentials,
@@ -23,6 +24,7 @@ export const addToBasketService = (
   return carshenasService
     .post<BasketItem>("/basket/", {
       body: formData,
+      ...getRequestConfig,
     })
     .then((response) => response.data);
 };
@@ -39,9 +41,10 @@ export const patchBasketService = (itemId: number, data: BasketRequest) => {
 
   return carshenasService.patch(`/basket/${itemId}/`, {
     body: formData,
+    ...getRequestConfig,
   });
 };
 
 export const deleteBasketService = (itemId: number) => {
-  return carshenasService.delete(`/basket/${itemId}/`);
+  return carshenasService.delete(`/basket/${itemId}/`), { ...getRequestConfig };
 };
