@@ -4,13 +4,6 @@ import type { BasketItem, BasketRequest } from "@/types/dto/basket";
 
 // Credentials config only for GET requests
 const getRequestConfig = {
-  headers: {
-    Accept: "*/*",
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Credentials": "true",
-    Credentials: "include",
-    "Access-Control-Allow-Origin": "*",
-  },
   withCredentials: true,
   credentials: "include" as RequestCredentials,
 };
