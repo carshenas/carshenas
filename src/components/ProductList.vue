@@ -17,7 +17,6 @@ const props = defineProps<{
   manual?: boolean
 }>()
 
-const isLoading = ref<boolean>(false)
 const products = ref<Product[]>(props.items || [])
 const pagination = reactive<{
   limit: number
@@ -35,7 +34,6 @@ const getProducts = async ({
 }) => {
   if (!shouldFetchProducts.value) return
 
-  isLoading.value = true
   try {
     const response = await getProductListService({
       ...props.filter,
@@ -45,12 +43,12 @@ const getProducts = async ({
 
     pagination.offset += pagination.limit
 
+    if (products.value.length >= response.data.count) return done('empty')
+
     done('ok')
   } catch (e) {
     console.error(e)
     done('error')
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -181,12 +179,6 @@ const getCartVariant = (productId: number): Variant | null => {
     </template>
   </v-infinite-scroll>
 </template>
-
-<style scoped>
-.centered-input {
-  width: 120px;
-}
-</style>
 
 <style scoped>
 .centered-input {
