@@ -4,8 +4,8 @@ import checkout from "./checkout";
 import user from "./user";
 import search from "./search";
 import login from "./login";
+import contacts from "./contacts";
 
-// user store
 import { useUserStore } from "@/stores/user";
 
 const router = createRouter({
@@ -21,6 +21,7 @@ const router = createRouter({
     checkout,
     login,
     user,
+    contacts,
     {
       path: "/:pathMatch(.*)*",
       name: "NotFoundPage",

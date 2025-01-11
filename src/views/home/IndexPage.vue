@@ -66,9 +66,9 @@ onMounted(() => getMostViewedCategories());
           src='https://trustseal.enamad.ir/logo.aspx?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64' alt=''
           style='cursor:pointer' code='pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64'></a>
       <div class="d-flex flex-column gap-2">
+
         <div>
-          <span class="ml-2"> تماس:</span>
-          <a href="tel:09012529729">09012529729</a>
+          <a href="/contacts" class="ml-2">تماس با ما</a>
         </div>
         <div class='text-caption'>
           <span class="ml-2"> ایمیل:</span>

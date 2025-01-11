@@ -11,6 +11,7 @@ import product from './product'
 import pageNotFound from './page-not-found'
 import message from './message'
 import support from './support'
+import contactUs from './contactUs'
 
 export default {
   app,
@@ -25,5 +26,6 @@ export default {
   checkout,
   pageNotFound,
   message,
-  support
+  support,
+  contactUs
 }
