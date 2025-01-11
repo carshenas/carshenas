@@ -5,7 +5,7 @@ import PopularModels from "./components/PopularModels.vue";
 import { onMounted, ref } from "vue";
 import { getMostViewedCategoriesService } from "@/services/carshenas/category";
 import type { Category } from "@/types/dto/category";
-
+import BrandFilterBottomSheet from '@/views/product/list/components/BrandFilterBottomSheet.vue'
 const items = ref<Category[]>();
 const loading = ref<boolean>();
 
@@ -70,12 +70,13 @@ onMounted(() => getMostViewedCategories());
           <span class="ml-2"> تماس:</span>
           <a href="tel:09012529729">09012529729</a>
         </div>
-        <div>
+        <div class='text-caption'>
           <span class="ml-2"> ایمیل:</span>
           <a href="mailto:carshenas.shop@gmail.com">carshenas.shop@gmail.com</a>
         </div>
       </div>
     </footer>
+    <BrandFilterBottomSheet />
     <!-- <section class="my-12">
       <div class="d-flex justify-space-between align-center">
         <h2 class="title-sm">
