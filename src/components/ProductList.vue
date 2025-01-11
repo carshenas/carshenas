@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Product, ProductFilter, Variant } from '@/types/dto/product'
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch, computed, reactive } from 'vue'
 import { getProductListService } from '@/services/carshenas/product'
 import CurrencyDisplay from './CurrencyDisplay.vue'
 import ImageLoader from './ImageLoader.vue'
@@ -17,37 +17,51 @@ const props = defineProps<{
   manual?: boolean
 }>()
 
-const _loading = ref<boolean>(false)
 const products = ref<Product[]>(props.items || [])
+const pagination = reactive<{
+  limit: number
+  offset: number
+}>({ limit: 10, offset: 0 })
 
 const shouldFetchProducts = computed(
   () => !props.items || props.items.length === 0
 )
 
-const getProducts = async () => {
+const getProducts = async ({
+  done
+}: {
+  done: (status: 'ok' | 'error' | 'empty' | 'loading') => void
+}) => {
   if (!shouldFetchProducts.value) return
 
-  _loading.value = true
   try {
-    const response = await getProductListService(props.filter)
-    products.value = response.data.result
+    const response = await getProductListService({
+      ...props.filter,
+      ...pagination
+    })
+    products.value = products.value.concat(response.data.result)
+
+    pagination.offset += pagination.limit
+
+    if (products.value.length >= response.data.count) return done('empty')
+
+    done('ok')
   } catch (e) {
     console.error(e)
-  } finally {
-    _loading.value = false
+    done('error')
   }
 }
 
-watch(
-  () => props.filter,
-  () => getProducts()
-)
+// watch(
+//   () => props.filter,
+//   () => getProducts()
+// )
 
-onMounted(() => {
-  if (!props.manual) {
-    getProducts()
-  }
-})
+// onMounted(() => {
+//   if (!props.manual) {
+//     getProducts()
+//   }
+// })
 
 const handleItemCounter = (product: Product, quantity: number) => {
   const existingItem = cartStore.items.find((item) => item.id === product.id)
@@ -76,61 +90,95 @@ const getCartQuantity = (productId: number): number => {
 
 // In your product list component
 const getCartVariant = (productId: number): Variant | null => {
-  const item = cartStore.items.find((item) => item.variant.id === productId);
-  if (!item) return null;
+  const item = cartStore.items.find((item) => item.variant.id === productId)
+  if (!item) return null
 
-  return item.variant;  // This is now safe because item.variant is already of type Variant
-};
-
+  return item.variant // This is now safe because item.variant is already of type Variant
+}
 </script>
 
 <template>
-  <div v-if="_loading || props.loading">
-    <v-skeleton-loader v-for="n in 4" :key="n" class="mt-2" height="100" type="ossein" />
-  </div>
+  <v-infinite-scroll @load="getProducts">
+    <template v-for="product in products" :key="product.id">
+      <div class="product py-2 px-4">
+        <v-row>
+          <v-col cols="4" class="d-flex align-center">
+            <ImageLoader
+              :src="
+                product.images && product.images.length > 0
+                  ? product.images[0]
+                  : product.image || 'placeholder.jpg'
+              "
+              :alt="product.name!"
+              width="86"
+              height="86"
+              aspectRatio="1"
+            />
+          </v-col>
 
-  <v-list v-else>
-    <v-list-item v-for="product in products" :key="product.id" class="product py-2 px-4">
-      <v-row>
-        <v-col cols="4" class="d-flex align-center">
-          <ImageLoader :src="product.images && product.images.length > 0
-            ? product.images[0]
-            : product.image || 'placeholder.jpg'
-            " :alt="product.name" width="86" height="86" aspectRatio="1" />
-        </v-col>
+          <v-col cols="8" class="d-flex flex-column">
+            <div class="d-flex justify-space-between align-center">
+              <h2 class="title-sm">{{ product.name }}</h2>
 
-        <v-col cols="8" class="d-flex flex-column">
-          <div class="d-flex justify-space-between align-center">
-            <h2 class="title-sm">{{ product.name }}</h2>
+              <v-btn
+                v-if="props.hasCounter && getCartQuantity(product.id) > 0"
+                density="compact"
+                icon="delete"
+                variant="plain"
+                class="px-0"
+              />
+            </div>
 
-            <v-btn v-if="props.hasCounter && getCartQuantity(product.id) > 0" density="compact" icon="delete"
-              variant="plain" class="px-0" />
-          </div>
+            <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
 
-          <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
+            <div
+              class="mt-2 flex-grow-1 d-flex justify-space-between align-end"
+            >
+              <CurrencyDisplay
+                :value="product.price"
+                value-class="text-primary font-weight-bold"
+                unit-class="body-sm text-outline"
+                class="d-flex justify-end body-md py-1"
+              />
 
-          <div class="mt-2 flex-grow-1 d-flex justify-space-between align-end">
-            <CurrencyDisplay :value="product.price" value-class="text-primary font-weight-bold"
-              unit-class="body-sm text-outline" class="d-flex justify-end body-md py-1" />
+              <ItemCounter
+                v-if="props.hasCounter && getCartVariant(product.id)"
+                :variant="getCartVariant(product.id)!"
+                :quantity="getCartQuantity(product.id)"
+                @update:quantity="
+                  (quantity: number) => handleItemCounter(product, quantity)
+                "
+              />
 
-            <ItemCounter v-if="props.hasCounter && getCartVariant(product.id)" :variant="getCartVariant(product.id)!"
-              :quantity="getCartQuantity(product.id)" @update:quantity="(quantity) => handleItemCounter(product, quantity)
-                " />
+              <v-btn
+                v-else
+                :text="$t('shared.more')"
+                variant="plain"
+                class="px-0"
+                append-icon="chevron_left"
+                density="compact"
+                :to="{
+                  name: 'ProductDetailPage',
+                  params: { id: product.id }
+                }"
+              />
+            </div>
+          </v-col>
+        </v-row>
+      </div>
+    </template>
 
-            <v-btn v-else :text="$t('shared.more')" variant="plain" class="px-0" append-icon="chevron_left"
-              density="compact" :to="{ name: 'ProductDetailPage', params: { id: product.id } }"></v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </v-list-item>
-  </v-list>
+    <template #loading>
+      <v-skeleton-loader
+        v-for="n in 4"
+        :key="n"
+        class="mt-2"
+        height="100"
+        type="ossein"
+      />
+    </template>
+  </v-infinite-scroll>
 </template>
-
-<style scoped>
-.centered-input {
-  width: 120px;
-}
-</style>
 
 <style scoped>
 .centered-input {
