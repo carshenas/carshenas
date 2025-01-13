@@ -1,56 +1,61 @@
 <script lang="ts" setup>
-import type { Product, ProductFilter, Variant } from '@/types/dto/product'
-import { ref, onMounted, watch, computed, reactive } from 'vue'
-import { getProductListService } from '@/services/carshenas/product'
-import CurrencyDisplay from './CurrencyDisplay.vue'
-import ImageLoader from './ImageLoader.vue'
-import ItemCounter from '@/components/ItemCounter.vue'
-import { useCartStore } from '@/stores/cart'
+import type { Product, ProductFilter, Variant } from "@/types/dto/product";
+import { ref, onMounted, watch, computed, reactive } from "vue";
+import { getProductListService } from "@/services/carshenas/product";
+import CurrencyDisplay from "./CurrencyDisplay.vue";
+import ImageLoader from "./ImageLoader.vue";
+import ItemCounter from "@/components/ItemCounter.vue";
+import { useCartStore } from "@/stores/cart";
+import type { Nullable } from "@/types/utilities";
 
-const cartStore = useCartStore()
+// const cartStore = useCartStore();
 
 const props = defineProps<{
-  items?: Product[]
-  loading?: boolean
-  filter?: ProductFilter
-  hasCounter?: boolean
-  manual?: boolean
-}>()
-
-const products = ref<Product[]>(props.items || [])
+  loading?: boolean;
+  filter?: ProductFilter;
+  hasCounter?: boolean;
+  noPagination?: boolean;
+  limit?: number;
+}>();
+const count = ref<Nullable<number>>(null);
+const products = ref<Product[]>([]);
 const pagination = reactive<{
-  limit: number
-  offset: number
-}>({ limit: 10, offset: 0 })
+  limit: number;
+  offset: number;
+}>({ limit: props.limit || 10, offset: 0 });
 
-const shouldFetchProducts = computed(
-  () => !props.items || props.items.length === 0
-)
+// const shouldFetchProducts = computed(
+//   () => !props.items || props.items.length === 0
+// );
 
 const getProducts = async ({
-  done
+  done,
 }: {
-  done: (status: 'ok' | 'error' | 'empty' | 'loading') => void
+  done: (status: "ok" | "error" | "empty" | "loading") => void;
 }) => {
-  if (!shouldFetchProducts.value) return
+  if (
+    (count.value && products.value.length >= count.value) ||
+    (props.noPagination && products.value.length)
+  )
+    return done("empty");
 
   try {
     const response = await getProductListService({
       ...props.filter,
-      ...pagination
-    })
-    products.value = products.value.concat(response.data.result)
+      ...pagination,
+    });
+    products.value = products.value.concat(response.data.result);
 
-    pagination.offset += pagination.limit
+    pagination.offset += pagination.limit;
 
-    if (products.value.length >= response.data.count) return done('empty')
+    count.value = response.data.count;
 
-    done('ok')
+    done("ok");
   } catch (e) {
-    console.error(e)
-    done('error')
+    console.error(e);
+    done("error");
   }
-}
+};
 
 // watch(
 //   () => props.filter,
@@ -63,16 +68,16 @@ const getProducts = async ({
 //   }
 // })
 
-const handleItemCounter = (product: Product, quantity: number) => {
-  const existingItem = cartStore.items.find((item) => item.id === product.id)
-  if (existingItem) {
-    if (quantity === 0) {
-      cartStore.removeItem(existingItem.id)
-    } else {
-      cartStore.updateQuantity(existingItem.id, quantity)
-    }
-  }
-}
+// const handleItemCounter = (product: Product, quantity: number) => {
+//   const existingItem = cartStore.items.find((item) => item.id === product.id);
+//   if (existingItem) {
+//     if (quantity === 0) {
+//       cartStore.removeItem(existingItem.id);
+//     } else {
+//       cartStore.updateQuantity(existingItem.id, quantity);
+//     }
+//   }
+// };
 // const handleWipeItem = async (productId: number) => {
 //   try {
 //     const itemsToWipe = cartStore.items.filter(item => item.id === productId)
@@ -83,22 +88,22 @@ const handleItemCounter = (product: Product, quantity: number) => {
 //     console.error('Failed to wipe items:', error)
 //   }
 // }
-const getCartQuantity = (productId: number): number => {
-  const item = cartStore.items.find((item) => item.id === productId)
-  return item ? item.stock : 0
-}
+// const getCartQuantity = (productId: number): number => {
+//   const item = cartStore.items.find((item) => item.id === productId);
+//   return item ? item.stock : 0;
+// };
 
-// In your product list component
-const getCartVariant = (productId: number): Variant | null => {
-  const item = cartStore.items.find((item) => item.variant.id === productId)
-  if (!item) return null
+// // In your product list component
+// const getCartVariant = (productId: number): Variant | null => {
+//   const item = cartStore.items.find((item) => item.variant.id === productId);
+//   if (!item) return null;
 
-  return item.variant // This is now safe because item.variant is already of type Variant
-}
+//   return item.variant; // This is now safe because item.variant is already of type Variant
+// };
 </script>
 
 <template>
-  <v-infinite-scroll @load="getProducts">
+  <v-infinite-scroll empty-text="" @load="getProducts">
     <template v-for="product in products" :key="product.id">
       <div class="product py-2 px-4">
         <v-row>
@@ -120,13 +125,13 @@ const getCartVariant = (productId: number): Variant | null => {
             <div class="d-flex justify-space-between align-center">
               <h2 class="title-sm">{{ product.name }}</h2>
 
-              <v-btn
+              <!-- <v-btn
                 v-if="props.hasCounter && getCartQuantity(product.id) > 0"
                 density="compact"
                 icon="delete"
                 variant="plain"
                 class="px-0"
-              />
+              /> -->
             </div>
 
             <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
@@ -141,17 +146,17 @@ const getCartVariant = (productId: number): Variant | null => {
                 class="d-flex justify-end body-md py-1"
               />
 
-              <ItemCounter
+              <!-- <ItemCounter
                 v-if="props.hasCounter && getCartVariant(product.id)"
                 :variant="getCartVariant(product.id)!"
                 :quantity="getCartQuantity(product.id)"
                 @update:quantity="
                   (quantity: number) => handleItemCounter(product, quantity)
                 "
-              />
+              /> -->
 
+              <!-- v-else -->
               <v-btn
-                v-else
                 :text="$t('shared.more')"
                 variant="plain"
                 class="px-0"
@@ -159,7 +164,7 @@ const getCartVariant = (productId: number): Variant | null => {
                 density="compact"
                 :to="{
                   name: 'ProductDetailPage',
-                  params: { id: product.id }
+                  params: { id: product.id },
                 }"
               />
             </div>
