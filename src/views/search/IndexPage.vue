@@ -1,61 +1,61 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import CategoryList from '@/components/CategoryList.vue'
-import { useRouter } from 'vue-router'
-import ProductList from '@/components/ProductList.vue'
-import SearchSuggestions from './components/SearchSuggestions.vue'
-import { useDatabaseStore } from '@/stores/database'
-import { onBeforeRouteLeave } from 'vue-router'
-import { generateNumericId } from '@/helpers/general'
-import type { Category } from '@/types/dto/category'
-import { debounce } from 'lodash'
-import type { Product } from '@/types/dto/product'
-import { getSearchResultsService } from '@/services/carshenas/search'
+import { ref } from "vue";
+import CategoryList from "@/components/CategoryList.vue";
+import { useRouter } from "vue-router";
+import ProductList from "@/components/ProductList.vue";
+import SearchSuggestions from "./components/SearchSuggestions.vue";
+import { useDatabaseStore } from "@/stores/database";
+import { onBeforeRouteLeave } from "vue-router";
+import { generateNumericId } from "@/helpers/general";
+import type { Category } from "@/types/dto/category";
+import { debounce } from "lodash";
+import type { Product } from "@/types/dto/product";
+import { getSearchResultsService } from "@/services/carshenas/search";
 
-const router = useRouter()
-const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
-const products = ref<Product[]>()
-const categories = ref<Category[]>()
-const search = ref<string>()
+const router = useRouter();
+const { open: openDatabase, getDb, getStore, add } = useDatabaseStore();
+const products = ref<Product[]>();
+const categories = ref<Category[]>();
+const search = ref<string>();
 
 const fetchSearchResults = async () => {
   try {
     if (!search.value || search.value.length < 1) {
-      products.value = []
-      categories.value = []
-      return
+      products.value = [];
+      categories.value = [];
+      return;
     }
 
-    const response = await getSearchResultsService(search.value)
-    products.value = response.data.products || []
-    categories.value = response.data.categories || []
+    const response = await getSearchResultsService(search.value);
+    products.value = response.data.products || [];
+    categories.value = response.data.categories || [];
   } catch (e) {
-    console.error('Error fetching search results:', e)
+    console.error("Error fetching search results:", e);
   }
-}
+};
 
-const onInput = debounce(fetchSearchResults, 1000)
+const onInput = debounce(fetchSearchResults, 1000);
 
 const updateSearch = (e: string) => {
-  search.value = e
+  search.value = e;
   // getProducts()
-}
+};
 
-openDatabase('search', undefined, (db: IDBDatabase) => {
-  db.createObjectStore('suggestions', { keyPath: 'id' })
-})
+openDatabase("search", undefined, (db: IDBDatabase) => {
+  db.createObjectStore("suggestions", { keyPath: "id" });
+});
 
 onBeforeRouteLeave(async (to, from, next) => {
   if (
-    (to.name === 'ProductsPage' || to.name === 'ProductDetail') &&
+    (to.name === "ProductsPage" || to.name === "ProductDetail") &&
     search.value
   ) {
-    const searchDb = await getDb('search')
-    const suggestions = getStore(searchDb, 'suggestions')
-    add(suggestions, { title: search.value, id: generateNumericId() })
+    const searchDb = await getDb("search");
+    const suggestions = getStore(searchDb, "suggestions");
+    add(suggestions, { title: search.value, id: generateNumericId() });
   }
-  next()
-})
+  next();
+});
 </script>
 
 <template>
@@ -89,8 +89,8 @@ onBeforeRouteLeave(async (to, from, next) => {
       <div v-if="categories?.length">
         <h2 class="title-sm mt-6 px-4">
           {{
-            $t('search.searchInCategory', {
-              item: search
+            $t("search.searchInCategory", {
+              item: search,
             })
           }}
         </h2>
@@ -101,8 +101,8 @@ onBeforeRouteLeave(async (to, from, next) => {
       <div v-if="products?.length" class="mt-6 w-100 d-flex px-4">
         <h2 class="title-sm">
           {{
-            $t('search.searchInProducts', {
-              item: search
+            $t("search.searchInProducts", {
+              item: search,
             })
           }}
         </h2>
@@ -114,7 +114,12 @@ onBeforeRouteLeave(async (to, from, next) => {
         </RouterLink> -->
       </div>
 
-      <ProductList class="mt-6" :filter="{ title: search }" />
+      <ProductList
+        class="mt-6"
+        :limit="4"
+        :filter="{ title: search }"
+        no-pagination
+      />
     </template>
 
     <div
@@ -122,12 +127,12 @@ onBeforeRouteLeave(async (to, from, next) => {
       class="flex-grow-1 d-flex align-center"
     >
       <span class="w-100 text-center">
-        {{ $t('search.whatProductAreYouLookingFor') }}
+        {{ $t("search.whatProductAreYouLookingFor") }}
       </span>
     </div>
 
     <div v-else class="flex-grow-1 d-flex align-center">
-      <span class="w-100 text-center"> {{ $t('shared.nothingFound') }} </span>
+      <span class="w-100 text-center"> {{ $t("shared.nothingFound") }} </span>
     </div>
   </div>
 </template>

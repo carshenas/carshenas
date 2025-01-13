@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import useAppConfig from '@/composable/app-config'
-import { toDisplayCurrency } from '@/helpers/currency'
-import type { Nullable } from '@/types/utilities'
-import { computed } from 'vue'
+import useAppConfig from "@/composable/app-config";
+import { toDisplayCurrency } from "@/helpers/currency";
+import type { Nullable } from "@/types/utilities";
+import { computed } from "vue";
 
-const appConfig = useAppConfig()
+const appConfig = useAppConfig();
 
 const props = withDefaults(
   defineProps<{
-    value: Nullable<number> | Nullable<string>
-    valueClass?: string | string[]
-    unitClass?: string | string[]
-    showUnit?: boolean
+    value: Nullable<number> | Nullable<string>;
+    valueClass?: string | string[];
+    unitClass?: string | string[];
+    showUnit?: boolean;
   }>(),
   { showUnit: true }
-)
+);
 
 const computedValue = computed(() => {
-  return props.value && toDisplayCurrency(props.value)
-})
+  return props.value && toDisplayCurrency(props.value);
+});
 </script>
 
 <template>
