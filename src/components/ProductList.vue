@@ -1,61 +1,61 @@
 <script lang="ts" setup>
-import type { Product, ProductFilter, Variant } from "@/types/dto/product";
-import { ref, onMounted, watch, computed, reactive } from "vue";
-import { getProductListService } from "@/services/carshenas/product";
-import CurrencyDisplay from "./CurrencyDisplay.vue";
-import ImageLoader from "./ImageLoader.vue";
-import ItemCounter from "@/components/ItemCounter.vue";
-import { useCartStore } from "@/stores/cart";
-import type { Nullable } from "@/types/utilities";
+import type { Product, ProductFilter, Variant } from '@/types/dto/product'
+import { ref, onMounted, watch, computed, reactive } from 'vue'
+import { getProductListService } from '@/services/carshenas/product'
+import CurrencyDisplay from './CurrencyDisplay.vue'
+import ImageLoader from './ImageLoader.vue'
+import ItemCounter from '@/components/ItemCounter.vue'
+import { useCartStore } from '@/stores/cart'
+import type { Nullable } from '@/types/utilities'
 
 // const cartStore = useCartStore();
 
 const props = defineProps<{
-  loading?: boolean;
-  filter?: ProductFilter;
-  hasCounter?: boolean;
-  noPagination?: boolean;
-  limit?: number;
-}>();
-const count = ref<Nullable<number>>(null);
-const products = ref<Product[]>([]);
+  loading?: boolean
+  filter?: ProductFilter
+  hasCounter?: boolean
+  noPagination?: boolean
+  limit?: number
+}>()
+const count = ref<Nullable<number>>(null)
+const products = ref<Product[]>([])
 const pagination = reactive<{
-  limit: number;
-  offset: number;
-}>({ limit: props.limit || 10, offset: 0 });
+  limit: number
+  offset: number
+}>({ limit: props.limit || 10, offset: 0 })
 
 // const shouldFetchProducts = computed(
 //   () => !props.items || props.items.length === 0
 // );
 
 const getProducts = async ({
-  done,
+  done
 }: {
-  done: (status: "ok" | "error" | "empty" | "loading") => void;
+  done: (status: 'ok' | 'error' | 'empty' | 'loading') => void
 }) => {
   if (
     (count.value && products.value.length >= count.value) ||
     (props.noPagination && products.value.length)
   )
-    return done("empty");
+    return done('empty')
 
   try {
     const response = await getProductListService({
       ...props.filter,
-      ...pagination,
-    });
-    products.value = products.value.concat(response.data.result);
+      ...pagination
+    })
+    products.value = products.value.concat(response.data.result)
 
-    pagination.offset += pagination.limit;
+    pagination.offset += pagination.limit
 
-    count.value = response.data.count;
+    count.value = response.data.count
 
-    done("ok");
+    done('ok')
   } catch (e) {
-    console.error(e);
-    done("error");
+    console.error(e)
+    done('error')
   }
-};
+}
 
 // watch(
 //   () => props.filter,
@@ -103,7 +103,7 @@ const getProducts = async ({
 </script>
 
 <template>
-  <v-infinite-scroll empty-text="" @load="getProducts">
+  <v-infinite-scroll @load="getProducts">
     <template v-for="product in products" :key="product.id">
       <div class="product py-2 px-4">
         <v-row>
@@ -164,7 +164,7 @@ const getProducts = async ({
                 density="compact"
                 :to="{
                   name: 'ProductDetailPage',
-                  params: { id: product.id },
+                  params: { id: product.id }
                 }"
               />
             </div>
@@ -181,6 +181,11 @@ const getProducts = async ({
         height="100"
         type="ossein"
       />
+    </template>
+
+    <template #empty>
+      <!-- To prevent extra scrollbar from appearing   -->
+      <div style="height: 24px"></div>
     </template>
   </v-infinite-scroll>
 </template>
