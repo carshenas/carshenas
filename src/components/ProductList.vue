@@ -1,14 +1,10 @@
 <script lang="ts" setup>
-import type { Product, ProductFilter, Variant } from '@/types/dto/product'
-import { ref, onMounted, watch, computed, reactive } from 'vue'
+import type { Product, ProductFilter } from '@/types/dto/product'
+import { ref, reactive, watch, nextTick } from 'vue'
 import { getProductListService } from '@/services/carshenas/product'
 import CurrencyDisplay from './CurrencyDisplay.vue'
 import ImageLoader from './ImageLoader.vue'
-import ItemCounter from '@/components/ItemCounter.vue'
-import { useCartStore } from '@/stores/cart'
 import type { Nullable } from '@/types/utilities'
-
-// const cartStore = useCartStore();
 
 const props = defineProps<{
   loading?: boolean
@@ -24,17 +20,13 @@ const pagination = reactive<{
   offset: number
 }>({ limit: props.limit || 10, offset: 0 })
 
-// const shouldFetchProducts = computed(
-//   () => !props.items || props.items.length === 0
-// );
-
 const getProducts = async ({
   done
 }: {
   done: (status: 'ok' | 'error' | 'empty' | 'loading') => void
 }) => {
   if (
-    (count.value && products.value.length >= count.value) ||
+    (count.value !== null && products.value.length >= count.value) ||
     (props.noPagination && products.value.length)
   )
     return done('empty')
@@ -57,53 +49,22 @@ const getProducts = async ({
   }
 }
 
-// watch(
-//   () => props.filter,
-//   () => getProducts()
-// )
+const isListVisible = ref(true)
 
-// onMounted(() => {
-//   if (!props.manual) {
-//     getProducts()
-//   }
-// })
-
-// const handleItemCounter = (product: Product, quantity: number) => {
-//   const existingItem = cartStore.items.find((item) => item.id === product.id);
-//   if (existingItem) {
-//     if (quantity === 0) {
-//       cartStore.removeItem(existingItem.id);
-//     } else {
-//       cartStore.updateQuantity(existingItem.id, quantity);
-//     }
-//   }
-// };
-// const handleWipeItem = async (productId: number) => {
-//   try {
-//     const itemsToWipe = cartStore.items.filter(item => item.id === productId)
-//     if (itemsToWipe.length > 0) {
-//       await cartStore.clearCart(itemsToWipe.map(item => item.id))
-//     }
-//   } catch (error) {
-//     console.error('Failed to wipe items:', error)
-//   }
-// }
-// const getCartQuantity = (productId: number): number => {
-//   const item = cartStore.items.find((item) => item.id === productId);
-//   return item ? item.stock : 0;
-// };
-
-// // In your product list component
-// const getCartVariant = (productId: number): Variant | null => {
-//   const item = cartStore.items.find((item) => item.variant.id === productId);
-//   if (!item) return null;
-
-//   return item.variant; // This is now safe because item.variant is already of type Variant
-// };
+watch(
+  () => props.filter,
+  async () => {
+    isListVisible.value = false
+    count.value = null
+    products.value = []
+    await nextTick()
+    isListVisible.value = true
+  }
+)
 </script>
 
 <template>
-  <v-infinite-scroll @load="getProducts">
+  <v-infinite-scroll v-if="isListVisible" @load="getProducts">
     <template v-for="product in products" :key="product.id">
       <div class="product py-2 px-4">
         <v-row>
