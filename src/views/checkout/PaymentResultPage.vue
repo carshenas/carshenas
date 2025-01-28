@@ -2,7 +2,7 @@
 import { useRoute } from "vue-router";
 
 const {
-  query: { isSuccess, "tracking-code": trackingCode },
+  query: { isSuccess, "tracking-code": trackingCode, amount },
 } = useRoute();
 </script>
 <template>
@@ -32,6 +32,10 @@ const {
             ? $t("checkout.paymentSuccessMessage")
             : $t("checkout.paymentErrorMessage")
         }}
+      </p>
+
+      <p v-if="amount" class="mb-4 label-lg">
+        {{ `${$t("checkout.amount")} : ${amount}` }}
       </p>
 
       <p v-if="trackingCode" class="mb-4 label-lg">
