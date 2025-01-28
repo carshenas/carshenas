@@ -13,4 +13,5 @@ export default {
   noName: "بدون نام",
   continue: "ادامه",
   loading: "لطفا منتظر بمانید",
+  goToHome: "بازگشت به خانه",
 };
