@@ -17,4 +17,10 @@ export default {
   apply: "ثبت",
   discountApplied: "کد تخفیف ثبت شده",
   total: "مجموع",
+  paymentResult: "نتیجه پرداخت",
+  paymentSuccess: "پرداخت موفق",
+  paymentError: "پرداخت ناموفق",
+  paymentSuccessMessage: "پرداخت موفقیت امیز بود",
+  paymentErrorMessage: "پرداخت ناموفق بود",
+  trackingCode: "کد رهگیری",
 };
