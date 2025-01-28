@@ -2,7 +2,7 @@
 import { useRoute } from "vue-router";
 
 const {
-  query: { isSuccess, "tracking-code": trackingCode, amount },
+  query: { "is-success": isSuccess, "tracking-code": trackingCode, amount },
 } = useRoute();
 </script>
 <template>
