@@ -15,4 +15,5 @@ export default {
   paymentSuccessMessage: "Your payment has been successful",
   paymentErrorMessage: "Your payment has been failed",
   trackingCode: "Tracking code",
+  amount: "Amount",
 };

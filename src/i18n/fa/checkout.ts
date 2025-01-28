@@ -23,4 +23,5 @@ export default {
   paymentSuccessMessage: "پرداخت موفقیت امیز بود",
   paymentErrorMessage: "پرداخت ناموفق بود",
   trackingCode: "کد رهگیری",
+  amount: "مبلغ",
 };
