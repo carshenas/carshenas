@@ -12,7 +12,7 @@ const {
       max-width="300"
     >
       <v-icon
-        icon="check_circle"
+        :icon="isSuccess ? 'check_circle' : 'cancel'"
         size="100"
         :color="isSuccess === 'true' ? 'success' : 'error'"
         class="mb-4"
