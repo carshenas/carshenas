@@ -66,7 +66,8 @@ export default createVuetify({
       flat: true,
     },
     VTextField: {
-      variant: "outlined",
-    },
-  },
-});
+      hideDetails: 'auto',
+      variant: 'outlined'
+    }
+  }
+})

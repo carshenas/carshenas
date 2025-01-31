@@ -5,7 +5,7 @@ import shared from './shared'
 import home from './home'
 import user from './user'
 import auth from './auth'
-import validation from './validation'
+import validator from './validator'
 import checkout from './checkout'
 import product from './product'
 import pageNotFound from './page-not-found'
@@ -22,7 +22,7 @@ export default {
   product,
   auth,
   user,
-  validation,
+  validator,
   checkout,
   pageNotFound,
   message,

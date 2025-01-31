@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import vMobileInput from '@/directives/v-mobile-input'
 import vFocus from '@/directives/v-focus'
-import { mobile, required } from '@/helpers/validation'
-import i18n from '@/plugins/i18n'
-import type { ValidationParam, ValidationResult } from '@/types/validation'
+import { useI18n } from 'vue-i18n'
+import validator from '@/helpers/validator'
 
-const { t } = i18n.global
+const { t } = useI18n()
 const rules = [
-  (v: ValidationParam): ValidationResult => required(v, t('shared.phone')),
-  (v: ValidationParam): ValidationResult => mobile(v, t('shared.phone'))
+  (v: any) => validator(v, 'required', t('shared.phone')),
+  (v: any) => validator(v, 'mobile', t('shared.phone'))
 ]
 </script>
 

@@ -15,16 +15,16 @@ export function useAddressManagement() {
   const loading = ref(false);
   const addressList = ref<Address[]>([]);
 
-  const fetchAddressList = async () => {
+  const fetchAddressList = async (): Promise<Address[]> => {
     try {
       const response = await getAddressList();
       addressList.value = response.data as unknown as Address[];
+      return addressList.value; // Return the fetched addresses
     } catch (error) {
       console.error("Error fetching address list:", error);
       throw error;
     }
   };
-
   const updateMapPosition = (newPosition: LatLng) => {
     selectedPosition.value = newPosition;
   };
