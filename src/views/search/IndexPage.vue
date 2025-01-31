@@ -16,7 +16,7 @@ const router = useRouter()
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
 const products = ref<Product[]>()
 const categories = ref<Category[]>()
-const search = ref<string>();
+const search = ref<string>()
 
 const fetchSearchResults = async () => {
   try {
@@ -38,7 +38,6 @@ const onInput = debounce(fetchSearchResults, 1000)
 
 const updateSearch = (e: string) => {
   search.value = e
-  // getProducts()
 }
 
 openDatabase('search', undefined, (db: IDBDatabase) => {
@@ -59,16 +58,33 @@ onBeforeRouteLeave(async (to, from, next) => {
 </script>
 
 <template>
-  <div class="h-100 d-flex flex-column bar-padding position-relative	">
+  <div class="h-100 d-flex flex-column bar-padding position-relative">
     <div class="fixed-bar pa-4">
-      <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
-        prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" @input="onInput"
-        @click:prepend-inner="router.back()" />
+      <v-text-field
+        v-model="search"
+        :placeholder="$t('shared.search')"
+        variant="outlined"
+        rounded
+        hide-details
+        prepend-inner-icon="arrow_forward_ios"
+        append-inner-icon="search"
+        @input="onInput"
+        @click:prepend-inner="router.back()"
+      />
     </div>
 
-    <SearchSuggestions class="px-4" :title="search" @select="updateSearch" style="height: 68px" />
+    <SearchSuggestions
+      class="px-4"
+      :title="search"
+      @select="updateSearch"
+      style="height: 68px"
+    />
 
-    <template v-if="search && search.length > 1 && (products?.length || categories?.length)">
+    <template
+      v-if="
+        search && search.length > 1 && (products?.length || categories?.length)
+      "
+    >
       <div v-if="categories?.length">
         <h2 class="title-sm mt-6 px-4">
           {{
@@ -92,15 +108,23 @@ onBeforeRouteLeave(async (to, from, next) => {
 
         <v-spacer />
 
-        <!-- <RouterLink :to="{ name: 'ProductsPage', query: { search } }">
+        <RouterLink :to="{ name: 'ProductsPage', query: { title: search } }">
           {{ $t('search.viewAll') }}
-        </RouterLink> -->
+        </RouterLink>
       </div>
 
-      <ProductList v-if="products?.length" :items="products" class="mt-6" manual />
+      <ProductList
+        class="mt-6"
+        :limit="4"
+        :filter="{ title: search }"
+        no-pagination
+      />
     </template>
 
-    <div v-else-if="!search || search.length < 2" class="flex-grow-1 d-flex align-center">
+    <div
+      v-else-if="!search || search.length < 2"
+      class="flex-grow-1 d-flex align-center"
+    >
       <span class="w-100 text-center">
         {{ $t('search.whatProductAreYouLookingFor') }}
       </span>
@@ -122,9 +146,9 @@ onBeforeRouteLeave(async (to, from, next) => {
   background-color: white;
   top: 0;
   left: 50%;
-  transform: translateX(-50%); 
+  transform: translateX(-50%);
   z-index: 5;
   max-width: 480px;
-  width: 100%; 
+  width: 100%;
 }
 </style>

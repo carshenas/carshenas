@@ -1,49 +1,49 @@
 export interface ProductBase {
-  id: number;
-  name?: string;
-  description?: string;
-  price: number;
-  quantity: number;
-  stock?: number;
-  out_of_stock?: boolean;
+  id: number
+  name?: string
+  description?: string
+  price: number
+  quantity: number
+  stock?: number
+  out_of_stock?: boolean
 }
 
 export interface ProductWithImage extends ProductBase {
-  image: string;
-  images?: never;
+  image: string
+  images?: never
 }
 
 export interface ProductWithImages extends ProductBase {
-  images: string[];
-  image?: string | null;
+  images: string[]
+  image?: string | null
 }
 
-export type Product = ProductWithImage | ProductWithImages;
+export type Product = ProductWithImage | ProductWithImages
 
 export interface ProductFilter {
-  title?: string;
+  title?: string
 }
 
 export interface Variant extends ProductWithImages {
-  is_unlimited?: boolean;
-  specification?: Record<string, any>;
-  brand: string;
-  warranty?: string;
-  color: Color;
+  is_unlimited?: boolean
+  specification?: Record<string, any>
+  brand: string
+  warranty?: string
+  color: Color
 }
 
 export interface Color {
-  name: string;
-  code: string;
+  name: string
+  code: string
 }
 
 export interface Warranty {
-  name: string;
-  price: number[];
-  color: Color[];
+  name: string
+  price: number[]
+  color: Color[]
 }
 
 export interface Brand {
-  name: string;
-  warranties: Warranty[];
+  name: string
+  warranties: Warranty[]
 }

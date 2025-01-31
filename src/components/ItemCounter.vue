@@ -38,6 +38,7 @@ const addToCart = async () => {
       stock: 1,
     });
     cartStore.addItem({
+      name:basketItem.variant.name,
       id: basketItem.id,
       variant: props.variant,
       stock: basketItem.stock,

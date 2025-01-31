@@ -3,16 +3,16 @@ import useAppConfig from "@/composable/app-config";
 import { computed, onMounted, ref, watch } from "vue";
 import IMAGES_TYPES from "@/constants/supported-image-types";
 import type { ImageExtension } from "@/types/image.ts";
-import type { NullableString } from "@/types/global";
+import type { Nullable } from "@/types/utilities";
 import { getAssetUrl } from "@/helpers/files";
 import { WIDTH_PATTERN, HEIGHT_PATTERN } from "@/constants/regexp";
 
 const appConfig = useAppConfig();
 const props = defineProps<{
-  src: NullableString;
+  src: Nullable<string>;
   width?: string;
   height?: string;
-  alt?: string;
+  alt: string;
   types?: ImageExtension[];
   aspectRatio?: string;
 }>();
@@ -63,11 +63,25 @@ watch(
 </script>
 
 <template>
-  <picture v-if="props.src" ref="picture" :style="`width: ${props.width}; height: ${props.height};`">
-    <source v-for="image in images" :key="image.type" :srcset="image.src" :type="image.type" />
+  <picture
+    v-if="props.src"
+    ref="picture"
+    :style="`width: ${props.width}; height: ${props.height};`"
+  >
+    <source
+      v-for="image in images"
+      :key="image.type"
+      :srcset="image.src"
+      :type="image.type"
+    />
 
-    <img :src="defaultImage" :alt="props.alt" :width="props.width" :height="props.height"
-      :style="`aspect-ratio: ${props.aspectRatio};`" />
+    <img
+      :src="defaultImage"
+      :alt="props.alt"
+      :width="props.width"
+      :height="props.height"
+      :style="`aspect-ratio: ${props.aspectRatio};`"
+    />
   </picture>
 
   <v-icon v-else icon="hide_image" />

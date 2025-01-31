@@ -26,5 +26,4 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-dev-dist/workbox-5199072c.js
-dev-dist/sw.js
+/dev-dist

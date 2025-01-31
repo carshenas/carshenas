@@ -1,13 +1,13 @@
 import type { ObjectDirective } from 'vue'
 import { fixNumericInput, getFirstInputElement } from '@/helpers/document'
 import { SYSTEM_KEYS } from '@/constants/keyboard'
-import type { NullableString } from '@/types/global'
+import type { Nullable } from '@/types/utilities'
 import { toEnglishNumbers } from '@/helpers/number'
 
 // this directive works based on regex below:
 // /^(0|+98|0098)9[0-9]{9}$/
 
-function getLengthBasedOnPattern(value: NullableString) {
+function getLengthBasedOnPattern(value: Nullable<string>) {
   if (value?.length) {
     if (value.startsWith('+98')) return 13
     if (value.startsWith('0098')) return 14
@@ -30,9 +30,12 @@ function keydown(event: KeyboardEvent) {
 
   if (
     // is first digit invalid
-    (!isSystemKeyOrShortcut && value.length < 1 && !['+', '0', '9'].includes(key)) ||
+    (!isSystemKeyOrShortcut &&
+      value.length < 1 &&
+      !['+', '0', '9'].includes(key)) ||
     // is reach the max length
-    (!isSystemKeyOrShortcut && value.length === getLengthBasedOnPattern(value)) ||
+    (!isSystemKeyOrShortcut &&
+      value.length === getLengthBasedOnPattern(value)) ||
     !(
       // is numeric
       (
