@@ -11,8 +11,8 @@ defineProps<{
 const { t } = useI18n()
 const phoneNumber = ref<string>()
 const rules = [
-  (v: any) => validator(v, 'required', t('shared.title')),
-  (v: any) => validator(v, 'mobile', t('shared.title'))
+  (v: any) => validator(v, 'required', t('shared.phone')),
+  (v: any) => validator(v, 'mobile', t('shared.phone'))
 ]
 
 const getPhoneNumber = () => phoneNumber.value

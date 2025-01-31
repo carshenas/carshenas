@@ -46,7 +46,7 @@ const getCartVariant = (productId: number): Variant | null => {
   const item = cartStore.items.find((item) => item.variant.id === productId)
   if (!item) return null
 
-  return item.variant // This is now safe because item.variant is already of type Variant
+  return item.variant 
 }
 
 const handleItemCounter = (product: Product, quantity: number) => {

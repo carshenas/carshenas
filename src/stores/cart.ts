@@ -96,7 +96,7 @@ export const useCartStore = defineStore("cart", () => {
     const existingItem = items.value.find(
       (item) => item.variant.id === newItem.variant.id
     );
-
+    console.log(newItem);
     if (existingItem) {
       existingItem.stock += newItem.stock;
     } else {
@@ -104,7 +104,7 @@ export const useCartStore = defineStore("cart", () => {
         id: newItem.id,
         stock: newItem.stock,
         variant: {
-          name: newItem.variant.name,
+          name: newItem.name,
           id: newItem.variant.id,
           price: newItem.variant.price,
           warranty: newItem.variant.warranty,
@@ -119,6 +119,7 @@ export const useCartStore = defineStore("cart", () => {
         },
       });
     }
+    console.log(items.value);
     saveCartToLocalStorage(items.value);
   };
 

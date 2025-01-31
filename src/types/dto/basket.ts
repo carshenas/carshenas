@@ -7,7 +7,7 @@ export interface BasketRequest {
 
 export interface BasketItem {
   id: number;
+  name?: string;
   variant: Variant;
   stock: number;
 }
-
