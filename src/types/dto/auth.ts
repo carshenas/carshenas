@@ -1,12 +1,12 @@
-import type { NullableNumber, NullableString } from '../global'
+import type { Nullable } from '../utilities'
 
 export interface GetOTPBody extends FormData {
-  phoneNumber: NullableString
+  phoneNumber: Nullable<string>
 }
 
 export interface GetOTPResponse {}
 
 export interface ValidateOTPBody extends FormData {
-  otp: NullableNumber
-  phoneNumber: NullableString
+  otp: Nullable<number>
+  phoneNumber: Nullable<string>
 }

@@ -1,5 +1,5 @@
 import useAppConfig from '@/composable/app-config'
-import type { NullableNumber, NullableString } from '@/types/global'
+import type { Nullable } from '@/types/utilities'
 
 export const rates = {
   IRR: 1,
@@ -7,7 +7,7 @@ export const rates = {
 }
 
 const converter = (
-  value: NullableNumber | NullableString,
+  value: Nullable<number> | Nullable<string>,
   fromRate: number,
   toRate: number,
   format?: boolean
@@ -16,7 +16,8 @@ const converter = (
     const numberValue = Number(value.toString().replace(/,/g, ''))
 
     if (fromRate !== toRate) {
-      const result = fromRate < toRate ? numberValue / toRate : numberValue * fromRate
+      const result =
+        fromRate < toRate ? numberValue / toRate : numberValue * fromRate
       return format ? formatCurrency(result) : result
     }
 
@@ -26,10 +27,10 @@ const converter = (
   return 0
 }
 
-export const formatCurrency = (value: NullableNumber | NullableString) =>
+export const formatCurrency = (value: Nullable<number> | Nullable<string>) =>
   value ? Number(value.toString().replace(/,/g, '')).toLocaleString() : '0'
 
-export const toDisplayCurrency = (value: NullableNumber | NullableString) =>
+export const toDisplayCurrency = (value: Nullable<number> | Nullable<string>) =>
   converter(
     value,
     rates[useAppConfig().baseCurrencyUnit],
@@ -37,7 +38,10 @@ export const toDisplayCurrency = (value: NullableNumber | NullableString) =>
     true
   )
 
-export const toBaseCurrency = (value: NullableNumber | NullableString, format?: boolean) =>
+export const toBaseCurrency = (
+  value: Nullable<number> | Nullable<string>,
+  format?: boolean
+) =>
   converter(
     value,
     rates[useAppConfig().displayCurrencyUnit],
