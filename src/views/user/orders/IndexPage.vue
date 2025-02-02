@@ -1,67 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import type Order from "@/types/dto/order";
+import { onMounted, ref } from 'vue';
 import OrderCards from "./components/OrderCards.vue";
 import OrderItemCards from './components/OrderItemCards.vue';
+import { getOrderList } from '@/services/carshenas/order';
+import type { OrderListResponse } from '@/types/dto/order';
 
-const Orders = ref<Order[]>([
-  {
-    OrderId: 1,
-    state: 'successful',
-    date: '2024-03-19',
-    price: '100.00',
-    postalCode: '12345',
-    orderDetail: [
-      {
-        itemId: 101,
-        itemAmount: 1,
-        itemName: 'Product A',
-        itemPrice: '100000',
-        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
-      },
-      {
-        itemId: 102,
-        itemAmount: 2,
-        itemName: 'Product B',
-        itemPrice: '100000',
-        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
-      }
-    ]
-  },
-  {
-    OrderId: 2,
-    state: 'doing',
-    date: '2024-03-20',
-    price: '75.00',
-    postalCode: '54321',
-    orderDetail: [
-      {
-        itemId: 201,
-        itemAmount: 1,
-        itemName: 'Product C',
-        itemPrice: '100000',
-        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
-      }
-    ]
-  },
-  {
-    OrderId: 3,
-    state: 'canceled',
-    date: '2024-03-20',
-    price: '75.00',
-    postalCode: '54321',
-    orderDetail: [
-      {
-        itemId: 301,
-        itemAmount: 1,
-        itemName: 'Product D',
-        itemPrice: '100000',
-        itemImage: 'https://images.tayna.com/prod-images/1200/Powerline/065-powerline-45-435.jpg'
-      }
-    ]
-  },
-]);
 
+const orders = ref<OrderListResponse[]>([])
+
+const getOrders = async () => {
+
+  try {
+    const response = await getOrderList()
+    orders.value = response.data
+  } catch (e) {
+    console.error(e)
+  }
+}
+onMounted(() => getOrders())
+
+console.log(orders)
 const selectedOrderIndex = ref<number | null>(null);
 
 const toggleOrderDetail = (index: number) => {
@@ -86,11 +44,11 @@ const clearSelectedOrderIndex = () => {
 
     </div>
     <div class=" d-flex flex-column ga-4 mt-4" v-if="selectedOrderIndex === null">
-      <OrderCards v-for="(order, index) in Orders" :key="index" :order="order"
+      <OrderCards v-for="(order, index) in orders" :key="index" :order="order"
         :toggleOrderDetail="() => toggleOrderDetail(index)" :index="index" />
     </div>
 
 
-    <OrderItemCards v-if="selectedOrderIndex !== null" :orderDetail="Orders[selectedOrderIndex].orderDetail" />
+    <OrderItemCards v-if="selectedOrderIndex !== null" :orderDetail="orders[selectedOrderIndex]" />
   </section>
 </template>

@@ -1,10 +1,9 @@
 import carshenasService from "@/services";
-import type { OrderRequest } from "@/types/dto/order";
-
-interface OrderResponse {
-  url: string;
-}
-
+import type {
+  OrderListResponse,
+  OrderRequest,
+  OrderResponse,
+} from "@/types/dto/order";
 
 export const createOrderService = (data: OrderRequest) =>
   carshenasService.post<OrderResponse>("/order/", {
@@ -13,3 +12,6 @@ export const createOrderService = (data: OrderRequest) =>
       "Content-Type": "application/json",
     },
   });
+
+export const getOrderList = () =>
+  carshenasService.get<[OrderListResponse]>("/order/");

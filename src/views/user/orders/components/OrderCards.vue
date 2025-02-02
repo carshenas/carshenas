@@ -1,21 +1,22 @@
 <script setup lang="ts">
-import type Order from "@/types/dto/order";
+import type {OrderListResponse} from "@/types/dto/order";
+import { toDisplayCurrency } from "@/helpers/currency";
+import { useJalaliDate } from '@/composable/use-jalali-date'
 
 const props = defineProps<{
-  order: Order;
+  order: OrderListResponse;
   toggleOrderDetail: (index: number) => void;
   index: number;
 }>();
-
-const getStateData = (state: string) => {
-  switch (state) {
-    case 'successful':
+const getStateData = (status: string) => {
+  switch (status) {
+    case 'Created':
       return {
         class: 'text-green-darken-4',
         text: 'تحویل داده شد',
         icon: 'done'
       };
-    case 'doing':
+    case 'InProgress':
       return {
         class: 'text-orange',
         text: 'درجریان',
@@ -35,24 +36,30 @@ const getStateData = (state: string) => {
       };
   }
 }
+
+const { convertToJalali } = useJalaliDate()
 </script>
 
 <template>
   <v-card class="mx-auto w-100 pa-2">
     <div class="d-flex align-center justify-space-between">
-      <span :class="getStateData(order.state).class">{{ getStateData(order.state).text }}
-        <v-icon :icon="getStateData(order.state).icon" size="x-small" />
+      <span :class="getStateData(order.status).class">{{ getStateData(order.status).text }}
+        <v-icon :icon="getStateData(order.status).icon" size="x-small" />
       </span>
       <v-btn icon="more_horiz" variant="text" @click="() => toggleOrderDetail(index)" />
     </div>
-    <v-card-text class="title-md">{{ order.OrderId }}</v-card-text>
     <div class="d-flex w-100 justify-space-between text-grey">
-      <div>
-        <span>{{ order.date }}</span>
+      <v-card-text class="title-md">{{ order.id }}</v-card-text>
+
+      <div class='d-flex justify-space-between w-50 align-center'>
+        <span>{{toDisplayCurrency(order.finalPrice)}}</span>
+        <div>
       </div>
       <div>
-        <span>{{ order.price }}</span>
+        <span>{{ convertToJalali(order.dateCreated) }}</span>
       </div>
+    </div>
+
     </div>
   </v-card>
 </template>
