@@ -20,9 +20,9 @@ const cartProducts = computed<Product[]>(() =>
     name: item.variant.name,
     description: item.variant.description,
     price: item.variant.price,
-    quantity: item.stock,
-    stock: item.variant.stock,
-    out_of_stock: item.variant.stock === 0,
+    quantity: item.quantity,
+    stock: item.variant.quantity,
+    out_of_stock: item.variant.quantity === 0,
     // If variant has images array, use that structure
     ...(item.variant.images?.length
       ? {
@@ -38,7 +38,7 @@ const cartProducts = computed<Product[]>(() =>
 
 const getCartQuantity = (productId: number): number => {
   const item = cartStore.items.find((item) => item.id === productId)
-  return item ? item.stock : 0
+  return item ? item.quantity : 0
 }
 
 // In your product list component

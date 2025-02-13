@@ -1,6 +1,7 @@
 import type { FetcherOptions, FetchPath, FetchResponse } from "./types";
 import { generateURL, mergeOptions } from "./helpers";
 import { useUserStore } from "@/stores/user";
+import { useSnackbar } from "@/stores/snackbar";
 
 const useFetch = async <R = unknown, D = unknown>(
   path: FetchPath,
@@ -14,20 +15,61 @@ const useFetch = async <R = unknown, D = unknown>(
 
   try {
     const response = await fetch(url, mergedOptions);
+    const responseClone = response.clone();
+    responseClone.json().catch((err) => {
+      console.log("Failed to parse response:", err);
+    });
+
     return statusChecker<R>(response, url.toString(), mergedOptions);
   } catch (e) {
     throw new Error(e as string);
   }
 };
 
+const formattedResponse = async <R>(
+  response: Response
+): Promise<FetchResponse<R>> => ({
+  data: (await normalizeResponseData(response)) as R,
+  status: response.status,
+  statusText: response.statusText,
+  headers: response.headers,
+});
+
 const statusChecker = async <R>(
   response: Response,
   originalUrl: string,
   originalOptions: RequestInit
 ): Promise<FetchResponse<R>> => {
+  const responseForLogging = response.clone();
+  const headers: { [key: string]: string } = {};
+  response.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+
+  const responseBody = await responseForLogging.json();
+  // console.log("Full Response:", {
+  //   response: {
+  //     type: response.type,
+  //     url: response.url,
+  //     redirected: response.redirected,
+  //     status: response.status,
+  //     ok: response.ok,
+  //     statusText: response.statusText,
+  //     headers,
+  //     body: responseBody,
+  //   },
+  // });
+
   if (response.ok) {
     return Promise.resolve(await formattedResponse<R>(response));
   }
+
+  const snackbar = useSnackbar();
+  if (response.status === 400) {
+    console.log(responseBody);
+    snackbar.show(responseBody[0]);
+  }
+
   if (response.status === 401) {
     console.warn(
       `401 Unauthorized at ${response.url}. Attempting to refresh token.`
@@ -80,15 +122,6 @@ const refreshAccessToken = async (): Promise<boolean> => {
     return false;
   }
 };
-
-const formattedResponse = async <R>(
-  response: Response
-): Promise<FetchResponse<R>> => ({
-  data: (await normalizeResponseData(response)) as R,
-  status: response.status,
-  statusText: response.statusText,
-  headers: response.headers,
-});
 
 const normalizeResponseData = async (response: Response) => {
   try {

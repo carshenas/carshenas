@@ -15,3 +15,6 @@ export const createOrderService = (data: OrderRequest) =>
 
 export const getOrderList = () =>
   carshenasService.get<[OrderListResponse]>("/order/");
+
+export const getOrderDetail = (id: number) =>
+  carshenasService.get<OrderListResponse>(`/order/${id}/`);

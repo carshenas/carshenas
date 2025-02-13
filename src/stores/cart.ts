@@ -1,4 +1,3 @@
-// stores/cart.ts
 import { defineStore } from "pinia";
 import { ref, computed, watch } from "vue";
 import { debounce } from "lodash";
@@ -8,27 +7,26 @@ import {
   patchBasketService,
 } from "@/services/carshenas/basket";
 import type { BasketItem } from "@/types/dto/basket";
+import { useSnackbar } from "./snackbar";
 
 const CART_STORAGE_KEY = "cart-items";
 const DEBOUNCE_DELAY = 500;
 
-// Load the cart from local storage
-const loadCartFromLocalStorage = (): BasketItem[] => {
-  const storedCart = localStorage.getItem(CART_STORAGE_KEY);
-  return storedCart ? JSON.parse(storedCart) : [];
-};
-
-// Save the cart to local storage
-const saveCartToLocalStorage = (items: BasketItem[]) => {
-  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-};
-
 export const useCartStore = defineStore("cart", () => {
-  const items = ref<BasketItem[]>(loadCartFromLocalStorage());
+  const snackbar = useSnackbar();
+  const items = ref<BasketItem[]>([]);
   const isUpdating = ref(false);
   const pendingUpdates = ref<Map<number, number>>(new Map());
+  const updateErrors = ref<Map<number, string>>(new Map());
 
-  // Debounced function to process all pending updates
+  // Save cart with error handling
+  const saveCartToLocalStorage = (cartItems: BasketItem[]) => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Failed to save cart to localStorage:", error);
+    }
+  };
   const processPendingUpdates = debounce(async () => {
     if (isUpdating.value || pendingUpdates.value.size === 0) return;
 
@@ -37,19 +35,24 @@ export const useCartStore = defineStore("cart", () => {
     pendingUpdates.value.clear();
 
     try {
-      // Process all updates in parallel
       await Promise.all(
-        updates.map(async ([cartId, stock]) => {
+        updates.map(async ([cartId, quantity]) => {
           const item = items.value.find((item) => item.id === cartId);
           if (!item) return;
 
           try {
-            await patchBasketService(cartId, { stock });
-            item.stock = stock;
+            await patchBasketService(cartId, { quantity });
+            item.quantity = quantity;
+            updateErrors.value.delete(cartId);
           } catch (error) {
-            console.error(`Failed to update item ${cartId}:`, error);
-            // Revert the local state if the update fails
-            pendingUpdates.value.set(cartId, item.stock);
+            const previousQuantity = item.quantity;
+            item.quantity = previousQuantity - 1;
+            updateErrors.value.set(
+              cartId,
+              error instanceof Error
+                ? error.message
+                : "Failed to update quantity"
+            );
           }
         })
       );
@@ -57,11 +60,6 @@ export const useCartStore = defineStore("cart", () => {
       saveCartToLocalStorage(items.value);
     } finally {
       isUpdating.value = false;
-      // If there are any new pending updates that came in during processing,
-      // trigger another process cycle
-      if (pendingUpdates.value.size > 0) {
-        processPendingUpdates();
-      }
     }
   }, DEBOUNCE_DELAY);
 
@@ -70,7 +68,7 @@ export const useCartStore = defineStore("cart", () => {
       const response = await getBasketService();
       items.value = response.data.map((item: BasketItem) => ({
         id: item.id,
-        stock: item.stock,
+        quantity: item.quantity,
         variant: {
           name: item.variant.name,
           id: item.variant.id,
@@ -98,11 +96,11 @@ export const useCartStore = defineStore("cart", () => {
     );
     console.log(newItem);
     if (existingItem) {
-      existingItem.stock += newItem.stock;
+      existingItem.quantity += newItem.quantity;
     } else {
       items.value.push({
         id: newItem.id,
-        stock: newItem.stock,
+        quantity: newItem.quantity,
         variant: {
           name: newItem.name,
           id: newItem.variant.id,
@@ -123,15 +121,11 @@ export const useCartStore = defineStore("cart", () => {
     saveCartToLocalStorage(items.value);
   };
 
-  const updateQuantity = (cartId: number, stock: number) => {
+  const updateQuantity = (cartId: number, quantity: number) => {
     const item = items.value.find((item) => item.id === cartId);
     if (!item) return;
-
-    // Update local state immediately
-    item.stock = stock;
-    // Add to pending updates
-    pendingUpdates.value.set(cartId, stock);
-    // Trigger debounced update
+    item.quantity = quantity;
+    pendingUpdates.value.set(cartId, quantity);
     processPendingUpdates();
   };
 
@@ -169,7 +163,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const payableAmount = computed(() =>
     items.value.reduce(
-      (total, item) => total + (item.variant.price ?? 0) * item.stock,
+      (total, item) => total + (item.variant.price ?? 0) * item.quantity,
       0
     )
   );
@@ -179,7 +173,7 @@ export const useCartStore = defineStore("cart", () => {
 
   const getItemQuantity = (variantId: number) => {
     const item = items.value.find((item) => item.variant.id === variantId);
-    return item ? item.stock : 0;
+    return item ? item.quantity : 0;
   };
 
   // Watch for changes and save to localStorage
