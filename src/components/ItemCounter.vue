@@ -25,7 +25,7 @@ const quantity = computed(() => {
   const item = cartStore.items.find(
     (item) => item.variant.id === props.variant.id
   );
-  return item ? item.stock : 0;
+  return item ? item.quantity : 0;
 });
 
 const addToCart = async () => {
@@ -35,13 +35,13 @@ const addToCart = async () => {
     isAddingToCart.value = true;
     const basketItem: BasketItem = await addToBasketService({
       variant: props.variant.id,
-      stock: 1,
+      quantity: 1,
     });
     cartStore.addItem({
       name:basketItem.variant.name,
       id: basketItem.id,
       variant: props.variant,
-      stock: basketItem.stock,
+      quantity: basketItem.quantity,
     });
   } catch (error) {
     console.error("Failed to add to basket:", error);
