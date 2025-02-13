@@ -15,7 +15,7 @@ const headers = new Headers();
 
 const carshenasFetchOptions = {
   baseURL,
-  withCredentials: true, // Added withCredentials globally
+  withCredentials: true,
 };
 
 const handleParameters = (parameters?: FetcherOptions["parameters"]) =>

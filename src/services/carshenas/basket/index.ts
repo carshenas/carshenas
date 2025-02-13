@@ -13,7 +13,7 @@ export const addToBasketService = (
 ): Promise<BasketItem> => {
   const formData = new FormData();
   if (data.variant) formData.append("variant", data.variant.toString());
-  if (data.stock) formData.append("stock", data.stock.toString());
+  if (data.quantity) formData.append("quantity", data.quantity.toString());
   return carshenasService
     .post<BasketItem>("/basket/", {
       body: formData,
@@ -30,7 +30,7 @@ export const getBasketService = () => {
 
 export const patchBasketService = (itemId: number, data: BasketRequest) => {
   const formData = new FormData();
-  if (data.stock) formData.append("stock", data.stock.toString());
+  if (data.quantity) formData.append("quantity", data.quantity.toString());
 
   return carshenasService.patch(`/basket/${itemId}/`, {
     body: formData,

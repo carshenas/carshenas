@@ -33,7 +33,7 @@ const handleAddOrder = async () => {
 
     const orderData: OrderRequest = {
       variants: cartStore.items.map(item => ({
-        quantity: item.stock,
+        quantity: item.quantity,
         variant: item.variant.id
       })),
       location: selectedAddress.value.id
