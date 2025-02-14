@@ -27,3 +27,5 @@ coverage
 
 *.tsbuildinfo
 /dev-dist
+.vscode/extensions.json
+/.vscode

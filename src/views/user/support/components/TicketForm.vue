@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { VForm } from 'vuetify/components'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { createTicketService } from '@/services/carshenas/support'
 
 const formRef = ref<VForm | null>(null)
 const isLoading = ref(false)
-const loadingMessage = ref('') // Loading message state
+const loadingMessage = ref('')
 const rules = {
   required: (value: string) => !!value || ''
 }
-const files = ref<File[]>([])
+const file = ref<File | null>(null) // Store a single file
 const message = ref('')
 
 const emit = defineEmits<{
@@ -18,95 +18,124 @@ const emit = defineEmits<{
 }>()
 
 const handleSubmit = async () => {
-  const { valid: isValid } = await formRef.value!.validate()
+  if (!formRef.value) return
+  const { valid: isValid } = await formRef.value.validate()
+
   if (isValid) {
     const formData = new FormData()
     formData.append('message', message.value)
-    if (files.value.length > 0) {
-      for (const file of files.value) {
-        formData.append('files[]', file)
-      }
+
+    if (file.value) {
+      formData.append('file', file.value)
     }
+
     try {
       isLoading.value = true
       loadingMessage.value = 'در حال ثبت درخواست'
+
+      // Send the formData
       await createTicketService(formData)
-      emit('update:isFormVisible', false)
+
       emit('ticketCreated')
+      emit('update:isFormVisible', false)
+
     } catch (error) {
       console.error('Form submission failed:', error)
       loadingMessage.value = 'مشکلی پیش آمد'
     } finally {
-      setTimeout(() => {
-        isLoading.value = false
-        loadingMessage.value = ''
-      }, 2000)
+      isLoading.value = false
+      loadingMessage.value = ''
     }
+  }
+}
+
+const resetForm = () => {
+  message.value = ''
+  file.value = null
+  if (formRef.value) {
+    formRef.value.resetValidation()
   }
 }
 
 const props = defineProps<{
   isFormVisible: boolean
 }>()
+
+
+
+watch(() => props.isFormVisible, (newValue) => {
+  if (newValue) {
+    resetForm()
+  }
+})
+
+// Updated type-safe handleFileChange function
+const handleFileChange = (fileInput: File | File[] | null) => {
+  // Handle the case when input is null or undefined
+  if (!fileInput) {
+    file.value = null
+    return
+  }
+
+  const singleFile = Array.isArray(fileInput) ? fileInput[0] : fileInput
+
+  if (singleFile) {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+    if (singleFile.size > MAX_FILE_SIZE) {
+      alert('File size should not exceed 5MB')
+      file.value = null
+      return
+    }
+    file.value = singleFile
+  } else {
+    file.value = null
+  }
+}
+
 </script>
 
+
 <template>
-  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column justify-space-between">
+  <v-form ref="formRef" v-if="props.isFormVisible" class="d-flex flex-column gap-4">
     <!-- Message input -->
-    <div>
-      <v-textarea v-model="message" :label="$t('support.textLabel')" row-height="30" rows="4" variant="filled" auto-grow
-        shaped :rules="[rules.required]" class="support-input"></v-textarea>
-    </div>
+    <v-textarea v-model="message" :label="$t('support.textLabel')" row-height="30" rows="4" variant="filled" auto-grow
+      shaped :rules="[rules.required]" class="support-input"></v-textarea>
 
     <!-- File input -->
-    <div>
-      <v-file-input v-model="files" :label="$t('support.fileLabel')" placeholder="Upload your documents" multiple>
-        <template v-slot:selection="{ fileNames }">
-          <template v-for="fileName in fileNames" :key="fileName">
-            <v-chip class="me-2" color="primary" size="small" label>
-              {{ fileName }}
-            </v-chip>
-          </template>
-        </template>
-      </v-file-input>
-    </div>
+    <v-file-input v-model="file" :label="$t('support.fileLabel')" placeholder="Upload your document"
+      accept="image/*,.pdf,.doc,.docx" @update:model-value="handleFileChange">
+      <template v-slot:selection="{ fileNames }">
+        <v-chip v-if="fileNames.length" class="me-2 mt-2" color="primary" size="small" label>
+          {{ fileNames[0] }}
+        </v-chip>
+      </template>
+    </v-file-input>
+
 
     <!-- Submit button -->
-    <div>
-      <v-btn block rounded="pill" color="primary" size="x-large" class="me-4" :disabled="isLoading"
-        @click="handleSubmit">
-        <!-- Show loading spinner when isLoading is true -->
-        <template v-if="isLoading">
-          <v-progress-circular indeterminate color="white" size="20" class="me-2"></v-progress-circular>
-          {{ $t('shared.loading') }}
-        </template>
-        <template v-else>
-          {{ $t('shared.submit') }}
-        </template>
-      </v-btn>
-    </div>
+    <v-btn block rounded="pill" color="primary" size="x-large" :loading="isLoading" :disabled="isLoading"
+      @click="handleSubmit">
+      {{ isLoading ? $t('shared.loading') : $t('shared.submit') }}
+    </v-btn>
   </v-form>
 </template>
 
-
-<style scoped>
-.justify-start {
-  justify-content: flex-start;
+<style>
+.support-input {
+  padding-top: 2rem !important;
 }
 
-.justify-end {
-  justify-content: flex-end;
+.v-form {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.gap-4 {
+  gap: 1rem;
 }
 
 textarea {
   padding-top: 2rem !important;
-}
-
-.loading-overlay {
-  z-index: 1000;
-}
-
-.v-overlay__content {
-  background-color: rgba(255, 255, 255, 0.9);
 }
 </style>

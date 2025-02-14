@@ -15,7 +15,7 @@ const handleMoreClick = () => {
 
 const getStateData = (status: string) => {
   switch (status) {
-    case 'Approved':
+    case 'Answered':
       return {
         class: 'text-green-darken-4',
         text: 'Approved',
@@ -27,9 +27,9 @@ const getStateData = (status: string) => {
         text: 'Pending',
         icon: 'pending'
       }
-    case 'Rejected':
+    case 'Closed':
       return {
-        class: 'text-red-darken-4',
+        class: 'text-gray-darken-4',
         text: ' ',
         icon: 'close'
       }
@@ -46,10 +46,10 @@ const { convertToJalali } = useJalaliDate()
 </script>
 
 <template>
-  <v-card class="mx-auto w-100 pa-2">
+  <v-card class="mx-auto w-100 pa-2 support-cards">
     <div class="d-flex align-center justify-space-between">
       <p :class="getStateData(props.ticket.status).class">
-        <span v-if="props.ticket.status === 'Rejected'">
+        <span v-if="props.ticket.status === 'Closed'">
           {{ $t('support.rejected') }}
         </span>
         <span v-if="props.ticket.status === 'Approved'">
@@ -73,3 +73,9 @@ const { convertToJalali } = useJalaliDate()
     </div>
   </v-card>
 </template>
+
+<style scoped>
+.support-cards {
+  min-height: 120px;
+}
+</style>
