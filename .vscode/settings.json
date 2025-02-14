@@ -1,9 +1,6 @@
 {
-  "cSpell.words": [
-    "carshenas",
-    "decamelize",
-    "jalaali",
-    "pinia",
-    "vuetify"
-  ]
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.defaultFormatter": "Vue.volar",
+  "editor.formatOnSave": true
 }

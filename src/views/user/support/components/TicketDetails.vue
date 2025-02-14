@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import { updateTicketService, closeTicketService } from '@/services/carshenas/support'
 import type { TicketMessages, Message } from '@/types/dto/tickets'
 import type { VForm } from 'vuetify/components'
@@ -18,8 +18,7 @@ const message = ref('')
 const messages = ref<Message[] | null>(props.ticket ? props.ticket.messages : null)
 const isClosing = ref(false)
 
-console.log(props.ticket.status)
-// Watch for ticket changes and update messages
+
 watch(() => props.ticket, (newTicket) => {
   messages.value = newTicket ? newTicket.messages : null
 }, { immediate: true })
@@ -28,23 +27,34 @@ const rules = {
   required: (value: string) => !!value || ''
 }
 
-const handleFileChange = (newFile: File | null) => {
-  if (!newFile) {
+// Updated type-safe handleFileChange function
+const handleFileChange = (fileInput: File | File[] | null) => {
+  if (!fileInput) {
     file.value = null
     return
   }
 
-  const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
-  if (newFile.size > MAX_FILE_SIZE) {
-    alert('File size should not exceed 5MB')
-    file.value = null
-    return
-  }
+  // Handle both single file and array cases
+  const singleFile = Array.isArray(fileInput) ? fileInput[0] : fileInput
 
-  file.value = newFile
+  // If we have a valid file, check its size
+  if (singleFile) {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+    if (singleFile.size > MAX_FILE_SIZE) {
+      alert('File size should not exceed 5MB')
+      file.value = null
+      return
+    }
+    file.value = singleFile
+  } else {
+    file.value = null
+  }
 }
+
+
+
 const containerStyle = computed(() => ({
-  maxHeight: props.ticket.status !== 'Closed' ? '50dvh' : '80dvh'
+  maxHeight: props.ticket && props.ticket.status !== 'Closed' ? '50dvh' : '80dvh'
 }))
 
 const closeTicket = async () => {
@@ -98,6 +108,7 @@ const sendMessage = async () => {
       if (messages.value) {
         messages.value = [...messages.value, {
           message: message.value,
+          isAnswer: false,
           file: file.value ? URL.createObjectURL(file.value) : null
         }]
       }
@@ -131,9 +142,9 @@ const sendMessage = async () => {
 </script>
 
 <template>
-  <div class="d-flex flex-column h-100 justify-end chat-wrapper">
+  <div v-if="props.ticket" class="d-flex flex-column h-100 justify-end chat-wrapper">
     <div v-if="props.ticket.status !== 'Closed'" class="close-ticket">
-      <v-btn density="compact" color="error" variant="link" block :loading="isClosing" @click="closeTicket">
+      <v-btn density="compact" color="error" variant="text" block :loading="isClosing" @click="closeTicket">
         {{ isClosing ? $t('shared.loading') : $t('support.closeTicket') }}
       </v-btn>
     </div>
@@ -149,7 +160,8 @@ const sendMessage = async () => {
           </v-card-text>
 
           <v-card-actions class="pa-0 w-100" v-if="message.file">
-            <a :href="message.file" class="w-100 bg-red-lighten-5 rounded" target="_blank" download>
+            <a :href="typeof message.file === 'string' ? message.file : ''" class="w-100 bg-red-lighten-5 rounded"
+              target="_blank" download>
               <v-btn class="text-xs" append-icon="download" color="grey-darken-3" size="x-small">
                 دانلود فایل
               </v-btn>
@@ -170,7 +182,7 @@ const sendMessage = async () => {
 
         <div>
           <v-file-input :model-value="file" :label="$t('support.fileLabel')" placeholder="Upload your document"
-            accept="image/*,.pdf,.doc,.docx" @update:model-value="handleFileChange">
+            accept="image/*,.pdf,.doc,.docx" @update:model-value="handleFileChange" :multiple="false">
             <template v-slot:selection="{ fileNames }">
               <v-chip v-if="fileNames.length" class="me-2 mt-5" color="primary" size="small" label>
                 {{ fileNames[0] }}
