@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import type { Ticket, TicketMessages } from "@/types/dto/tickets";
 import TicketCards from "./components/TicketCard.vue";
@@ -24,6 +24,11 @@ onMounted(async () => {
   await refreshTicketList();
 });
 
+const reversedTickets = computed(() => {
+  return [...tickets.value].reverse();
+});
+
+
 const refreshTicketList = async () => {
   try {
     const offset = (currentPage.value - 1) * itemsPerPage.value;
@@ -39,6 +44,10 @@ watch(currentPage, async () => {
   await refreshTicketList();
 });
 
+const showPagination = computed(() => {
+  return !isFormVisible.value && !selectedTicket.value;
+});
+console.log(showPagination.value)
 const handleTicketSelected = async (ticket: number) => {
   selectedTicketId.value = ticket;
 
@@ -52,7 +61,6 @@ const handleTicketSelected = async (ticket: number) => {
   }
 };
 
-// Toggle form visibility and refresh ticket list if needed
 const toggleFormVisibility = async (refreshList = false) => {
   isFormVisible.value = !isFormVisible.value;
 
@@ -61,7 +69,6 @@ const toggleFormVisibility = async (refreshList = false) => {
   }
 };
 
-// Handle navigation back
 const goBack = () => {
   if (selectedTicket.value) {
     selectedTicket.value = null;
@@ -74,7 +81,7 @@ const goBack = () => {
 </script>
 
 <template>
-  <section class="pa-4 d-flex flex-column ga-8 h-100">
+  <section class="pa-4 d-flex flex-column ga-3 h-100">
     <div class="w-100 d-flex align-center justify-space-between">
       <v-btn icon="arrow_forward_ios" variant="text" @click="goBack" />
       <h1>{{ $t("user.support") }}</h1>
@@ -91,9 +98,10 @@ const goBack = () => {
       </div>
 
       <!-- List of tickets -->
-      <div class="d-flex flex-column-reverse ga-4" v-if="!selectedTicket && !isFormVisible">
-        <TicketCards v-for="(ticket, index) in tickets" :key="index" :ticket="ticket"
+      <div class="card-container d-flex flex-column-reverse ga-4" v-if="!selectedTicket && !isFormVisible">
+        <TicketCards v-for="(ticket, index) in reversedTickets" :key="index" :ticket="ticket"
           @ticketSelected="handleTicketSelected" />
+
       </div>
 
       <!-- Ticket details -->
@@ -104,12 +112,17 @@ const goBack = () => {
         v-on:ticketCreated="refreshTicketList" />
     </div>
 
-    <v-pagination v-if="totalPages > 1" v-model="currentPage" :length="totalPages" :total-visible="5"
+    <v-pagination v-if="totalPages > 1 && showPagination" v-model="currentPage" :length="totalPages" :total-visible="5"
       @input="refreshTicketList" />
   </section>
 </template>
 
 <style scoped>
+.card-container {
+  max-height: 60dvh;
+  overflow-y: auto;
+}
+
 .justify-start {
   justify-content: flex-start;
 }
