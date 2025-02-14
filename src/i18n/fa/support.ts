@@ -3,6 +3,6 @@ export default {
   fileLabel: "عکس خود را اپلود کنید",
   approved: "پاسخ داده شد",
   pending: "درجریان",
-  rejected: "رد شده,",
+  rejected: "بسته شده",
   closeTicket: "بستن تیکت",
 };

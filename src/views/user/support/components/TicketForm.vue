@@ -69,13 +69,29 @@ watch(() => props.isFormVisible, (newValue) => {
   }
 })
 
-const handleFileChange = (selectedFile: File | null) => {
-  if (!selectedFile) {
+// Updated type-safe handleFileChange function
+const handleFileChange = (fileInput: File | File[] | null) => {
+  // Handle the case when input is null or undefined
+  if (!fileInput) {
     file.value = null
     return
   }
-  file.value = selectedFile
+
+  const singleFile = Array.isArray(fileInput) ? fileInput[0] : fileInput
+
+  if (singleFile) {
+    const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
+    if (singleFile.size > MAX_FILE_SIZE) {
+      alert('File size should not exceed 5MB')
+      file.value = null
+      return
+    }
+    file.value = singleFile
+  } else {
+    file.value = null
+  }
 }
+
 </script>
 
 
@@ -104,7 +120,7 @@ const handleFileChange = (selectedFile: File | null) => {
   </v-form>
 </template>
 
-<style scoped>
+<style>
 .support-input {
   padding-top: 2rem !important;
 }
@@ -117,5 +133,9 @@ const handleFileChange = (selectedFile: File | null) => {
 
 .gap-4 {
   gap: 1rem;
+}
+
+textarea {
+  padding-top: 2rem !important;
 }
 </style>

@@ -49,7 +49,7 @@ const { convertToJalali } = useJalaliDate()
   <v-card class="mx-auto w-100 pa-2 support-cards">
     <div class="d-flex align-center justify-space-between">
       <p :class="getStateData(props.ticket.status).class">
-        <span v-if="props.ticket.status === 'Rejected'">
+        <span v-if="props.ticket.status === 'Closed'">
           {{ $t('support.rejected') }}
         </span>
         <span v-if="props.ticket.status === 'Approved'">
