@@ -7,13 +7,10 @@ import {
   patchBasketService,
 } from "@/services/carshenas/basket";
 import type { BasketItem } from "@/types/dto/basket";
-import { useSnackbar } from "./snackbar";
-
 const CART_STORAGE_KEY = "cart-items";
 const DEBOUNCE_DELAY = 500;
 
 export const useCartStore = defineStore("cart", () => {
-  const snackbar = useSnackbar();
   const items = ref<BasketItem[]>([]);
   const isUpdating = ref(false);
   const pendingUpdates = ref<Map<number, number>>(new Map());
@@ -27,6 +24,7 @@ export const useCartStore = defineStore("cart", () => {
       console.error("Failed to save cart to localStorage:", error);
     }
   };
+
   const processPendingUpdates = debounce(async () => {
     if (isUpdating.value || pendingUpdates.value.size === 0) return;
 
