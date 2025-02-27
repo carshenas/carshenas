@@ -91,9 +91,14 @@ const sendOTP = async (providedOtp?: string) => {
   }
 }
 
-const handleSubmitOtp = (otpValue: string) => {
-  sendOTP(otpValue)
-}
+
+const handleSubmitOtp = (otpValue: unknown) => {
+  if (typeof otpValue === "string") {
+    sendOTP(otpValue)
+  } else {
+    console.error("OTP must be a string");
+  }
+};
 
 useOnBack((_, _2, next) => {
   if (!step.value) next()
