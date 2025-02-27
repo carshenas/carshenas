@@ -66,7 +66,6 @@ onBeforeRouteLeave(async (to, from, next) => {
         variant="outlined"
         rounded
         hide-details
-        prepend-inner-icon="arrow_forward_ios"
         append-inner-icon="search"
         @input="onInput"
         @click:prepend-inner="router.back()"

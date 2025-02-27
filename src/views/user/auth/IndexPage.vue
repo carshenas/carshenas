@@ -62,10 +62,10 @@ const getOTP = async () => {
 
 const { t } = useI18n()
 const snackbarStore = useSnackbar()
-const sendOTP = async () => {
+const sendOTP = async (providedOtp?: string) => {
   loading.value = true
   try {
-    const otp = activeComponent.value.getOTP()
+    const otp = providedOtp || activeComponent.value.getOTP()
 
     const body = new FormData()
 
@@ -91,6 +91,10 @@ const sendOTP = async () => {
   }
 }
 
+const handleSubmitOtp = (otpValue: string) => {
+  sendOTP(otpValue)
+}
+
 useOnBack((_, _2, next) => {
   if (!step.value) next()
   else {
@@ -104,13 +108,8 @@ useOnBack((_, _2, next) => {
   <v-container class="h-100">
     <v-form ref="form" class="h-100" @submit.prevent="next">
       <KeepAlive>
-        <component
-          ref="activeComponent"
-          v-bind="props"
-          :is="step ? SecondStep : FirstStep"
-          :loading="loading"
-          @resend="getOTP"
-        />
+        <component ref="activeComponent" v-bind="props" :is="step ? SecondStep : FirstStep" :loading="loading"
+          @resend="getOTP" @submit-otp="handleSubmitOtp" />
       </KeepAlive>
     </v-form>
   </v-container>

@@ -58,7 +58,7 @@ onMounted(getVehicles)
     </div>
 
     <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
-      prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" />
+     append-inner-icon="search" />
   </v-card-title>
 
   <v-card-text class="pa-0">

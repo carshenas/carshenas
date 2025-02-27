@@ -12,25 +12,19 @@ const router = useRouter()
 const userStore = useUserStore()
 const step = ref<0 | 1 | 2>(0)
 const snackbarStore = useSnackbar()
-
-// Compute component based on step
 const component = computed(() => [TheCart, TheTransport, TheGateway][step.value])
 
-// Watch for unauthorized step changes
 watch(step, (newStep) => {
   if (newStep > 0 && !userStore.isLoggedIn) {
     step.value = 0
-    // Optional: Show login dialog or redirect to login page
     router.push('/login?redirect=/checkout')
   }
 })
 
-// Modified next handler with login check
 const onNext = () => {
   if (!userStore.isLoggedIn && step.value === 0) {
     router.push('/authentication?redirect=/checkout')
     snackbarStore.show(t('message.loginNeeded'))
-
     return
   }
   step.value++
