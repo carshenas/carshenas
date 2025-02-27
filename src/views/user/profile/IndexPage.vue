@@ -34,11 +34,11 @@ const items: { title: string; 'prepend-icon': string; to: RouteLocationRaw }[] =
       'prepend-icon': 'support_agent',
       to: { name: 'UserSupportPage' }
     },
-    {
-      title: t('user.notification'),
-      'prepend-icon': 'notifications',
-      to: { name: 'UserNotificationPage' }
-    }
+    // {
+    //   title: t('user.notification'),
+    //   'prepend-icon': 'notifications',
+    //   to: { name: 'UserNotificationPage' }
+    // }
   ]
 
 const snackbarStore = useSnackbar()

@@ -9,6 +9,7 @@ const isReceiveInPerson = ref<boolean>(true)
 const addressStore = useAddressStore()
 
 const {
+  addressList,
   showInfo,
   bottomSheetVisible,
   selectedPosition,
@@ -20,6 +21,7 @@ const {
   updateLatLngString,
   submitAddress,
 } = useAddressManagement()
+
 
 onMounted(async () => {
   try {
@@ -38,9 +40,7 @@ const selectAddress = (addressId: number) => {
   addressStore.setSelectedAddressId(addressId)
   isReceiveInPerson.value = false
 }
-
-// Watch for changes in addressList
-watch(() => addressStore.addressList, (newAddressList) => {
+watch(() => addressList, (newAddressList) => {
   if (!addressStore.selectedAddressId) {
     addressStore.initializeDefaultAddress()
     if (addressStore.selectedAddressId) {
@@ -58,23 +58,26 @@ watch(() => addressStore.addressList, (newAddressList) => {
 
       <!-- Delivery address options -->
       <div class="mt-4">
-        <div v-if="addressStore.addressList.length > 0">
-          <v-radio-group v-model="addressStore.selectedAddressId" class="mt-2">
-            <v-card v-for="address in addressStore.addressList" :key="address.id" class="mb-2 pa-4" :class="{
-              'border-primary': addressStore.selectedAddressId === address.id && !isReceiveInPerson
-            }" variant="outlined" rounded="lg" @click="selectAddress(address.id)">
-              <v-radio :value="address.id" color="primary" hide-details>
-                <template #label>
-                  <div class="d-flex flex-column ga-2">
-                    <span class="text-body-1">{{ address.address }}</span>
-                    <span class="text-caption text-grey">
-                      {{ address.postalCode }}
-                    </span>
-                  </div>
-                </template>
-              </v-radio>
-            </v-card>
-          </v-radio-group>
+        <div v-if="addressList.length > 0">
+          <div v-if="addressList.length > 0">
+            <v-radio-group v-model="addressStore.selectedAddressId" class="mt-2">
+              <v-card v-for="address in addressList" :key="address.id" class="mb-2 pa-4"
+                :class="{ 'border-primary': addressStore.selectedAddressId === address.id && !isReceiveInPerson }"
+                variant="outlined" rounded="lg" @click="selectAddress(address.id)">
+                <v-radio :value="address.id" color="primary" hide-details>
+                  <template #label>
+                    <div class="d-flex flex-column ga-2">
+                      <span class="text-body-1">{{ address.address }}</span>
+                      <span class="text-caption text-grey">
+                        {{ address.postalCode }}
+                      </span>
+                    </div>
+                  </template>
+                </v-radio>
+              </v-card>
+            </v-radio-group>
+          </div>
+
         </div>
       </div>
 

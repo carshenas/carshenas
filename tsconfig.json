@@ -12,6 +12,10 @@
     }
   ],
   "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": false,
     "module": "NodeNext",
     "baseUrl": ".",
     "paths": {

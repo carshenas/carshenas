@@ -26,6 +26,8 @@ const isLoading = ref(true)
 const snackbar = ref(false)
 const userStore = useUserStore();
 const isLoggedIn = userStore.isLoggedIn;
+
+console.log(variants)
 const handleSelectedWarranty = (selectedWarrantyData: Warranty | null) => {
   if (selectedWarrantyData) {
     selectedWarrantyPrice.value = Math.min(...selectedWarrantyData.price)
@@ -173,7 +175,12 @@ const showSnackbar = (message: string) => {
   <CommentSection v-if="isLoggedIn" :comments="product.feedbacks" :id="product.id"
     @feedbackSubmitted="fetchProductDetails" />
   <div class="pa-4 text-center" v-else>
-    <span>برای ثبت نظر وارد شوید</span>
+    <span>برای ثبت نظر
+      <RouterLink :to="{ name: 'AuthPage' }">
+        وارد
+      </RouterLink>
+      شوید
+    </span>
   </div>
   <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant" />
