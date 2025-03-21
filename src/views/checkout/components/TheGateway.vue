@@ -26,7 +26,7 @@ const selectedAddress = computed(() => {
 const handleAddOrder = async () => {
   try {
     loading.value = true;
-
+    console.log('Selected Shipment ID:', addressStore.selectedShipping);
     if (!selectedAddress.value) {
       throw new Error('Please select a delivery address')
     }
@@ -36,7 +36,8 @@ const handleAddOrder = async () => {
         quantity: item.quantity,
         variant: item.variant.id
       })),
-      location: selectedAddress.value.id
+      location: selectedAddress.value.id,
+      shipping: addressStore.selectedShipping ?? 0 
     };
 
     console.log('Prepared Order Data:', orderData);

@@ -13,7 +13,6 @@ const props = defineProps<{
   variants: Variant[];
   selectedColorCode: string | null;
 }>();
-
 const brands = computed<Brand[]>(() => {
   const brandMap: Record<string, Brand> = {};
 
@@ -80,7 +79,6 @@ function sortBrands(brands: Brand[]): Brand[] {
 const sortedBrands = computed<Brand[]>(() => {
   return sortBrands(brands.value);
 });
-
 const selectedBrand = computed(() => {
   return (
     sortedBrands.value.find(

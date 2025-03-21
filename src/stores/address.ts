@@ -14,12 +14,18 @@ export const useAddressStore = defineStore("address", () => {
   const addressList = ref<Address[]>([]);
   const selectedAddressId = ref<number | null>(null);
   const loading = ref(false);
+  const selectedShipping = ref<number | null>(null);
 
   // Getters
   const selectedAddress = computed(() =>
     addressList.value.find((address) => address.id === selectedAddressId.value)
   );
-
+  const setSelectedShipping = (shipping: number | null) => {
+    selectedShipping.value = shipping;
+  };
+  const resetSelectedShipping = () => {
+    selectedShipping.value = null;
+  };
   const defaultAddress = computed(() =>
     addressList.value.find((address) => address.isDefault)
   );
@@ -65,6 +71,7 @@ export const useAddressStore = defineStore("address", () => {
     addressList,
     selectedAddressId,
     loading,
+    selectedShipping,
 
     // Getters
     selectedAddress,
@@ -74,8 +81,11 @@ export const useAddressStore = defineStore("address", () => {
     setAddressList,
     setSelectedAddressId,
     addAddress,
+    setSelectedShipping,
     updateAddress,
     deleteAddress,
     initializeDefaultAddress,
+    resetSelectedShipping,
+
   };
 });

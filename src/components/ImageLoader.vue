@@ -63,25 +63,11 @@ watch(
 </script>
 
 <template>
-  <picture
-    v-if="props.src"
-    ref="picture"
-    :style="`width: ${props.width}; height: ${props.height};`"
-  >
-    <source
-      v-for="image in images"
-      :key="image.type"
-      :srcset="image.src"
-      :type="image.type"
-    />
+  <picture v-if="props.src" ref="picture" :style="`width: ${props.width}; height: ${props.height};`">
+    <source v-for="image in images" :key="image.type" :srcset="image.src" :type="image.type" />
 
-    <img
-      :src="defaultImage"
-      :alt="props.alt"
-      :width="props.width"
-      :height="props.height"
-      :style="`aspect-ratio: ${props.aspectRatio};`"
-    />
+    <img :src="defaultImage" :alt="props.alt" :width="props.width" :height="props.height"
+      :style="`aspect-ratio: ${props.aspectRatio};`" />
   </picture>
 
   <v-icon v-else icon="hide_image" />
@@ -98,13 +84,14 @@ img {
 }
 
 picture::before {
+  mix-blend-mode: multiply;
+
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: white;
   /* Background to target */
   z-index: -1;
   mix-blend-mode: screen;

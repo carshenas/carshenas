@@ -15,6 +15,16 @@ const useFetch = async <R = unknown, D = unknown>(
 
   try {
     const response = await fetch(url, mergedOptions);
+
+    if (response.status === 204) {
+      console.log("No content returned (204 status)");
+      return {
+        status: response.status,
+        statusText: response.statusText,
+        data: null as unknown as R, // Null data for responses with no content
+        headers: response.headers,
+      };
+    }
     const responseClone = response.clone();
     responseClone.json().catch((err) => {
       console.log("Failed to parse response:", err);

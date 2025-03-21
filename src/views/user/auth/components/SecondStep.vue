@@ -1,9 +1,12 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{ phoneNumber: string; otpExpireTime: number; loading: boolean }>()
-const emit = defineEmits<{ (event: 'resend'): void }>()
+const emit = defineEmits<{
+  (event: 'resend'): void;
+  (event: 'submit-otp', otp: string): void
+}>()
 
 const router = useRouter()
 
@@ -13,10 +16,10 @@ const counter = ref(counterInitiateValue)
 let refreshIntervalId: NodeJS.Timeout
 
 const startTimer = () =>
-  (refreshIntervalId = setInterval(() => {
-    if (counter.value > 0) counter.value--
-    else clearInterval(refreshIntervalId)
-  }, 1000))
+(refreshIntervalId = setInterval(() => {
+  if (counter.value > 0) counter.value--
+  else clearInterval(refreshIntervalId)
+}, 1000))
 
 const receiveCodeAgain = () => {
   emit('resend')
@@ -24,6 +27,12 @@ const receiveCodeAgain = () => {
   counter.value = counterInitiateValue
   startTimer()
 }
+
+watch(otp, (newValue) => {
+  if (newValue.length === 4 && !props.loading) {
+    emit('submit-otp', newValue)
+  }
+})
 
 const timer = computed(() => new Date(counter.value * 1000).toISOString().substring(14, 19))
 
@@ -54,15 +63,11 @@ defineExpose({ getOTP })
           {{ $t('auth.leftToReceiveTheCodeAgain', { timer }) }}
         </p>
 
-        <v-btn
-          v-else
-          :text="$t('auth.receiveTheCodeAgain')"
-          variant="plain"
-          @click="receiveCodeAgain()"
-        />
+        <v-btn v-else :text="$t('auth.receiveTheCodeAgain')" variant="plain" @click="receiveCodeAgain()" />
       </div>
     </div>
 
+    <!-- Submit button kept for fallback but not needed for normal flow anymore -->
     <v-btn :loading="props.loading" type="submit">{{ $t('auth.login') }}</v-btn>
   </div>
 </template>

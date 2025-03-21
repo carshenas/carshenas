@@ -36,12 +36,13 @@ const filteredItems = computed((): Brand[] | Vehicle[] => {
   else return items || []
 })
 
-const handleClick = (item: any) => {
+const handleClick = (item: any) => {  
+
   if (item.vehicles) return (models.value = item.vehicles)
   else {
     router.push({
       path: '/product',
-      query: { ...route.query, vehicle: item.id },
+      query: { ...route.query, vehicle: item.id, vehicleName: item.name }, 
     });
   } emit('close')
 }
@@ -58,7 +59,7 @@ onMounted(getVehicles)
     </div>
 
     <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
-      prepend-inner-icon="arrow_forward_ios" append-inner-icon="search" />
+     append-inner-icon="search" />
   </v-card-title>
 
   <v-card-text class="pa-0">

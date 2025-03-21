@@ -33,10 +33,10 @@ export default {
       path: "support",
       component: () => import("@/views/user/support/IndexPage.vue"),
     },
-    {
-      name: "UserNotificationPage",
-      path: "notifications",
-      component: () => import("@/views/user/notification/IndexPage.vue"),
-    },
+    // {
+    //   name: "UserNotificationPage",
+    //   path: "notifications",
+    //   component: () => import("@/views/user/notification/IndexPage.vue"),
+    // },
   ],
 } as RouteRecordRaw;
