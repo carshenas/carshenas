@@ -7,6 +7,7 @@ import { computed } from 'vue'
 
 const route = useRoute()
 const filter = computed((): ProductFilter => route.query)
+
 </script>
 
 <template>
@@ -15,7 +16,7 @@ const filter = computed((): ProductFilter => route.query)
       {{ $t('product.title', { title: '' }) }}
     </h1>
 
-    <ProductList :filter class="mt-4" />
+    <ProductList :filter />
 
     <BrandFilterBottomSheet />
   </v-container>
