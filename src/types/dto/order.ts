@@ -18,6 +18,7 @@
 export interface OrderRequest {
   variants: OrderItem[];
   location: number;
+  shipping: number
 }
 export interface OrderItem {
   quantity: number;
@@ -54,4 +55,21 @@ export interface Transaction {
   amount: number;
   isSuccessful: boolean;
   dateCreated: string;
+}
+interface Schedule {
+  id: number;
+  startTime: string;
+  endTime: string;
+}
+
+interface ShippingDay {
+  weekday: string;
+  datetime: string;
+  schedule: Schedule[];
+}
+
+export interface ShippingResponse {
+  cost: number;
+  description: string;
+  days: ShippingDay[];
 }

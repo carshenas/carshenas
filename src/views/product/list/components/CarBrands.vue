@@ -36,12 +36,13 @@ const filteredItems = computed((): Brand[] | Vehicle[] => {
   else return items || []
 })
 
-const handleClick = (item: any) => {
+const handleClick = (item: any) => {  
+
   if (item.vehicles) return (models.value = item.vehicles)
   else {
     router.push({
       path: '/product',
-      query: { ...route.query, vehicle: item.id },
+      query: { ...route.query, vehicle: item.id, vehicleName: item.name }, 
     });
   } emit('close')
 }

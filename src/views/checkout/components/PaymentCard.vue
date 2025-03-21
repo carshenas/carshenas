@@ -88,7 +88,7 @@ const removeDiscount = () => {
 
     <div class="d-flex justify-space-between">
       <p class="label-md text-outline">{{ $t('checkout.deliveryPrice') }}</p>
-      <CurrencyDisplay :value="cartStore.payableAmount" value-class="text-primary font-weight-bold"
+      <CurrencyDisplay :value="cartStore.deliveryPriceComputed" value-class="text-primary font-weight-bold"
         unit-class="body-sm text-outline" class="d-flex justify-end body-md" />
     </div>
 
@@ -102,7 +102,8 @@ const removeDiscount = () => {
 
     <div class="d-flex justify-space-between">
       <p class="label-md">{{ $t('checkout.payable') }} :</p>
-      <CurrencyDisplay :value="cartStore.payableAmount - (appliedDiscount?.amount || 0)"
+      <CurrencyDisplay
+        :value="(cartStore.payableAmount + cartStore.deliveryPriceComputed) - (appliedDiscount?.amount || 0)"
         value-class="text-primary font-weight-bold" unit-class="body-sm text-outline"
         class="d-flex justify-end body-md" />
     </div>

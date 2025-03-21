@@ -15,6 +15,15 @@ export const useCartStore = defineStore("cart", () => {
   const isUpdating = ref(false);
   const pendingUpdates = ref<Map<number, number>>(new Map());
   const updateErrors = ref<Map<number, string>>(new Map());
+  const deliveryPrice = ref(0); // Reactive variable for delivery price
+
+  const deliveryPriceComputed = computed({
+    get: () => deliveryPrice.value, // Getter to retrieve the delivery price
+    set: (newPrice: number) => {
+      deliveryPrice.value = newPrice; // Setter to update the delivery price
+      console.log("Delivery price updated:", newPrice); // Optional: Log the updated price
+    },
+  });
 
   // Save cart with error handling
   const saveCartToLocalStorage = (cartItems: BasketItem[]) => {
@@ -163,7 +172,7 @@ export const useCartStore = defineStore("cart", () => {
     items.value.reduce(
       (total, item) => total + (item.variant.price ?? 0) * item.quantity,
       0
-    )
+    ) + deliveryPriceComputed.value 
   );
 
   const isItemInCart = (variantId: number) =>
@@ -177,6 +186,16 @@ export const useCartStore = defineStore("cart", () => {
   // Watch for changes and save to localStorage
   watch(items, (newItems) => saveCartToLocalStorage(newItems), { deep: true });
 
+  // Watch for changes in deliveryPriceComputed and update payableAmount
+  watch(
+    () => deliveryPriceComputed.value, // Watch the delivery price
+    (newDeliveryPrice) => {
+      console.log("Delivery price changed:", newDeliveryPrice);
+      // The `payableAmount` computed property will automatically update
+      // because it depends on `deliveryPriceComputed.value`.
+    }
+  );
+
   // Fetch cart initially
   fetchCart();
 
@@ -186,6 +205,8 @@ export const useCartStore = defineStore("cart", () => {
     updateQuantity,
     removeItem,
     clearCart,
+    deliveryPrice, // Expose the getter and setter
+    deliveryPriceComputed,
     payableAmount,
     isItemInCart,
     getItemQuantity,
