@@ -20,7 +20,7 @@
             </p>
             <p class="body-md">
                 <strong>{{ $t("contactUs.addressLabel") }}:</strong>
-                <span>خیابان آزادی - خیابان حبیب الهی -کوچه درودی - پلاک ۱۹</span>
+                <span>خیابان امیر کبیر پاساژ کاشانی پلاک 107</span>
             </p>
             <p class="body-md">
                 <strong>تلگرام:</strong>

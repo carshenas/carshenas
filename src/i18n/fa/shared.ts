@@ -14,4 +14,11 @@ export default {
   continue: "ادامه",
   loading: "لطفا منتظر بمانید",
   goToHome: "بازگشت به خانه",
+  // New translations for contact footer
+  contactUs: "تماس با ما",
+  hideContact: "بستن اطلاعات تماس",
+  emailLabel: "ایمیل",
+  phoneLabel: "تلفن",
+  addressLabel: "آدرس",
+  telegramLabel: "تلگرام",
 };

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
 import { useCartStore } from "@/stores/cart";
+import { useSnackbar } from '@/stores/snackbar';
 import type { Variant } from "@/types/dto/product";
 import { addToBasketService } from "@/services/carshenas/basket";
 import type { BasketItem } from "@/types/dto/basket";
@@ -11,6 +12,8 @@ const props = defineProps<{
 
 const cartStore = useCartStore();
 const isAddingToCart = ref(false);
+const isUpdatingQuantity = ref(false);
+const snackbar = useSnackbar();
 
 const findBasketItemId = computed(() => {
   const item = cartStore.items.find(item => item.variant.id === props.variant.id);
@@ -31,6 +34,17 @@ const quantity = computed(() => {
 const addToCart = async () => {
   if (isAddingToCart.value) return;
 
+  // Check stock before adding to cart
+  if (!props.variant.is_unlimited && 
+      props.variant.quantity !== undefined && 
+      props.variant.quantity <= 0) {
+    snackbar.show("Item is out of stock", {
+      color: "error",
+      timeout: 3000
+    });
+    return;
+  }
+
   try {
     isAddingToCart.value = true;
     const basketItem: BasketItem = await addToBasketService({
@@ -45,24 +59,42 @@ const addToCart = async () => {
     });
   } catch (error) {
     console.error("Failed to add to basket:", error);
+    snackbar.show(error instanceof Error ? error.message : "Failed to add to basket", {
+      color: "error",
+      timeout: 3000
+    });
   } finally {
     isAddingToCart.value = false;
   }
 };
 
 const add = () => {
+  if (isUpdatingQuantity.value) return;
+  
   const basketItemId = findBasketItemId.value;
   if (basketItemId) {
+    isUpdatingQuantity.value = true;
+    // Don't update UI, let the cart store handle it
     cartStore.updateQuantity(basketItemId, quantity.value + 1);
+    setTimeout(() => {
+      isUpdatingQuantity.value = false;
+    }, 300);
   }
 };
 
 const remove = () => {
+  if (isUpdatingQuantity.value) return;
+  
   const basketItemId = findBasketItemId.value;
   if (!basketItemId) return;
 
   if (quantity.value > 1) {
+    isUpdatingQuantity.value = true;
+    // Don't update UI, let the cart store handle it
     cartStore.updateQuantity(basketItemId, quantity.value - 1);
+    setTimeout(() => {
+      isUpdatingQuantity.value = false;
+    }, 300);
   } else {
     cartStore.removeItem(basketItemId);
   }
@@ -91,6 +123,7 @@ const remove = () => {
 
 <style scoped>
 .centered-input {
-  width: 120px;
+  width: fit-content;
+  text-align: center;
 }
 </style>

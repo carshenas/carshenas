@@ -43,17 +43,35 @@ export const useCartStore = defineStore("cart", () => {
 
     try {
       await Promise.all(
-        updates.map(async ([cartId, quantity]) => {
+        updates.map(async ([cartId, newQuantity]) => {
           const item = items.value.find((item) => item.id === cartId);
           if (!item) return;
 
+          const oldQuantity = item.quantity;
+          console.log(`Updating item ${cartId}:`, {
+            oldQuantity,
+            newQuantity,
+            currentItemQuantity: item.quantity
+          });
+
           try {
-            await patchBasketService(cartId, { quantity });
-            item.quantity = quantity;
+            await patchBasketService(cartId, { quantity: newQuantity });
+            // Only update UI after successful API call
+            item.quantity = newQuantity;
+            console.log(`Update successful for item ${cartId}:`, {
+              oldQuantity,
+              newQuantity,
+              finalQuantity: item.quantity
+            });
             updateErrors.value.delete(cartId);
           } catch (error) {
-            const previousQuantity = item.quantity;
-            item.quantity = previousQuantity - 1;
+            // Keep the old quantity since we never updated the UI
+            console.log(`Update failed for item ${cartId}:`, {
+              oldQuantity,
+              attemptedNewQuantity: newQuantity,
+              currentQuantity: item.quantity,
+              error: error instanceof Error ? error.message : "Unknown error"
+            });
             updateErrors.value.set(
               cartId,
               error instanceof Error
@@ -131,7 +149,9 @@ export const useCartStore = defineStore("cart", () => {
   const updateQuantity = (cartId: number, quantity: number) => {
     const item = items.value.find((item) => item.id === cartId);
     if (!item) return;
-    item.quantity = quantity;
+    
+    // Store the old quantity but don't update UI yet
+    const oldQuantity = item.quantity;
     pendingUpdates.value.set(cartId, quantity);
     processPendingUpdates();
   };
@@ -172,7 +192,7 @@ export const useCartStore = defineStore("cart", () => {
     items.value.reduce(
       (total, item) => total + (item.variant.price ?? 0) * item.quantity,
       0
-    ) + deliveryPriceComputed.value 
+    ) + deliveryPriceComputed.value
   );
 
   const isItemInCart = (variantId: number) =>
