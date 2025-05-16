@@ -56,8 +56,7 @@ export const useCartStore = defineStore("cart", () => {
 
           try {
             await patchBasketService(cartId, { quantity: newQuantity });
-            // Only update UI after successful API call
-            item.quantity = newQuantity;
+            // Update successful, keep the new quantity
             console.log(`Update successful for item ${cartId}:`, {
               oldQuantity,
               newQuantity,
@@ -65,11 +64,12 @@ export const useCartStore = defineStore("cart", () => {
             });
             updateErrors.value.delete(cartId);
           } catch (error) {
-            // Keep the old quantity since we never updated the UI
-            console.log(`Update failed for item ${cartId}:`, {
+            // Revert to old quantity on error
+            item.quantity = oldQuantity;
+            console.log(`Update failed for item ${cartId}, reverting:`, {
               oldQuantity,
               attemptedNewQuantity: newQuantity,
-              currentQuantity: item.quantity,
+              revertedQuantity: item.quantity,
               error: error instanceof Error ? error.message : "Unknown error"
             });
             updateErrors.value.set(
@@ -150,8 +150,13 @@ export const useCartStore = defineStore("cart", () => {
     const item = items.value.find((item) => item.id === cartId);
     if (!item) return;
     
-    // Store the old quantity but don't update UI yet
+    // Store the old quantity
     const oldQuantity = item.quantity;
+    
+    // Update UI optimistically
+    item.quantity = quantity;
+    
+    // Add to pending updates
     pendingUpdates.value.set(cartId, quantity);
     processPendingUpdates();
   };
