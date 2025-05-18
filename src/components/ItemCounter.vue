@@ -75,6 +75,10 @@ const addToCart = async () => {
       variant: props.variant,
       quantity: basketItem.quantity,
     });
+    snackbar.show("کالا به سبد اضافه شد", {
+      color: "success",
+      timeout: 3000
+    });
   } catch (error) {
     console.error("Failed to add to basket:", error);
     snackbar.show(error instanceof Error ? error.message : "Failed to add to basket", {

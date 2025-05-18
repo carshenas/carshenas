@@ -54,10 +54,20 @@ watch(
       </v-app-bar-title>
 
       <template #append>
-        <v-btn v-if="cartStore.items.length" icon="local_mall" density="comfortable" :to="{ name: 'CheckoutPage' }" />
-
+        <v-btn v-if="cartStore.items.length" icon="local_mall" density="comfortable" :to="{ name: 'CheckoutPage' }">
+          <v-badge
+            :content="cartStore.items.length"
+            color="primary"
+            location="top end"
+            offset-x="1"
+            offset-y="1"
+            size="small"
+          >
+            <v-icon>local_mall</v-icon>
+          </v-badge>
+        </v-btn>
         <v-btn v-if="!userStore.isLoggedIn" :to="{ name: 'AuthPage' }" :text="$t('auth.login')" variant="text"
-          density="compact" class="text-primary title-md" />
+z          density="compact" class="text-primary title-md" />
 
         <v-btn v-else :to="{ name: 'UserProfilePage' }" density="comfortable" icon="account_circle" />
       </template>
