@@ -234,7 +234,7 @@ export const useCartStore = defineStore("cart", () => {
     items.value.reduce(
       (total, item) => total + (item.variant.price ?? 0) * item.quantity,
       0
-    ) + deliveryPriceComputed.value
+    ) 
   );
 
   const isItemInCart = (variantId: number) =>

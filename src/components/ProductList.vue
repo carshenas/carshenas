@@ -114,14 +114,14 @@ defineExpose({
                   class="d-flex justify-end body-md py-1"
                 />
 
-                <v-btn
+                <!-- <v-btn
                   :text="$t('shared.more')"
                   variant="plain"
                   class="px-0"
                   append-icon="chevron_left"
                   density="compact"
                   @click.stop
-                />
+                /> -->
               </div>
             </v-col>
           </v-row>

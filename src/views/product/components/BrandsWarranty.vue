@@ -185,7 +185,7 @@ watch(showBottomSheet, (newVal) => {
             <div class="font-weight-bold">{{ brand.name }}</div>
             <div v-if="selectedBrandName === brand.name && selectedWarrantyName" class="text-caption font-weight-thin">
               <span class="">{{ selectedWarrantyName }}</span>
-              <v-icon icon="edit" class="mr-4" size="18"></v-icon>
+              <v-icon v-if="brands.length > 1" icon="edit" class="mr-4" size="18"></v-icon>
             </div>
             <div v-else-if="
               selectedBrandName === brand.name &&

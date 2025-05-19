@@ -14,7 +14,7 @@ const isOpen = ref<boolean>()
         icon="directions_car"
         :text="$t('product.vehicleFilter')"
         :delay="5"
-        right
+        left
         bottom
       />
     </template>
