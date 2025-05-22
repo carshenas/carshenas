@@ -40,12 +40,12 @@ const onNext = () => {
 
         <v-divider />
 
-        <v-stepper-item :title="$t('checkout.transport')" value="1" color="primary" edit-icon="local_shipping"
-          :complete="step > 1" :disabled="!userStore.isLoggedIn" />
+        <v-stepper-item :title="$t('checkout.transport')" value="1" :editable="step === 2" color="primary"
+          edit-icon="local_shipping" :complete="step > 1" :disabled="!userStore.isLoggedIn" />
 
         <v-divider />
 
-        <v-stepper-item :title="$t('checkout.pay')" value="2" color="primary" edit-icon="credit_card"
+        <v-stepper-item :title="$t('checkout.pay')" :editable="false" value="2" color="primary" edit-icon="credit_card"
           :disabled="!userStore.isLoggedIn" />
       </v-stepper-header>
     </v-stepper>
