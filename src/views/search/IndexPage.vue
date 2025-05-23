@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import CategoryList from '@/components/CategoryList.vue'
-import { useRouter } from 'vue-router'
 import ProductList from '@/components/ProductList.vue'
 import SearchSuggestions from './components/SearchSuggestions.vue'
 import { useDatabaseStore } from '@/stores/database'
@@ -11,26 +10,29 @@ import type { Category } from '@/types/dto/category'
 import { debounce } from 'lodash'
 import type { Product } from '@/types/dto/product'
 import { getSearchResultsService } from '@/services/carshenas/search'
-
-const router = useRouter()
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
 const products = ref<Product[]>()
 const categories = ref<Category[]>()
 const search = ref<string>()
+const isLoading = ref(false)
 
 const fetchSearchResults = async () => {
+  if (!search.value || search.value.length < 1) {
+    products.value = []
+    categories.value = []
+    return
+  }
+  
+  isLoading.value = true
+  
   try {
-    if (!search.value || search.value.length < 1) {
-      products.value = []
-      categories.value = []
-      return
-    }
-
     const response = await getSearchResultsService(search.value)
     products.value = response.data.products || []
     categories.value = response.data.categories || []
   } catch (e) {
     console.error('Error fetching search results:', e)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -60,29 +62,39 @@ onBeforeRouteLeave(async (to, from, next) => {
 <template>
   <div class="h-100 d-flex flex-column bar-padding position-relative">
     <div class="fixed-bar pa-4">
-      <v-text-field
-        v-model="search"
-        :placeholder="$t('shared.search')"
-        variant="outlined"
-        rounded
-        hide-details
-        append-inner-icon="search"
-        @input="onInput"
-        @click:prepend-inner="router.back()"
-      />
+      <div class="d-flex align-center">
+        <v-app-bar-nav-icon icon="close" density="compact" @click="$router.back()" class="mr-2" />
+        
+        <v-text-field 
+          v-model="search" 
+          :placeholder="$t('shared.search')" 
+          variant="outlined" 
+          rounded 
+          hide-details
+          append-inner-icon="search" 
+          @input="onInput"
+          :loading="isLoading"
+          class="flex-grow-1"
+        />
+      </div>
     </div>
 
-    <SearchSuggestions
-      class="px-4"
-      :title="search"
-      @select="updateSearch"
-      style="height: 68px"
+    <SearchSuggestions 
+      class="px-4" 
+      :title="search" 
+      @select="updateSearch" 
+      style="height: 68px" 
     />
 
+    <!-- Loading state -->
+    <div v-if="isLoading" class="loading-container">
+      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <div class="mt-4">{{ $t('shared.loading') }}</div>
+    </div>
+
+    <!-- Search results -->
     <template
-      v-if="
-        search && search.length > 1 && (products?.length || categories?.length)
-      "
+      v-else-if="search && search.length > 1 && (products?.length || categories?.length)"
     >
       <div v-if="categories?.length">
         <h2 class="title-sm mt-6 px-4">
@@ -116,7 +128,7 @@ onBeforeRouteLeave(async (to, from, next) => {
         class="mt-6"
         :limit="4"
         :filter="{ title: search }"
-        no-pagination
+        @update:filter="(newFilter) => search = newFilter.title || ''"
       />
     </template>
 
@@ -149,5 +161,16 @@ onBeforeRouteLeave(async (to, from, next) => {
   z-index: 5;
   max-width: 480px;
   width: 100%;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  width: 100%;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 14px;
 }
 </style>

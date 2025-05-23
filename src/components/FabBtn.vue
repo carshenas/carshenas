@@ -54,7 +54,7 @@ defineProps<{
   }
 
   &.bottom {
-    bottom: 4rem;
+    bottom: 1rem;
   }
 
   &.top {

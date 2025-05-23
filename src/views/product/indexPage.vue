@@ -72,11 +72,34 @@ const hasColorVariants = computed<boolean>(() => {
   return variants.value.some((variant) => !!variant.color)
 })
 
-const tabItems = ref([
-  { title: 'product.summery', href: '#summery' },
-  { title: 'product.details', href: '#spec' },
-  { title: 'product.comments', href: '#comments' }
-])
+const tabItems = computed(() => {
+  const items = []
+  
+  // Only add summary tab if there's a description
+  if (product.value.description) {
+    items.push({ title: 'product.summery', href: '#summery' })
+  }
+  
+  // Only add details tab if there are specifications
+  if (Object.keys(spec.value).length > 0) {
+    items.push({ title: 'product.details', href: '#spec' })
+  }
+  
+  // Only add comments tab if user is logged in and there are comments
+  if (isLoggedIn && product.value.feedbacks?.length > 0) {
+    items.push({ title: 'product.comments', href: '#comments' })
+  }
+  
+  return items
+})
+
+// Add computed property to check if content is short
+const shouldShowTabs = computed(() => {
+  // Get the total content height
+  const contentHeight = document.documentElement.scrollHeight - window.innerHeight
+  // Show tabs only if content height is more than 500px
+  return contentHeight > 500
+})
 
 const minPrice = computed<number>(() => {
   let minPrice = Infinity
@@ -133,7 +156,7 @@ const showSnackbar = (message: string) => {
   <v-skeleton-loader v-else class="mx-auto" max-width="300" elevation="0" type="image" boilerplate></v-skeleton-loader>
   <h1 class="px-4 title-md">{{ product.name }}</h1>
 
-  <v-tabs v-model="selectedTab" bg-color="white" align-tabs="center" class="position-sticky tab-pdp"
+  <v-tabs v-if="shouldShowTabs && tabItems.length > 0" v-model="selectedTab" bg-color="white" align-tabs="center" class="position-sticky tab-pdp"
     slider-color="primary" comfortable>
     <v-tab v-for="(tab, index) in tabItems" :key="index" :href="tab.href" rounded="5" color="red-darken-3">
       {{ $t(tab.title) }}

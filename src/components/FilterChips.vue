@@ -10,6 +10,10 @@ const props = defineProps<{
 const logger = useLogger();
 const activeFilters = ref<Record<string, any>>({});
 
+const emit = defineEmits<{
+    (e: 'remove', key: string): void
+}>();
+
 // Watch for filter changes and log them
 watch(() => props.filter, (newFilter) => {
     if (!newFilter) {
@@ -41,6 +45,12 @@ onMounted(() => {
     });
 });
 
+const removeFilter = (key: string) => {
+    delete activeFilters.value[key];
+    emit('remove', key);
+    logger.info('Filter removed', { key, remainingFilters: { ...activeFilters.value } });
+};
+
 defineExpose({
     getActiveFilters: () => ({ ...activeFilters.value }),
     getFilterCount: () => Object.keys(activeFilters.value).length,
@@ -60,6 +70,8 @@ defineExpose({
             class="ma-1"
             color="primary"
             outlined
+            closable
+            @click:close="removeFilter(key)"
         >
            {{ value }}
         </v-chip>
@@ -69,7 +81,8 @@ defineExpose({
 <style scoped>
 .filter-chips {
     display: flex;
-    justify-content: end;
+    justify-content: start;
     flex-wrap: wrap;
+    padding: 8px 0;
 }
 </style>
