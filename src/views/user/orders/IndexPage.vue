@@ -5,7 +5,6 @@ import OrderItemCards from './components/OrderItemCards.vue';
 import { getOrderList } from '@/services/carshenas/order';
 import type { OrderListResponse } from '@/types/dto/order';
 
-
 const orders = ref<OrderListResponse[]>([])
 
 const getOrders = async () => {
@@ -30,21 +29,78 @@ const clearSelectedOrderIndex = () => {
 </script>
 
 <template>
-  <section class="pa-4 h-100">
-    <div class="w-100 d-flex align-center justify-space-between">
-      <v-btn v-if="selectedOrderId === null" icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
-      <v-btn v-if="selectedOrderId !== null" icon="arrow_forward_ios" variant="text" @click="clearSelectedOrderIndex" />
-      <h1>{{ $t('user.orders') }}</h1>
-      <v-btn icon="" variant="text" />
-
-
-    </div>
-    <div class=" d-flex flex-column ga-4 mt-4" v-if="selectedOrderId === null">
-      <OrderCards v-for="(order, index) in orders" :key="index" :order="order"
-        :toggleOrderDetail="() => toggleOrderDetail(order.id)" :id="order.id" />
+  <section class="orders-page">
+    <!-- Header Section -->
+    <div class="orders-header">
+      <div class="d-flex align-center justify-space-between pa-4">
+        <v-btn v-if="selectedOrderId === null" icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
+        <v-btn v-if="selectedOrderId !== null" icon="arrow_forward_ios" variant="text" @click="clearSelectedOrderIndex" />
+        <h1 class="text-h5 font-weight-bold">{{ $t('user.orders') }}</h1>
+        <div style="width: 40px"></div> <!-- Spacer for alignment -->
+      </div>
     </div>
 
+    <!-- Main Content -->
+    <div class="orders-content">
+      <!-- Order List View -->
+      <div v-if="selectedOrderId === null" class="orders-list">
+        <v-container>
+          <v-row>
+            <v-col cols="12" sm="6" md="4" v-for="(order, index) in orders" :key="index">
+              <OrderCards 
+                :order="order"
+                :toggleOrderDetail="() => toggleOrderDetail(order.id)" 
+                :id="order.id" 
+              />
+            </v-col>
+          </v-row>
+        </v-container>
+      </div>
 
-    <OrderItemCards v-if="selectedOrderId !== null" :selectedOrderId="selectedOrderId" />
+      <!-- Order Detail View -->
+      <div v-else class="order-detail">
+        <OrderItemCards :selectedOrderId="selectedOrderId" />
+      </div>
+    </div>
   </section>
 </template>
+
+<style scoped>
+.orders-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.orders-header {
+  background-color: white;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.orders-content {
+  padding: 16px 0;
+}
+
+.orders-list {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.order-detail {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (max-width: 600px) {
+  .orders-content {
+    padding: 8px 0;
+  }
+  
+  .order-detail {
+    padding: 0 8px;
+  }
+}
+</style>
