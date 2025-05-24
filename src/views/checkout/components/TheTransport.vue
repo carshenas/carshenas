@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import PaymentCard from './PaymentCard.vue'
 import AddressCard from './AddressCard.vue'
 // import DeliveryTime from './DeliveryTime.vue'
@@ -6,22 +7,44 @@ import AddressCard from './AddressCard.vue'
 const emit = defineEmits<{
   (e: 'next'): void
 }>()
+
+const isAddressValid = ref(false);
+
+const handleAddressValidation = (isValid: boolean) => {
+  isAddressValid.value = isValid;
+};
+
+const handleNext = () => {
+  if (!isAddressValid.value) {
+    // Show error message or snackbar
+    return;
+  }
+  emit('next');
+};
 </script>
 
 <template>
   <div style="padding-bottom: 72px">
-    <AddressCard />
+    <AddressCard
+      v-model="isAddressValid"
+      @validation="handleAddressValidation"
+    />
 
     <v-divider thickness="8" color="divider" class="border-opacity-100" />
 
-    <!-- <DeliveryTime /> -->
 
     <v-divider thickness="8" color="divider" class="border-opacity-100" />
 
     <PaymentCard />
 
     <div class="bottom-bar pa-4">
-      <v-btn class="primary mt-4" block :text="$t('shared.continue')" @click="emit('next')" />
+      <v-btn 
+        class="primary mt-4" 
+        block 
+        :text="$t('shared.continue')" 
+        :disabled="!isAddressValid"
+        @click="handleNext"
+      />
     </div>
   </div>
 </template>

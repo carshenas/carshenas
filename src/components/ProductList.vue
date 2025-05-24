@@ -5,6 +5,7 @@ import ImageLoader from './ImageLoader.vue';
 import FilterChips from './FilterChips.vue'; // Import the FilterChips component
 import { useProductList } from '@/composable/useProductList';
 import type { ProductFilter } from '@/types/dto/product';
+import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps<{
   loading?: boolean;
@@ -22,6 +23,32 @@ const {
   handleScroll,
   debugLogs,
 } = useProductList(props);
+
+const emit = defineEmits<{
+    (e: 'update:filter', filter: ProductFilter): void
+}>();
+
+const router = useRouter();
+const route = useRoute();
+
+const handleFilterRemove = (key: string) => {
+    if (!props.filter) return;
+    
+    const newFilter = { ...props.filter };
+    delete newFilter[key as keyof ProductFilter];
+    
+    // Update URL parameters
+    const query = { ...route.query };
+    if (key === 'vehicleName') {
+        delete query.vehicle;
+        delete query.vehicleName;
+    } else {
+        delete query[key];
+    }
+    
+    router.push({ query });
+    emit('update:filter', newFilter);
+};
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll, { passive: true });
@@ -41,7 +68,10 @@ defineExpose({
 <template>
   <div>
     <!-- Add FilterChips component to display active filters -->
-    <FilterChips :filter="props.filter" />
+    <FilterChips 
+      :filter="props.filter" 
+      @remove="handleFilterRemove"
+    />
 
     <v-infinite-scroll v-if="isListVisible" @load="getProducts">
       <template v-for="product in products" :key="product.id">
@@ -51,6 +81,8 @@ defineExpose({
           shadow
           color="grey-lighten-5"
           class="product py-2 px-4 mt-2 ma-1"
+          @click="() => $router.push({ name: 'ProductDetailPage', params: { id: product.id } })"
+          style="cursor: pointer"
         >
           <v-row>
             <v-col cols="4" class="d-flex align-center">
@@ -82,17 +114,14 @@ defineExpose({
                   class="d-flex justify-end body-md py-1"
                 />
 
-                <v-btn
+                <!-- <v-btn
                   :text="$t('shared.more')"
                   variant="plain"
                   class="px-0"
                   append-icon="chevron_left"
                   density="compact"
-                  :to="{
-                    name: 'ProductDetailPage',
-                    params: { id: product.id },
-                  }"
-                />
+                  @click.stop
+                /> -->
               </div>
             </v-col>
           </v-row>

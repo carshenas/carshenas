@@ -16,6 +16,7 @@ export const useCartStore = defineStore("cart", () => {
   const pendingUpdates = ref<Map<number, number>>(new Map());
   const updateErrors = ref<Map<number, string>>(new Map());
   const deliveryPrice = ref(0); // Reactive variable for delivery price
+  const originalQuantities = ref<Map<number, number>>(new Map());
 
   const deliveryPriceComputed = computed({
     get: () => deliveryPrice.value, // Getter to retrieve the delivery price
@@ -43,23 +44,58 @@ export const useCartStore = defineStore("cart", () => {
 
     try {
       await Promise.all(
-        updates.map(async ([cartId, quantity]) => {
+        updates.map(async ([cartId, newQuantity]) => {
           const item = items.value.find((item) => item.id === cartId);
           if (!item) return;
 
+          // Get the stored original quantity
+          const originalQuantity = originalQuantities.value.get(cartId) || item.quantity;
+
+          console.log(`Updating item ${cartId}:`, {
+            originalQuantity,
+            requestedQuantity: newQuantity,
+            currentItemQuantity: item.quantity
+          });
+
           try {
-            await patchBasketService(cartId, { quantity });
-            item.quantity = quantity;
+            // Send update to server
+            await patchBasketService(cartId, { quantity: newQuantity });
+
+            // Update successful
+            console.log(`Update successful for item ${cartId}:`, {
+              originalQuantity,
+              requestedQuantity: newQuantity,
+              finalQuantity: item.quantity
+            });
+
+            // Clear stored original quantity
+            originalQuantities.value.delete(cartId);
+
+            // Clear any errors
             updateErrors.value.delete(cartId);
           } catch (error) {
-            const previousQuantity = item.quantity;
-            item.quantity = previousQuantity - 1;
-            updateErrors.value.set(
-              cartId,
-              error instanceof Error
-                ? error.message
-                : "Failed to update quantity"
-            );
+            // Revert to original quantity on error
+            item.quantity = originalQuantity;
+
+            console.log(`Update failed for item ${cartId}, reverting:`, {
+              originalQuantity,
+              attemptedQuantity: newQuantity,
+              revertedToQuantity: originalQuantity,
+              error: error instanceof Error ? error.message : "Unknown error"
+            });
+
+            // Set error message
+            let errorMessage = "Failed to update quantity";
+            if (error instanceof Error) {
+              errorMessage = error.message;
+
+              // Make the error message more user-friendly for stock limitations
+              if (error.message.includes("Not enough stock")) {
+                errorMessage = "Not enough stock available";
+              }
+            }
+
+            updateErrors.value.set(cartId, errorMessage);
           }
         })
       );
@@ -69,7 +105,6 @@ export const useCartStore = defineStore("cart", () => {
       isUpdating.value = false;
     }
   }, DEBOUNCE_DELAY);
-
   const fetchCart = async () => {
     try {
       const response = await getBasketService();
@@ -128,13 +163,40 @@ export const useCartStore = defineStore("cart", () => {
     saveCartToLocalStorage(items.value);
   };
 
-  const updateQuantity = (cartId: number, quantity: number) => {
+  const updateQuantity = (cartId: number, newQuantity: number) => {
     const item = items.value.find((item) => item.id === cartId);
     if (!item) return;
-    item.quantity = quantity;
-    pendingUpdates.value.set(cartId, quantity);
+
+    // Clear any previous errors for this item
+    updateErrors.value.delete(cartId);
+
+    // Store the current quantity before changing it
+    // Only store if we don't already have an original quantity for this item
+    if (!originalQuantities.value.has(cartId)) {
+      originalQuantities.value.set(cartId, item.quantity);
+    }
+
+    const originalQuantity = originalQuantities.value.get(cartId) || item.quantity;
+
+    // Only update if the quantity is actually different
+    if (originalQuantity === newQuantity) {
+      console.log(`Quantity unchanged for item ${cartId}: ${originalQuantity}`);
+      originalQuantities.value.delete(cartId);
+      return;
+    }
+
+    console.log(`Updating quantity for item ${cartId}: ${originalQuantity} -> ${newQuantity}`);
+
+    // Update UI optimistically
+    item.quantity = newQuantity;
+
+    // Add to pending updates
+    pendingUpdates.value.set(cartId, newQuantity);
+
+    // Process the updates
     processPendingUpdates();
   };
+
 
   const removeItem = async (cartId: number) => {
     // Remove any pending updates for this item
@@ -172,7 +234,7 @@ export const useCartStore = defineStore("cart", () => {
     items.value.reduce(
       (total, item) => total + (item.variant.price ?? 0) * item.quantity,
       0
-    ) + deliveryPriceComputed.value 
+    ) 
   );
 
   const isItemInCart = (variantId: number) =>
@@ -211,6 +273,6 @@ export const useCartStore = defineStore("cart", () => {
     isItemInCart,
     getItemQuantity,
     fetchCart,
-    isUpdating,
+    isUpdating, updateErrors
   };
 });

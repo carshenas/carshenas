@@ -3,6 +3,10 @@ export interface Category {
   image: string
   name: string
   children?: Category[]
+  parentId?: number;
+  parentName?: string;
+  grandparentId?: number;
+  grandparentName?: string;
 }
 
 export interface CategoryFilter extends URLSearchParams {

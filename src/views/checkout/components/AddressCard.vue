@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useAddressManagement } from "@/composable/useAddressManager";
 import { useAddressStore } from "@/stores/address";
 import NewAddressInfo from "@/views/user/addresses/components/NewAddressInfo.vue";
@@ -7,13 +7,24 @@ import NewAddressMap from "@/views/user/addresses/components/NewAddressMap.vue";
 import { getOrderShipping } from "@/services/carshenas/order";
 import type { ShippingResponse } from "@/types/dto/order";
 import { useCartStore } from "@/stores/cart";
+import TimeSelector from '@/components/TimeSelector.vue'
+
+const props = defineProps<{
+  modelValue?: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void;
+  (e: 'validation', value: boolean): void;
+}>();
+
 const isReceiveInPerson = ref<boolean>(true);
 const addressStore = useAddressStore();
 const shippingData = ref<ShippingResponse | null>(null);
 const selectedDayTab = ref<string | null>(null);
 const selectedScheduleId = ref<number | null>(null);
-  const cartStore = useCartStore(); 
-
+const selectedDateTime = ref<string | undefined>(undefined);
+const cartStore = useCartStore(); 
 
 const {
   addressList,
@@ -66,14 +77,17 @@ const selectAddress = async (addressId: number) => {
   addressStore.setSelectedAddressId(addressId);
   isReceiveInPerson.value = false;
   await loadShippingOptions(addressId);
+  emit('validation', false);
+  emit('update:modelValue', false);
 };
 
 const selectSchedule = (scheduleId: number) => {
   selectedScheduleId.value = scheduleId;
   addressStore.setSelectedShipping(scheduleId);
+  emit('validation', true);
+  emit('update:modelValue', true);
   console.log("Selected schedule:", scheduleId);
 };
-
 
 watch(
   () => addressList.value,
@@ -93,14 +107,71 @@ const selectInPersonPickup = async () => {
   // Set address ID to 1 for in-person pickup
   addressStore.setSelectedAddressId(1);
   await loadShippingOptions(1);
+  emit('validation', true);
+  emit('update:modelValue', true);
 };
+
+// Convert shipping data to TimeSelector format
+const availableDays = computed(() => {
+  if (!shippingData.value) return [];
+  return shippingData.value.days.map(day => day.datetime.split('T')[0]);
+});
+
+const availableTimes = computed(() => {
+  if (!shippingData.value) return [];
+  const times = new Set<string>();
+  shippingData.value.days.forEach(day => {
+    day.schedule.forEach(schedule => {
+      times.add(`${schedule.startTime}-${schedule.endTime}`);
+    });
+  });
+  return Array.from(times).sort();
+});
+
+const handleDateTimeSelect = (value: string) => {
+  selectedDateTime.value = value;
+  if (!shippingData.value) return;
+  
+  // Find the corresponding schedule ID
+  const [selectedDay, selectedTimeRange] = value.split('T');
+  const [selectedStartTime] = selectedTimeRange.split('-');
+  const day = shippingData.value.days.find(d => d.datetime.startsWith(selectedDay));
+  if (day) {
+    const schedule = day.schedule.find(s => s.startTime === selectedStartTime);
+    if (schedule) {
+      selectSchedule(schedule.id);
+    }
+  }
+};
+
+// Add computed property for validation
+const isValid = computed(() => {
+  if (isReceiveInPerson.value) return true;
+  return !!selectedScheduleId.value;
+});
+
+// Watch for validation changes
+watch(isValid, (newValue) => {
+  emit('validation', newValue);
+  emit('update:modelValue', newValue);
+});
 </script>
 
 <template>
   <v-container>
     <div>
-      <div class="d-flex justify-space-between">
+      <div class="d-flex justify-space-between align-center">
         <h2 class="my-2 title-sm">{{ $t("checkout.sendTo") }} :</h2>
+        <v-btn
+          class="text-caption"
+          variant="text"
+          color="primary"
+          size="small"
+          prepend-icon="add"
+          @click="bottomSheetVisible = true"
+        >
+          {{ $t("user.newAddress") }}
+        </v-btn>
       </div>
 
       <!-- Delivery address options -->
@@ -149,41 +220,20 @@ const selectInPersonPickup = async () => {
           <p class="text-body-2">{{ shippingData.description }}</p>
 
           <div class="mt-4">
-            <v-radio-group v-model="selectedScheduleId" mandatory>
-              <div class="d-flex gap-2 overflow-scroll ga-4">
-                <v-card v-for="day in shippingData.days" :key="day.datetime" min-width="180px" width="100%"
-                  class="mb-2 pa-3" variant="tonal" rounded="lg">
-                  <div class="d-flex justify-space-between align-center mb-2">
-                    <span class="text-subtitle-1 font-weight-bold">{{
-                      day.weekday
-                    }}</span>
-                    <span class="text-caption">{{ day.datetime }}</span>
-                  </div>
-
-                  <v-divider class="mb-2"></v-divider>
-
-                  <v-radio-group v-model="selectedScheduleId">
-                    <v-radio class="d-flex" v-for="schedule in day.schedule" :key="schedule.id" :value="schedule.id"
-                      color="primary" @click="selectSchedule(schedule.id)">
-                      <template #label>
-                        <span>{{ schedule.startTime }} تا {{ schedule.endTime }}</span>
-                      </template>
-                    </v-radio>
-                  </v-radio-group>
-                </v-card>
-              </div>
-            </v-radio-group>
+            <div class="d-flex gap-2 overflow-scroll ga-4">
+              <TimeSelector
+                v-model="selectedDateTime"
+                :available-days="availableDays"
+                :available-times="availableTimes"
+                @update:modelValue="handleDateTimeSelect"
+              />
+            </div>
           </div>
         </v-card>
       </div>
+
       <!-- Address management bottom sheet -->
       <v-bottom-sheet v-model="bottomSheetVisible">
-        <template #activator="{ props }">
-          <v-btn block v-bind="props" class="justify-space-between" rounded="lg" color="primary" size="x-large"
-            append-icon="add">
-            {{ $t("user.newAddress") }}
-          </v-btn>
-        </template>
         <v-card class="d-flex ga-4" :title="$t('user.newAddress')">
           <NewAddressMap :showInfo="showInfo" @update:position="updateMapPosition" @update:showInfo="updateShowInfo"
             @update:latLngString="updateLatLngString" />

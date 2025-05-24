@@ -11,6 +11,8 @@ const router = useRouter()
 const route = useRoute()
 const loading = ref<boolean>(false)
 const search = ref<string>()
+const showModels = ref<boolean>(false) // Add this to track view state
+
 const emit = defineEmits<{
   (e: 'select', payload: number): void
   (e: 'close'): void
@@ -35,16 +37,23 @@ const filteredItems = computed((): Brand[] | Vehicle[] => {
     return items?.filter((brand) => brand.name.includes(search.value!)) || []
   else return items || []
 })
+const handleBack = () => {
+  models.value = []
+  showModels.value = false
+  search.value = ''
+}
+const handleClick = (item: any) => {
+  if (item.vehicles) {
+    models.value = item.vehicles
+    showModels.value = true
+    return
+  }
 
-const handleClick = (item: any) => {  
-
-  if (item.vehicles) return (models.value = item.vehicles)
-  else {
-    router.push({
-      path: '/product',
-      query: { ...route.query, vehicle: item.id, vehicleName: item.name }, 
-    });
-  } emit('close')
+  router.push({
+    path: '/product',
+    query: { ...route.query, vehicle: item.id, vehicleName: item.name },
+  })
+  emit('close')
 }
 
 onMounted(getVehicles)
@@ -52,14 +61,16 @@ onMounted(getVehicles)
 
 <template>
   <v-card-title class="header">
-    <div class="mt-2 mb-4 d-flex justify-space-between">
-      {{ $t('shared.brands') }}
-
+    <div class="mt-2 mb-4 d-flex justify-space-between align-center">
+      <div class="d-flex align-center">
+        <v-btn v-if="showModels" variant="plain" icon="arrow_forward" density="comfortable" @click="handleBack" />
+        {{ $t('shared.brands') }}
+      </div>
       <v-btn variant="plain" icon="close" density="comfortable" @click="emit('close')" />
     </div>
 
     <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
-     append-inner-icon="search" />
+      append-inner-icon="search" />
   </v-card-title>
 
   <v-card-text class="pa-0">
