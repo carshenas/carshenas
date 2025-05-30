@@ -1,27 +1,59 @@
 <script setup lang="ts">
 import CurrencyDisplay from '@/components/CurrencyDisplay.vue'
 import { useCartStore } from '@/stores/cart'
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { checkDiscount } from '@/services/carshenas/order'
+import type { DiscountResponse } from '@/types/dto/order'
+import { useSnackbar } from '@/stores/snackbar'
+
+const emit = defineEmits<{
+  (e: 'discount-applied', code: string): void;
+}>();
 
 const cartStore = useCartStore()
 const discountCode = ref('')
 const loading = ref(false)
 const showDiscountInput = ref(false)
-const appliedDiscount = ref<{ code: string; amount: number } | null>(null)
+const appliedDiscount = ref<DiscountResponse | null>(null)
+const snackbar = useSnackbar()
+
+// Initialize discount code from store if it exists
+onMounted(async () => {
+  if (cartStore.discountCode) {
+    try {
+      const response = await checkDiscount(cartStore.discountCode)
+      appliedDiscount.value = response.data
+    } catch (error) {
+      cartStore.discountCode = null
+    }
+  }
+})
+
+const calculateDiscountAmount = computed(() => {
+  if (!appliedDiscount.value) return 0
+  
+  const totalPrice = cartStore.payableAmount + cartStore.deliveryPriceComputed
+  if (appliedDiscount.value.type === 'Percentage') {
+    return (totalPrice * appliedDiscount.value.amount) / 100
+  }
+  return appliedDiscount.value.amount
+})
 
 const applyDiscountCode = async () => {
   if (!discountCode.value) return
   loading.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    appliedDiscount.value = {
-      code: discountCode.value,
-      amount: 1000
-    }
+    const response = await checkDiscount(discountCode.value)
+    appliedDiscount.value = response.data
+    cartStore.discountCode = discountCode.value
     showDiscountInput.value = false
+    emit('discount-applied', discountCode.value)
     discountCode.value = ''
   } catch (error) {
-    console.error('Error applying discount:', error)
+    snackbar.show('کد تخفیف درست نیست', {
+      color: 'error',
+      timeout: 3000
+    })
   } finally {
     loading.value = false
   }
@@ -29,6 +61,8 @@ const applyDiscountCode = async () => {
 
 const removeDiscount = () => {
   appliedDiscount.value = null
+  cartStore.discountCode = null
+  emit('discount-applied', '')
 }
 </script>
 
@@ -66,11 +100,12 @@ const removeDiscount = () => {
             </div>
             <div class="text-caption text-primary">
               {{ appliedDiscount.code }}
+              <span v-if="appliedDiscount.type === 'Percentage'">({{ appliedDiscount.amount }}%)</span>
             </div>
           </div>
           <div class="d-flex align-center gap-2">
             <div class="text-primary font-weight-medium">
-              <CurrencyDisplay :value="appliedDiscount.amount" value-class="text-primary font-weight-bold"
+              <CurrencyDisplay :value="calculateDiscountAmount" value-class="text-primary font-weight-bold"
                 unit-class="body-sm text-primary" class="d-flex justify-end body-md" />
             </div>
             <v-btn icon="close" variant="text" density="compact" color="primary" @click="removeDiscount" />
@@ -94,7 +129,7 @@ const removeDiscount = () => {
 
     <div class="d-flex justify-space-between">
       <p class="label-md text-outline">{{ $t('checkout.discount') }}</p>
-      <CurrencyDisplay :value="appliedDiscount?.amount || 0" value-class="text-primary font-weight-bold"
+      <CurrencyDisplay :value="calculateDiscountAmount" value-class="text-primary font-weight-bold"
         unit-class="body-sm text-outline" class="d-flex justify-end body-md" />
     </div>
 
@@ -103,7 +138,7 @@ const removeDiscount = () => {
     <div class="d-flex justify-space-between">
       <p class="label-md">{{ $t('checkout.payable') }} :</p>
       <CurrencyDisplay
-        :value="(cartStore.payableAmount + cartStore.deliveryPriceComputed) - (appliedDiscount?.amount || 0)"
+        :value="(cartStore.payableAmount + cartStore.deliveryPriceComputed) - calculateDiscountAmount"
         value-class="text-primary font-weight-bold" unit-class="body-sm text-outline"
         class="d-flex justify-end body-md" />
     </div>

@@ -18,7 +18,8 @@
 export interface OrderRequest {
   variants: OrderItem[];
   location: number;
-  shipping: number
+  shipping: number;
+  discount?: string;
 }
 export interface OrderItem {
   quantity: number;
@@ -72,4 +73,11 @@ export interface ShippingResponse {
   cost: number;
   description: string;
   days: ShippingDay[];
+}
+
+export interface DiscountResponse {
+  id: number;
+  amount: number;
+  type: "Amount" | "Percentage";
+  code: string;
 }
