@@ -5,6 +5,7 @@ import { createOrderService } from '@/services/carshenas/order';
 import type { OrderRequest } from '@/types/dto/order';
 import { useCartStore } from '@/stores/cart'
 import { useAddressStore } from '@/stores/address';
+import { useSnackbar } from '@/stores/snackbar';
 
 const emit = defineEmits<{
   (e: 'next'): void;
@@ -12,6 +13,7 @@ const emit = defineEmits<{
 
 const cartStore = useCartStore()
 const addressStore = useAddressStore()
+const snackbar = useSnackbar()
 const item = cartStore.items
 const loading = ref(false);
 
@@ -37,7 +39,8 @@ const handleAddOrder = async () => {
         variant: item.variant.id
       })),
       location: selectedAddress.value.id,
-      shipping: addressStore.selectedShipping ?? 0 
+      shipping: addressStore.selectedShipping ?? 0,
+      discount: cartStore.discountCode || undefined
     };
 
     console.log('Prepared Order Data:', orderData);
@@ -52,7 +55,10 @@ const handleAddOrder = async () => {
 
   } catch (error) {
     console.error('Error processing order:', error);
-    // Here you might want to show an error message to the user
+    snackbar.show('خطا در ثبت سفارش', {
+      color: 'error',
+      timeout: 3000
+    });
   } finally {
     loading.value = false;
   }

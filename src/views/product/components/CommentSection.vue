@@ -19,7 +19,7 @@ const checkUserComment = () => {
   const userStore = useUserStore();
   const currentUser = userStore.user;
   
-  if (currentUser) {
+  if (currentUser && props.comments) {
     // Check if any comment has the current user's name
     hasCommented.value = props.comments.some(comment => 
       comment.user === `${currentUser.firstName} ${currentUser.lastName}`
@@ -87,7 +87,7 @@ const handleSubmit = async () => {
         <v-btn color="primary" @click="handleSubmit"> ثبت </v-btn>
       </div>
     </v-form>
-    <div v-if="comments">
+    <div v-if="props.comments">
       <div class="d-flex flex-column border rounded-lg pa-2 ga-4" v-for="(comment, id) in props.comments" :key="id">
         <div class="d-flex align-center">
           <v-avatar size="54">
