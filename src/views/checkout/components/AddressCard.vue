@@ -74,7 +74,10 @@ const loadShippingOptions = async (addressId: number) => {
 };
 
 const selectAddress = async (addressId: number) => {
+  console.log('selectAddress called with:', addressId);
   addressStore.setSelectedAddressId(addressId);
+  console.log('addressStore.selectedAddressId after set:', addressStore.selectedAddressId);
+  console.log('addressStore.selectedAddress after set:', addressStore.selectedAddress);
   isReceiveInPerson.value = false;
   await loadShippingOptions(addressId);
   emit('validation', false);
@@ -103,10 +106,11 @@ watch(
 );
 
 const selectInPersonPickup = async () => {
+  console.log('selectInPersonPickup called');
   isReceiveInPerson.value = true;
-  // Set address ID to 1 for in-person pickup
   addressStore.setSelectedAddressId(1);
-  // Add the in-person pickup address to the list if it doesn't exist
+  console.log('addressStore.selectedAddressId after set:', addressStore.selectedAddressId);
+  console.log('addressStore.selectedAddress after set:', addressStore.selectedAddress);
   if (!addressList.value.find(addr => addr.id === 1)) {
     addressStore.setAddressList([
       ...addressList.value,
@@ -188,7 +192,7 @@ watch(isValid, (newValue) => {
 
       <!-- Delivery address options -->
       <div class="mt-4">
-        <div v-if="addressList.length > 0">
+        <div>
           <v-radio-group v-model="addressStore.selectedAddressId" class="mt-2">
             <v-card class="mb-2 pa-4" :class="{ 'border-primary': isReceiveInPerson }" variant="outlined" rounded="lg"
               @click="selectInPersonPickup()">

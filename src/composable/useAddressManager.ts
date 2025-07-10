@@ -6,6 +6,7 @@ import {
   getAddressList,
   delAddress,
 } from "@/services/carshenas/address";
+import { useAddressStore } from "@/stores/address";
 
 export function useAddressManagement() {
   const showInfo = ref(false);
@@ -14,17 +15,19 @@ export function useAddressManagement() {
   const selectedAddress = ref<string | null>(null);
   const loading = ref(false);
   const addressList = ref<Address[]>([]);
+  const addressStore = useAddressStore();
 
-  const fetchAddressList = async (): Promise<Address[]> => {
-    try {
-      const response = await getAddressList();
-      addressList.value = response.data as unknown as Address[];
-      return addressList.value; // Return the fetched addresses
-    } catch (error) {
-      console.error("Error fetching address list:", error);
-      throw error;
-    }
-  };
+const fetchAddressList = async (): Promise<Address[]> => {
+  try {
+    const response = await getAddressList();
+    addressList.value = response.data as unknown as Address[];
+    addressStore.setAddressList(addressList.value); 
+    return addressList.value;
+  } catch (error) {
+    console.error("Error fetching address list:", error);
+    throw error;
+  }
+};
   const updateMapPosition = (newPosition: LatLng) => {
     selectedPosition.value = newPosition;
   };
@@ -43,7 +46,34 @@ export function useAddressManagement() {
       await sendAddressService(newAddress);
       showInfo.value = false;
       bottomSheetVisible.value = false;
-      await fetchAddressList();
+      const addresses = await fetchAddressList();
+      // Try to find the most recently added address (by max id)
+      const latest =
+        addresses.length > 0
+          ? addresses.reduce((a, b) => (a.id > b.id ? a : b))
+          : null;
+      if (latest) {
+        addressStore.setSelectedAddressId(latest.id);
+        console.log("Auto-selected new address with id:", latest.id);
+        // Log addressList in store and in composable
+        console.log(
+          "addressStore.addressList after auto-select:",
+          addressStore.addressList
+        );
+        console.log(
+          "addressList in composable after auto-select:",
+          addressList.value
+        );
+        // Log selectedAddressId and selectedAddress in store
+        console.log(
+          "addressStore.selectedAddressId after auto-select:",
+          addressStore.selectedAddressId
+        );
+        console.log(
+          "addressStore.selectedAddress after auto-select:",
+          addressStore.selectedAddress
+        );
+      }
     } catch (error) {
       console.error("Error submitting address:", error);
       throw error;
