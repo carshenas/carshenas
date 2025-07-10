@@ -52,18 +52,33 @@ const fetchProductDetails = async () => {
   try {
     const response = await getProductDetailsService(productId)
     product.value = response.data
-    variants.value = (product.value.variants || []).map((variant: Variant) => ({
+    console.log('Fetched product.value:', product.value.outOfStock)
+    // Filter out variants without an id
+    const validVariants = (product.value.variants || []).filter((variant: Variant) => variant && variant.id)
+    console.log('Filtered validVariants:', validVariants)
+    variants.value = validVariants.map((variant: Variant) => ({
       ...variant,
       images: product.value.images, // Example of copying overall product data
       title: product.value.name
     }))
     spec.value = product.value.specification
+    // Auto-select the single variant if only one exists
+    if (variants.value.length === 1) {
+      selectedWarranty.value = null
+      selectedBrand.value = null
+      selectedColorCode.value = null
+      // Explicitly set selectedVariant by setting the selection state
+      // If your UI expects selectedWarranty/Brand/Color, set them here
+      // For now, just log
+      console.log('Auto-selected single variant:', variants.value[0])
+    }
   } catch (error) {
     console.error('Failed to fetch product details:', error)
   } finally {
     isLoading.value = false
   }
 }
+
 const handleSelectColor = (colorCode: string) => {
   selectedColorCode.value = colorCode
 }
@@ -144,6 +159,17 @@ const showSnackbar = (message: string) => {
   snackbarMessage.value = message
   snackbar.value = true
 }
+
+// Add a computed property for outOfStock
+const isOutOfStock = computed(() => Boolean(product.value && product.value.outOfStock));
+
+function handleAddToCartClick() {
+  console.log('Show add to cart button, outOfStock:', product.value.outOfStock)
+  showSnackbar('Added to cart')
+}
+function handleNotAvailableClick() {
+  console.log('Show نا موجود, outOfStock:', product.value.outOfStock)
+}
 </script>
 
 <template>
@@ -206,11 +232,12 @@ const showSnackbar = (message: string) => {
     </span>
   </div>
   <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white">
-    <ItemCounter :variant="selectedVariant" v-if="selectedVariant" />
+    <ItemCounter :variant="selectedVariant" v-if="selectedVariant && !isOutOfStock" />
     <div v-else>
-      <v-btn rounded="xs" @click="showSnackbar" prepend-icon="add" color="#fd9d9c">
+      <v-btn v-if="!isOutOfStock" rounded="xs" @click="handleAddToCartClick" prepend-icon="add" color="#fd9d9c">
         {{ $t('product.addToCart') }}
       </v-btn>
+      <span v-else class="text-error font-weight-bold" @click="handleNotAvailableClick">نا موجود</span>
     </div>
     <v-snackbar v-model="snackbar" :timeout="3000" color="error" bottom right>
       {{ $t('product.alert') }}
