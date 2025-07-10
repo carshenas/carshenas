@@ -106,6 +106,18 @@ const selectInPersonPickup = async () => {
   isReceiveInPerson.value = true;
   // Set address ID to 1 for in-person pickup
   addressStore.setSelectedAddressId(1);
+  // Add the in-person pickup address to the list if it doesn't exist
+  if (!addressList.value.find(addr => addr.id === 1)) {
+    addressStore.setAddressList([
+      ...addressList.value,
+      {
+        id: 1,
+        address: "تهران خیابان امیر کبیر پاساژ کاشانی پلاک 107",
+        postalCode: "1234567890",
+        isDefault: false
+      }
+    ]);
+  }
   await loadShippingOptions(1);
   emit('validation', true);
   emit('update:modelValue', true);

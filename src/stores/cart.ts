@@ -17,6 +17,7 @@ export const useCartStore = defineStore("cart", () => {
   const updateErrors = ref<Map<number, string>>(new Map());
   const deliveryPrice = ref(0); // Reactive variable for delivery price
   const originalQuantities = ref<Map<number, number>>(new Map());
+  const discountCode = ref<string | null>(null);
 
   const deliveryPriceComputed = computed({
     get: () => deliveryPrice.value, // Getter to retrieve the delivery price
@@ -273,6 +274,8 @@ export const useCartStore = defineStore("cart", () => {
     isItemInCart,
     getItemQuantity,
     fetchCart,
-    isUpdating, updateErrors
+    isUpdating,
+    updateErrors,
+    discountCode
   };
 });

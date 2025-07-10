@@ -4,6 +4,7 @@ import type {
   OrderRequest,
   OrderResponse,
   ShippingResponse,
+  DiscountResponse,
 } from "@/types/dto/order";
 
 export const createOrderService = (data: OrderRequest) =>
@@ -22,3 +23,6 @@ export const getOrderDetail = (id: number) =>
 
 export const getOrderShipping = (id: number) =>
   carshenasService.get<ShippingResponse>(`/order/shipping/${id}/`);
+
+export const checkDiscount = (code: string) =>
+  carshenasService.get<DiscountResponse>(`/order/discount/${code}/`);
