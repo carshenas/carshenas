@@ -112,7 +112,7 @@ onMounted(() => getMostViewedCategories());
 
 <style scoped>
 .footer-container {
-  background-color: #f5f5f5;
+  background-color: var(--v-theme-surface);
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
   margin-top: 12px;
@@ -120,7 +120,7 @@ onMounted(() => getMostViewedCategories());
 }
 
 .contact-details {
-  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px dashed var(--v-theme-divider);
   padding-top: 12px;
 }
 

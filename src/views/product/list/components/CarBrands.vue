@@ -87,7 +87,7 @@ onMounted(getVehicles)
 
 <style lang="scss" scoped>
 .header {
-  background-color: white;
+  background-color: var(--v-theme-surface);
   position: sticky;
   top: 0;
   z-index: 1;

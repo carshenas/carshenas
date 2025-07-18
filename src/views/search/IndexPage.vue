@@ -154,7 +154,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 .fixed-bar {
   position: fixed;
-  background-color: white;
+  background-color: var(--v-theme-surface);
   top: 0;
   left: 50%;
   transform: translateX(-50%);

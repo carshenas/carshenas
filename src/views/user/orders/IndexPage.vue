@@ -34,7 +34,8 @@ const clearSelectedOrderIndex = () => {
     <div class="orders-header">
       <div class="d-flex align-center justify-space-between pa-4">
         <v-btn v-if="selectedOrderId === null" icon="arrow_forward_ios" variant="text" @click="$router.go(-1)" />
-        <v-btn v-if="selectedOrderId !== null" icon="arrow_forward_ios" variant="text" @click="clearSelectedOrderIndex" />
+        <v-btn v-if="selectedOrderId !== null" icon="arrow_forward_ios" variant="text"
+          @click="clearSelectedOrderIndex" />
         <h1 class="text-h5 font-weight-bold">{{ $t('user.orders') }}</h1>
         <div style="width: 40px"></div> <!-- Spacer for alignment -->
       </div>
@@ -47,11 +48,7 @@ const clearSelectedOrderIndex = () => {
         <v-container>
           <v-row>
             <v-col cols="12" sm="6" md="4" v-for="(order, index) in orders" :key="index">
-              <OrderCards 
-                :order="order"
-                :toggleOrderDetail="() => toggleOrderDetail(order.id)" 
-                :id="order.id" 
-              />
+              <OrderCards :order="order" :toggleOrderDetail="() => toggleOrderDetail(order.id)" :id="order.id" />
             </v-col>
           </v-row>
         </v-container>
@@ -68,12 +65,12 @@ const clearSelectedOrderIndex = () => {
 <style scoped>
 .orders-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: var(--v-theme-surface);
 }
 
 .orders-header {
-  background-color: white;
-  border-bottom: 1px solid #e0e0e0;
+  background-color: var(--v-theme-background);
+  border-bottom: 1px dashed var(--v-theme-divider);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -98,7 +95,7 @@ const clearSelectedOrderIndex = () => {
   .orders-content {
     padding: 8px 0;
   }
-  
+
   .order-detail {
     padding: 0 8px;
   }
