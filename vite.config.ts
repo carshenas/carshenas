@@ -1,3 +1,4 @@
+// vite.config.js
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -17,15 +18,67 @@ export default defineConfig({
       strategies: 'generateSW',
       srcDir: 'src',
       registerType: 'autoUpdate',
+      workbox: {
+        // Cache API responses
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\.yourbackend\.com\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+              }
+            }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: {
+                maxEntries: 60,
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+              }
+            }
+          }
+        ],
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/]
+      },
       manifest: {
         name: 'Carshenas',
         short_name: 'Carshenas',
         description: 'This is a PWA application.',
-        theme_color: '#0C0634'
+        theme_color: '#0C0634',
+        background_color: '#0C0634',
+        display: 'standalone',
+        orientation: 'portrait',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
       },
       devOptions: {
-        enabled: true, // Enable in development
-        type: 'module' // Use module format for service worker in dev
+        enabled: true,
+        type: 'module'
       }
     })
   ],

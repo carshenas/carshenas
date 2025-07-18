@@ -6,13 +6,24 @@ import { useUserStore } from "@/stores/user";
 import { useCartStore } from "@/stores/cart";
 import { useRoute } from "vue-router";
 import { getUser } from "@/services/carshenas/user";
+import { useTheme } from 'vuetify'
 const route = useRoute();
 const cartStore = useCartStore();
 const userStore = useUserStore();
 const isMenuOpen = ref<boolean>(false);
 const isBasketOpen = ref<boolean>(false);
+const theme = useTheme()
+const toggleTheme = () => {
+  const newTheme = theme.global.current.value.dark ? 'light' : 'dark'
+  theme.global.name.value = newTheme
+  localStorage.setItem('theme', newTheme)
+}
 
 onMounted(async () => {
+  const savedTheme = localStorage.getItem('theme')
+  if (savedTheme) {
+    theme.global.name.value = savedTheme
+  }
   try {
     const response = await getUser();
     userStore.user.firstName = response.data.firstName
@@ -54,6 +65,9 @@ watch(
       </v-app-bar-title>
 
       <template #append>
+        <v-btn icon @click="toggleTheme">
+          <v-icon>{{ theme.global.current.value.dark ? 'light_mode' : 'dark_mode' }}</v-icon>
+        </v-btn>
         <v-btn v-if="cartStore.items.length" icon="local_mall" density="comfortable" :to="{ name: 'CheckoutPage' }">
           <v-badge
             :content="cartStore.items.length"

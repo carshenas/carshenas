@@ -78,12 +78,12 @@ picture {
   display: inline-block;
 }
 
-img {
+.v-theme--light img {
   /* filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(180deg); */
   mix-blend-mode: multiply;
 }
 
-picture::before {
+.v-theme--light picture::before {
   mix-blend-mode: multiply;
 
   content: "";

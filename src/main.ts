@@ -1,5 +1,6 @@
 import { registerPlugins } from '@/plugins'
 import { createApp } from 'vue'
+import './pwa.js'
 
 import App from './App.vue'
 
