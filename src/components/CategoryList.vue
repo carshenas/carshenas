@@ -67,7 +67,7 @@ onMounted(() => {
         <div
           class="icon w-100 bg-category rounded-circle d-flex justify-center align-center"
         >
-          <ImageLoader :src="category.image" :alt="category.name" width="48" />
+          <ImageLoader :src="category.image" :alt="category.name" width="44" />
         </div>
 
         <span class="title mt-2 text-text w-100">{{ category.name }}</span>

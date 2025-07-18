@@ -28,6 +28,7 @@ export default createVuetify({
     },
   },
   theme: {
+    defaultTheme: 'light',
     themes: {
       light: {
         variables: {
@@ -54,6 +55,34 @@ export default createVuetify({
           "on-info": "#FFFFFF",
           outline: "#89938F",
           divider: "#F9F6EE",
+        },
+      },
+      dark: {
+        dark: true,
+        variables: {
+          "btn-height": "50px",
+        },
+        colors: {
+          primary: "#FB4847",
+          "on-primary": "#FFFFFF",
+          secondary: "#24acf2",
+          "on-secondary": "#FFFFFF",
+          background: "#181818",
+          "on-background": "#FFFFFF",
+          text: "#FFFFFF",
+          "on-text": "#262626",
+          surface: "#232323",
+          "on-surface": "#FFFFFF",
+          success: "#4bb543",
+          "on-success": "#FFFFFF",
+          warn: "#eb5656",
+          "on-warn": "#FFFFFF",
+          error: "#eb5656",
+          "on-error": "#FFFFFF",
+          info: "#eb5656",
+          "on-info": "#FFFFFF",
+          outline: "#89938F",
+          divider: "#333333",
         },
       },
     },
