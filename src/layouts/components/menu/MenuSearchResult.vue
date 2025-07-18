@@ -205,11 +205,6 @@ const closeResults = () => {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.no-results {
-  text-align: center;
-  padding: 24px;
-  color: rgba(0, 0, 0, 0.6);
-}
 
 .clickable-item {
   cursor: pointer;

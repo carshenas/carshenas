@@ -104,7 +104,7 @@ const closeSearchResults = () => {
 <style scoped>
 .fixed-bar {
   position: fixed;
-  background-color: white;
+  background-color: var(--v-theme-surface);
   top: 0;
   left: 0;
   right: 0;

@@ -152,7 +152,7 @@ const handleItemCounter = (product: Product, quantity: number) => {
 
 <style scoped>
 .bottom-bar {
-  background-color: white;
+  background-color: var(--v-theme-surface);
   left: 0;
   right: 0;
   bottom: 0;

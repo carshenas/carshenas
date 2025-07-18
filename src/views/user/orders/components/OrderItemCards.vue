@@ -156,35 +156,35 @@ onMounted(() => getOrders())
 }
 
 .receipt-card {
-  background-color: #fff;
+  background-color: var(--v-theme-surface);
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .receipt-header {
-  background-color: #f5f5f5;
+  background-color: var(--v-theme-background);
   border-radius: 8px 8px 0 0;
 }
 
 .receipt-item {
-  border-bottom: 1px dashed #e0e0e0;
+  border-bottom: 1px dashed var(--v-theme-divider);
   padding-bottom: 8px;
 }
 
 .receipt-footer {
-  background-color: #f5f5f5;
+  background-color: var(--v-theme-background);
   border-radius: 0 0 8px 8px;
 }
 
 .transaction-history {
-  background-color: white;
+  background-color: var(--v-theme-surface);
   border-radius: 4px;
   padding: 8px;
 }
 
 .transaction-item {
   padding: 4px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--v-theme-divider);
 }
 
 .transaction-item:last-child {
