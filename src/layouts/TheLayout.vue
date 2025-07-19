@@ -27,7 +27,7 @@ const component = computed(() => {
            border: none;
            border-radius: 4px;
            cursor: pointer;
-               z-index: 10;">
+           z-index: 10;">
     نصب اپلیکشن
   </button>
   <component :is="component" />

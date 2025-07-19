@@ -26,10 +26,11 @@ const props = defineProps<{
 
 <style lang="scss" scoped>
 .spec-even-bg {
-  background-color: rgba(38, 38, 38, 0.1);
+  background-color: var(--v-theme-surface-variant, var(--v-theme-surface));
 }
 
+
 .table-striped tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: var(--v-theme-surface-variant, var(--v-theme-surface));
 }
 </style>
