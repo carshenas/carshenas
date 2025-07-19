@@ -79,8 +79,7 @@ defineExpose({
           variant="flat"
           elevation="1"
           shadow
-          color="grey-lighten-5"
-          class="product py-2 px-4 mt-2 ma-1"
+          class="product py-2 px-4 mt-2 ma-1 bg-surface"
           @click="() => $router.push({ name: 'ProductDetailPage', params: { id: product.id } })"
           style="cursor: pointer"
         >
