@@ -231,7 +231,7 @@ function handleNotAvailableClick() {
       شوید
     </span>
   </div>
-  <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-white">
+  <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-surface">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant && !isOutOfStock" />
     <div v-else>
       <v-btn v-if="!isOutOfStock" rounded="xs" @click="handleAddToCartClick" prepend-icon="add" color="#fd9d9c">
