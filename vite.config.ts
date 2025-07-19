@@ -47,35 +47,44 @@ export default defineConfig({
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/]
       },
+      manifestFilename: 'manifest.json',
+      includeAssets: [
+        'pwa-192x192.png',
+        'pwa-512x512.png',
+        'logo.svg',
+        'carshenas.ico'
+      ],
+
       manifest: {
         name: 'Carshenas',
         short_name: 'Carshenas',
-        description: 'This is a PWA application.',
-        theme_color: '#0C0634',
-        background_color: '#0C0634',
-        display: 'standalone',
-        orientation: 'portrait',
-        scope: '/',
         start_url: '/',
+        display: 'standalone',
+        background_color: '#0C0634',
+        theme_color: '#0C0634',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: '/pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
-          },
-          {
-            src: 'pwa-512x512.png',
+            src: '/pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'any'
+          },
+          {
+            src: '/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ]
       },
+
+
       devOptions: {
         enabled: true,
         type: 'module'
