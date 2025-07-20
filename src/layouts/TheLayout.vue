@@ -11,13 +11,15 @@ const component = computed(() => {
   if (route.meta && route.meta.layout === false) return undefined
   else return DefaultLayout
 })
+
+const isHomePage = computed(() => route.path === '/')
 </script>
 
 <template>
   <teleport to="head">
     <link rel="manifest" href="/manifest.json">
   </teleport>
-  <button id="install-button" style="display: none;
+  <button id="install-button" v-if="isHomePage" style="display: none;
            position: fixed;
            bottom: 1rem;
            right: 1rem;
