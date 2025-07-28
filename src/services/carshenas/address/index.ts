@@ -12,7 +12,8 @@ export const sendAddressService = (body: SendAddress) => {
   formData.append("postal_code", body.postalCode);
   formData.append("latitude", body.latitude.toString());
   formData.append("longitude", body.longitude.toString());
-  formData.append("isDefault", body.isDefault.toString());
+  formData.append("is_default	", body.isDefault.toString());
+  formData.append("receiver_name", body.receiverName || "");
 
   return carshenasService.post<{
     id: number;
@@ -22,6 +23,7 @@ export const sendAddressService = (body: SendAddress) => {
     latitude: number;
     longitude: number;
     isDefault: boolean;
+    receiverName: string;
   }>("/user/location/", {
     body: formData,
   });

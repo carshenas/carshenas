@@ -48,11 +48,16 @@ onMounted(fetchAddressList)
       </v-bottom-sheet>
 
       <v-card class="mx-auto w-100 pa-2" v-for="(addr, index) in addressList" :key="index">
-        <v-card-text>{{ addr.address }}</v-card-text>
+        <v-card-text>{{ addr.address }}</v-card-text>            <span
+            class="text-caption text-grey">
+            تحویل گیرنده:
+            {{ addr.receiverName || 'نامشخص' }}
+          </span>
         <div class="d-flex w-100 justify-space-between text-grey align-center">
           <v-btn icon="delete" variant="text" @click="() => deleteAddress(addr.id)" />
+
           <div>
-            <span>{{ addr.postalCode}}</span>
+            <span>{{ addr.postalCode }}</span>
             <v-icon icon="local_post_office" />
           </div>
         </div>

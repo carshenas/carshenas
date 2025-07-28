@@ -41,6 +41,7 @@ const fetchAddressList = async (): Promise<Address[]> => {
   };
 
   const submitAddress = async (newAddress: SendAddress) => {
+    console.log("Submitting new address:", newAddress);
     loading.value = true;
     try {
       await sendAddressService(newAddress);
