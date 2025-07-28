@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 const props = defineProps<{
   modelValue?: string;
@@ -8,7 +8,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
+  (e: "update:modelValue", value: string): void;
 }>();
 
 const selectedDay = ref<string | null>(null);
@@ -24,26 +24,29 @@ const days = computed(() => {
   for (let i = 0; i < 7; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
-    result.push(date.toISOString().split('T')[0]);
+    result.push(date.toISOString().split("T")[0]);
   }
 
   return result;
 });
-console.log(props.availableTimes)
+console.log(props.availableTimes);
 // Generate available times (9 AM to 5 PM)
 const times = computed(() => {
-
   if (props.availableTimes) return props.availableTimes;
   const result = [];
   for (let hour = 9; hour <= 17; hour++) {
-    result.push(`${hour.toString().padStart(2, '0')}:00`);
+    result.push(`${hour.toString().padStart(2, "0")}:00`);
   }
   return result;
 });
 
 const formatDay = (day: string) => {
   const date = new Date(day);
-  return date.toLocaleDateString('fa-IR', { weekday: 'long', month: 'long', day: 'numeric' });
+  return date.toLocaleDateString("fa-IR", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 };
 
 const handleDaySelect = (day: string) => {
@@ -60,7 +63,7 @@ const handleTimeSelect = (time: string) => {
 const updateValue = () => {
   if (selectedDay.value && selectedTime.value) {
     const value = `${selectedDay.value}T${selectedTime.value}`;
-    emit('update:modelValue', value);
+    emit("update:modelValue", value);
   }
 };
 </script>
@@ -69,12 +72,18 @@ const updateValue = () => {
   <div class="time-selector">
     <!-- Step 1: Day Selection -->
     <div class="step day-selection" :class="{ 'step-completed': selectedDay }">
-      <h3 class="step-title">{{ $t('checkout.deliveryTime') }}</h3>
+      <h3 class="step-title">{{ $t("checkout.deliveryTime") }}</h3>
       <div class="scroll-container">
         <div class="scroll-content">
-          <v-btn v-for="day in days" :key="day" :color="selectedDay === day ? 'primary' : 'grey-lighten-1'"
-            :variant="selectedDay === day ? 'flat' : 'outlined'" class="day-btn" @click="handleDaySelect(day)">
-            {{ formatDay(day) }}
+          <v-btn
+            v-for="day in days"
+            :key="day"
+            :color="selectedDay === day ? 'primary' : 'grey-lighten-1'"
+            :variant="selectedDay === day ? 'flat' : 'outlined'"
+            class="day-btn"
+            @click="handleDaySelect(day)"
+          >
+            {{ day }}
           </v-btn>
         </div>
       </div>
@@ -82,11 +91,16 @@ const updateValue = () => {
 
     <!-- Step 2: Time Selection -->
     <div v-if="selectedDay" class="step time-selection">
-
       <div class="scroll-container">
         <div class="scroll-content">
-          <v-btn v-for="time in times" :key="time" :color="selectedTime === time ? 'primary' : 'grey-lighten-1'"
-            :variant="selectedTime === time ? 'flat' : 'outlined'" class="time-btn" @click="handleTimeSelect(time)">
+          <v-btn
+            v-for="time in times"
+            :key="time"
+            :color="selectedTime === time ? 'primary' : 'grey-lighten-1'"
+            :variant="selectedTime === time ? 'flat' : 'outlined'"
+            class="time-btn"
+            @click="handleTimeSelect(time)"
+          >
             {{ time }}
           </v-btn>
         </div>
