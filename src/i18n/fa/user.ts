@@ -17,5 +17,5 @@ export default {
   unit: 'واحد',
   postalCode: 'کد پستی',
   newTicket: 'تیکت جدید',
-  editPersonalInfo: 'ویرایش اطلاعات شخصی'
+  editPersonalInfo: 'ویرایش اطلاعات شخصی', receiverNamePlaceholder: 'نام گیرنده را وارد کنید', receiverName: 'نام گیرنده',
 }

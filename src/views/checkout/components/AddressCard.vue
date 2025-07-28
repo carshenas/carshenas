@@ -24,7 +24,7 @@ const shippingData = ref<ShippingResponse | null>(null);
 const selectedDayTab = ref<string | null>(null);
 const selectedScheduleId = ref<number | null>(null);
 const selectedDateTime = ref<string | undefined>(undefined);
-const cartStore = useCartStore(); 
+const cartStore = useCartStore();
 
 const {
   addressList,
@@ -127,27 +127,15 @@ const selectInPersonPickup = async () => {
   emit('update:modelValue', true);
 };
 
-// Convert shipping data to TimeSelector format
-const availableDays = computed(() => {
-  if (!shippingData.value) return [];
-  return shippingData.value.days.map(day => day.datetime.split('T')[0]);
-});
 
-const availableTimes = computed(() => {
-  if (!shippingData.value) return [];
-  const times = new Set<string>();
-  shippingData.value.days.forEach(day => {
-    day.schedule.forEach(schedule => {
-      times.add(`${schedule.startTime}-${schedule.endTime}`);
-    });
-  });
-  return Array.from(times).sort();
-});
+const handleScheduleSelect = (scheduleId: number) => {
+  selectSchedule(scheduleId);
+};
 
 const handleDateTimeSelect = (value: string) => {
   selectedDateTime.value = value;
   if (!shippingData.value) return;
-  
+
   // Find the corresponding schedule ID
   const [selectedDay, selectedTimeRange] = value.split('T');
   const [selectedStartTime] = selectedTimeRange.split('-');
@@ -178,14 +166,8 @@ watch(isValid, (newValue) => {
     <div>
       <div class="d-flex justify-space-between align-center">
         <h2 class="my-2 title-sm">{{ $t("checkout.sendTo") }} :</h2>
-        <v-btn
-          class="text-caption"
-          variant="text"
-          color="primary"
-          size="small"
-          prepend-icon="add"
-          @click="bottomSheetVisible = true"
-        >
+        <v-btn class="text-caption" variant="text" color="primary" size="small" prepend-icon="add"
+          @click="bottomSheetVisible = true">
           {{ $t("user.newAddress") }}
         </v-btn>
       </div>
@@ -222,6 +204,10 @@ watch(isValid, (newValue) => {
                     <span class="text-caption text-grey">
                       {{ address.postalCode }}
                     </span>
+                    <span class="text-caption text-grey">
+                      تحویل گیرنده:
+                      {{ address.receiverName || 'نامشخص' }}
+                    </span>
                   </div>
                 </template>
               </v-radio>
@@ -233,18 +219,15 @@ watch(isValid, (newValue) => {
       <div v-if="shippingData && addressStore.selectedAddressId" class="mt-6">
         <h2 class="my-2 title-sm">{{ $t("checkout.deliveryTime") }} :</h2>
         <v-card class="pa-4 mt-2" variant="flat" rounded="lg">
-          <p class="text-body-2">{{ shippingData.description }}</p>
+          <p class="text-body-3 text-red-accent-4">{{ shippingData.description }}</p>
 
           <div class="mt-4">
             <div class="d-flex gap-2 overflow-scroll ga-4">
-              <TimeSelector
-                v-model="selectedDateTime"
-                :available-days="availableDays"
-                :available-times="availableTimes"
-                @update:modelValue="handleDateTimeSelect"
-              />
+              <TimeSelector v-model="selectedDateTime" :shipping-data="shippingData"
+                @update:modelValue="handleDateTimeSelect" @schedule-selected="handleScheduleSelect" />
             </div>
           </div>
+
         </v-card>
       </div>
 

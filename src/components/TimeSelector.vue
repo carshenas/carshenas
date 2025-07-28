@@ -1,66 +1,74 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
+
+// Define the type for shipping data
+interface ShippingDay {
+  weekday: string;
+  datetime: string;
+  schedule: Array<{
+    id: number;
+    startTime: string;
+    endTime: string;
+  }>;
+}
+
+interface ShippingData {
+  cost: number;
+  description: string;
+  days: ShippingDay[];
+}
 
 const props = defineProps<{
   modelValue?: string;
-  availableDays?: string[];
-  availableTimes?: string[];
+  shippingData?: ShippingData | null;
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void;
+  (e: "update:modelValue", value: string): void;
+  (e: "scheduleSelected", scheduleId: number): void;
 }>();
 
 const selectedDay = ref<string | null>(null);
 const selectedTime = ref<string | null>(null);
 
-// Generate available days (next 7 days)
+// Get days from shipping data
 const days = computed(() => {
-  if (props.availableDays) return props.availableDays;
-
-  const result = [];
-  const today = new Date();
-
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    result.push(date.toISOString().split('T')[0]);
-  }
-
-  return result;
+  if (!props.shippingData?.days) return [];
+  return props.shippingData.days;
 });
-console.log(props.availableTimes)
-// Generate available times (9 AM to 5 PM)
+
+// Get available times from shipping data
 const times = computed(() => {
+  if (!props.shippingData?.days || !selectedDay.value) return [];
 
-  if (props.availableTimes) return props.availableTimes;
-  const result = [];
-  for (let hour = 9; hour <= 17; hour++) {
-    result.push(`${hour.toString().padStart(2, '0')}:00`);
-  }
-  return result;
+  const day = props.shippingData.days.find(d => d.datetime === selectedDay.value);
+  if (!day) return [];
+
+  return day.schedule.map(schedule => ({
+    id: schedule.id,
+    timeRange: `${schedule.startTime}-${schedule.endTime}`,
+    startTime: schedule.startTime,
+    endTime: schedule.endTime
+  }));
 });
 
-const formatDay = (day: string) => {
-  const date = new Date(day);
-  return date.toLocaleDateString('fa-IR', { weekday: 'long', month: 'long', day: 'numeric' });
-};
-
-const handleDaySelect = (day: string) => {
-  selectedDay.value = day;
+const handleDaySelect = (dayData: ShippingDay) => {
+  selectedDay.value = dayData.datetime;
   selectedTime.value = null;
-  updateValue();
+  // Don't emit yet, wait for time selection
 };
 
-const handleTimeSelect = (time: string) => {
-  selectedTime.value = time;
-  updateValue();
+const handleTimeSelect = (timeData: any) => {
+  selectedTime.value = timeData.timeRange;
+  updateValue(timeData.id);
 };
 
-const updateValue = () => {
+const updateValue = (scheduleId: number) => {
   if (selectedDay.value && selectedTime.value) {
     const value = `${selectedDay.value}T${selectedTime.value}`;
-    emit('update:modelValue', value);
+    emit("update:modelValue", value);
+    // Also emit the schedule ID for the parent to use
+    emit("scheduleSelected", scheduleId);
   }
 };
 </script>
@@ -69,12 +77,16 @@ const updateValue = () => {
   <div class="time-selector">
     <!-- Step 1: Day Selection -->
     <div class="step day-selection" :class="{ 'step-completed': selectedDay }">
-      <h3 class="step-title">{{ $t('checkout.deliveryTime') }}</h3>
+      <h3 class="step-title">{{ $t("checkout.deliveryTime") }}</h3>
       <div class="scroll-container">
         <div class="scroll-content">
-          <v-btn v-for="day in days" :key="day" :color="selectedDay === day ? 'primary' : 'grey-lighten-1'"
-            :variant="selectedDay === day ? 'flat' : 'outlined'" class="day-btn" @click="handleDaySelect(day)">
-            {{ formatDay(day) }}
+          <v-btn v-for="day in days" :key="day.datetime"
+            :color="selectedDay === day.datetime ? 'primary' : 'grey-lighten-1'"
+            :variant="selectedDay === day.datetime ? 'flat' : 'outlined'" class="day-btn" @click="handleDaySelect(day)">
+            <div class="d-flex flex-column align-center">
+              <span class="text-caption">{{ day.weekday }}</span>
+              <span class="text-body-2">{{ day.datetime }}</span>
+            </div>
           </v-btn>
         </div>
       </div>
@@ -82,19 +94,19 @@ const updateValue = () => {
 
     <!-- Step 2: Time Selection -->
     <div v-if="selectedDay" class="step time-selection">
-
       <div class="scroll-container">
         <div class="scroll-content">
-          <v-btn v-for="time in times" :key="time" :color="selectedTime === time ? 'primary' : 'grey-lighten-1'"
-            :variant="selectedTime === time ? 'flat' : 'outlined'" class="time-btn" @click="handleTimeSelect(time)">
-            {{ time }}
+          <v-btn v-for="time in times" :key="time.id"
+            :color="selectedTime === time.timeRange ? 'primary' : 'grey-lighten-1'"
+            :variant="selectedTime === time.timeRange ? 'flat' : 'outlined'" class="time-btn"
+            @click="handleTimeSelect(time)">
+            {{ time.timeRange }}
           </v-btn>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <style scoped lang="scss">
 .time-selector {
   display: flex;
@@ -135,6 +147,23 @@ const updateValue = () => {
   gap: 0.5rem;
   padding: 0.25rem;
   min-width: min-content;
+}
+
+.day-btn {
+  flex: 0 0 auto;
+  min-width: 140px; // Increased width for weekday + date
+  text-transform: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  height: 60px; // Increased height for two lines
+}
+
+.time-btn {
+  flex: 0 0 auto;
+  min-width: 120px;
+  text-transform: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .day-btn,

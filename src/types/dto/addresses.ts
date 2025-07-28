@@ -6,6 +6,8 @@ export interface Address {
   latitude: number
   longitude: number
   isDefault: boolean
+  receiverName?: string
+
 }
 
 export interface SendAddress {
@@ -15,4 +17,5 @@ export interface SendAddress {
   longitude: number
   postalCode: string
   isDefault: boolean
+  receiverName?: string
 }
