@@ -39,8 +39,8 @@ onMounted(() => getModels())
         :src="model.image"
         :alt="model.name"
         class="rounded-lg pop-models"
-        width="132"
-        height="164"
+        width="264"
+        height="328"
       />
     </RouterLink>
   </div>
@@ -62,5 +62,7 @@ onMounted(() => getModels())
 <style>
 .pop-models img {
   border-radius: 10px;
+  height: 164px;
+  width: 132px;
 }
 </style>
