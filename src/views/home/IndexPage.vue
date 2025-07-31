@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CategoryList from "@/components/CategoryList.vue";
 import PopularModels from "./components/PopularModels.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, nextTick } from "vue";
 import { getMostViewedCategoriesService } from "@/services/carshenas/category";
 import type { Category } from "@/types/dto/category";
 import BrandFilterBottomSheet from '@/views/product/list/components/BrandFilterBottomSheet.vue'
@@ -9,21 +9,79 @@ import BrandFilterBottomSheet from '@/views/product/list/components/BrandFilterB
 const items = ref<Category[]>();
 const loading = ref<boolean>();
 const showContactDetails = ref(false);
+const error = ref<string | null>(null);
+const footerRef = ref<HTMLElement>();
 
 const getMostViewedCategories = async () => {
   loading.value = true;
+  error.value = null;
   try {
     const response = await getMostViewedCategoriesService();
     items.value = response.data;
   } catch (e) {
+    error.value = 'خطا در بارگذاری دسته‌بندی‌ها. لطفا دوباره تلاش کنید.';
     console.error(e);
   } finally {
     loading.value = false;
   }
 };
 
+const scrollToBottom = () => {
+  console.log('🚀 scrollToBottom called');
+  console.log('📏 Current page height before scroll:', document.documentElement.scrollHeight);
+  console.log('📏 Current body height before scroll:', document.body.scrollHeight);
+  console.log('📍 Current scroll position:', window.scrollY);
+  
+  // Try with longer delay
+  setTimeout(() => {
+    console.log('⏰ After 600ms delay:');
+    console.log('📏 Page height after delay:', document.documentElement.scrollHeight);
+    console.log('📏 Body height after delay:', document.body.scrollHeight);
+    console.log('📍 Current scroll position before scroll:', window.scrollY);
+    
+    // Try multiple scroll methods
+    console.log('🔄 Trying window.scrollTo to documentElement.scrollHeight');
+    window.scrollTo({
+      top: document.documentElement.scrollHeight,
+      behavior: 'smooth'
+    });
+    
+    // Also try scrolling to footer element directly
+    if (footerRef.value) {
+      console.log('🔄 Also trying scrollIntoView on footer element');
+      footerRef.value.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end' 
+      });
+    }
+    
+    console.log('✅ Scroll commands executed');
+    
+    // Check if scroll actually happened after a longer delay
+    setTimeout(() => {
+      console.log('📍 Final scroll position after scroll:', window.scrollY);
+      console.log('📏 Final page height:', document.documentElement.scrollHeight);
+      console.log('📏 Final body height:', document.body.scrollHeight);
+    }, 1000);
+    
+  }, 600); // Increased delay to 600ms
+};
+
 const toggleContactDetails = () => {
+  console.log('🔄 toggleContactDetails called');
+  console.log('📊 showContactDetails before toggle:', showContactDetails.value);
+  
   showContactDetails.value = !showContactDetails.value;
+  
+  console.log('📊 showContactDetails after toggle:', showContactDetails.value);
+  
+  // Scroll to bottom when expanding contact details
+  if (showContactDetails.value) {
+    console.log('✅ Expanding contact details - calling scrollToBottom');
+    scrollToBottom();
+  } else {
+    console.log('❌ Collapsing contact details - no scroll');
+  }
 };
 
 onMounted(() => getMostViewedCategories());
@@ -57,12 +115,14 @@ onMounted(() => getMostViewedCategories());
         <h2 class="title-sm">
           {{ $t("home.popularCatagories") }}
         </h2>
-
+        <div v-if="error" class="error-message">
+          {{ error }}
+        </div>
         <CategoryList :items :loading manual class="mt-4" />
       </section>
     </div>
     
-    <footer class="footer-container">
+    <footer ref="footerRef" class="footer-container">
       <div class="d-flex justify-space-between align-center pa-4">
         <a class="pa-1  bg-red-lighten-5" referrerpolicy='origin' target='_blank'
           href='https://trustseal.enamad.ir/?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64'>
@@ -139,5 +199,16 @@ onMounted(() => getMostViewedCategories());
 .contact-btn {
   font-size: 14px;
   margin-left: 2rem;
+}
+
+.error-message {
+  color: #d32f2f;
+  background: #fff0f0;
+  border: 1px solid #d32f2f;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 15px;
 }
 </style>
