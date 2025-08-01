@@ -145,6 +145,11 @@ onMounted(() => getMostViewedCategories());
           </div>
         </div>
       </v-expand-transition>
+      
+      <!-- Version number for cache identification -->
+      <div class="version-info">
+        <span class="version-text">v.1.0.0</span>
+      </div>
     </footer>
     
     <BrandFilterBottomSheet />
@@ -180,6 +185,21 @@ onMounted(() => getMostViewedCategories());
 .contact-btn {
   font-size: 14px;
   margin-left: 2rem;
+}
+
+.version-info {
+  text-align: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--v-theme-divider);
+  margin-top: 8px;
+}
+
+.version-text {
+  font-size: 10px;
+  color: var(--v-theme-outline);
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  opacity: 0.7;
 }
 
 .error-message {

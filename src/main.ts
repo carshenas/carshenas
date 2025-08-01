@@ -1,15 +1,14 @@
 import { registerPlugins } from '@/plugins'
 import { createApp } from 'vue'
-import './pwa.js'
-
 import App from './App.vue'
+import './pwa' // Import PWA logic
 
 // Custom styles
 import '@/assets/styles/main.scss'
 
 const app = createApp(App)
 
-// Define the BeforeInstallPromptEvent interface
+// Define interfaces for install prompt
 interface BeforeInstallPromptEvent extends Event {
     readonly platforms: string[];
     readonly userChoice: Promise<{
@@ -19,48 +18,11 @@ interface BeforeInstallPromptEvent extends Event {
     prompt(): Promise<void>;
 }
 
-// Global variables
+// Global variables for installation
 let deferredPrompt: BeforeInstallPromptEvent | null = null;
 let installPromptTimeout: NodeJS.Timeout;
 
-console.log('🔍 PA Installability Check');
-
-// Check all PWA requirements
-function checkPWARequirements() {
-    const requirements = {
-        'HTTPS/localhost': location.protocol === 'https:' || location.hostname === 'localhost',
-        'Manifest linked': !!document.querySelector('link[rel="manifest"]'),
-        'Service Worker': 'serviceWorker' in navigator,
-        'Not already installed': !window.matchMedia('(display-mode: standalone)').matches
-    };
-
-    console.log('PWA Requirements:', requirements);
-
-    // Check if manifest is accessible
-    fetch('/manifest.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(manifest => {
-            console.log('✅ Manifest loaded:', manifest);
-
-            // Validate required manifest fields
-            const requiredFields = ['name', 'short_name', 'start_url', 'display', 'icons'];
-            const missingFields = requiredFields.filter(field => !manifest[field]);
-
-            if (missingFields.length > 0) {
-                console.log('❌ Missing manifest fields:', missingFields);
-            } else {
-                console.log('✅ Manifest has all required fields');
-            }
-        })
-        .catch(error => {
-            console.log('❌ Manifest loading error:', error);
-        });
-}
+console.log('🔍 PWA Installatio Check Starting');
 
 // Install app function
 async function installApp(): Promise<void> {
@@ -71,11 +33,8 @@ async function installApp(): Promise<void> {
             console.log(`User response: ${outcome}`);
             deferredPrompt = null;
             
-            // Hide install button
             const installButton = document.getElementById('install-button');
-            if (installButton) {
-                installButton.style.display = 'none';
-            }
+            if (installButton) installButton.style.display = 'none';
         } catch (error) {
             console.log('Install error:', error);
         }
@@ -87,7 +46,6 @@ function showInstallButton(): void {
     const installButton = document.getElementById('install-button');
     if (installButton) {
         installButton.style.display = 'block';
-        // Remove existing listeners to avoid duplicates
         installButton.removeEventListener('click', installApp);
         installButton.addEventListener('click', installApp);
     } else {
@@ -95,44 +53,30 @@ function showInstallButton(): void {
     }
 }
 
-// Wait for DOM to be ready
+// Installation logic (separate from updates)
 document.addEventListener('DOMContentLoaded', () => {
-    checkPWARequirements();
-
-    // Set timeout to check for install prompt
     installPromptTimeout = setTimeout(() => {
-        console.log('⏱️ No install prompt after 10 seconds - checking why...');
-
+        console.log('⏱️ No install prompt after 10 seconds');
+        
         if (window.matchMedia('(display-mode: standalone)').matches) {
             console.log('ℹ️ PWA is already installed');
         } else {
-            console.log('❌ Install prompt not triggered - possible reasons:');
-            console.log('   - Not enough user engagement');
-            console.log('   - Missing manifest requirements');
-            console.log('   - External resource loading issues');
-            console.log('   - Browser doesn\'t support PWA install');
-            console.log('   - Try opening Chrome DevTools → Application → Manifest → Add to homescreen');
+            console.log('❌ Install prompt not triggered');
         }
     }, 10000);
 
-    // Single beforeinstallprompt event listener
+    // Install prompt event
     window.addEventListener('beforeinstallprompt', (e: Event) => {
-        console.log('🎉 beforeinstalprompt event fired!');
-        
+        console.log('🎉 beforeinsallprompt event fired!');
         clearTimeout(installPromptTimeout);
         e.preventDefault();
         
         deferredPrompt = e as BeforeInstallPromptEvent;
         console.log('Available platforms:', deferredPrompt.platforms);
-        
-        // Show install button
         showInstallButton();
-        
-        // Store globally for debugging
-        (window as any).deferredPrompt = deferredPrompt;
     });
 
-    // Listen for successful installation
+    // App installed event
     window.addEventListener('appinstalled', () => {
         console.log('✅ PWA was successfully installed');
         deferredPrompt = null;
