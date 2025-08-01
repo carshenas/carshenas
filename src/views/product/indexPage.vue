@@ -231,6 +231,11 @@ function handleNotAvailableClick() {
       شوید
     </span>
   </div>
+  
+  <!-- Show message when logged in but no comments -->
+  <div v-if="isLoggedIn && (!product.feedbacks || product.feedbacks.length === 0)" class="pa-4 text-center">
+    <span class="text-medium-emphasis">نظری ثبت نشده است</span>
+  </div>
   <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-surface">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant && !isOutOfStock" />
     <div v-else>
