@@ -11,7 +11,6 @@ export const getOTPService = (body: GetOTPBody) =>
     '/user/otp/',
     {
       body,
-
     },
 
   )
@@ -20,3 +19,8 @@ export const validateOTPService = (body: ValidateOTPBody) =>
   carshenasService.post<{ access: string; refresh: string }>('/user/verify/', {
     body, ...requestConfig,
   })
+
+
+export const Logout = () =>
+  carshenasService.post('  /user/logout/'
+  )

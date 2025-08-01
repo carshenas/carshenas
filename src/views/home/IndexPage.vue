@@ -141,7 +141,7 @@ onMounted(() => getMostViewedCategories());
           
           <div class="contact-item">
             <strong>تلگرام:</strong>
-            <a href="https://t.me/CarshenasShopBot">@CarshenasShopBot</a>
+            <a href="https://t.me/@Carshenas_support">@@Carshenas_support</a>
           </div>
         </div>
       </v-expand-transition>
