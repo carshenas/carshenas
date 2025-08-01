@@ -190,7 +190,7 @@ function handleNotAvailableClick() {
   </v-tabs>
 
   <div class="d-flex flex-column t-4 px-4 ga-8">
-    <p>
+    <p v-if="product.score && product.score > 0">
       <v-icon icon="mdi_star" />
       <span>{{ product.score }} </span>
       <span>
@@ -200,6 +200,9 @@ function handleNotAvailableClick() {
           })
         }}
       </span>
+    </p>
+    <p v-else class="text-medium-emphasis">
+      امتیازی ثبت نشده
     </p>
   </div>
 
