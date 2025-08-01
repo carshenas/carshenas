@@ -190,7 +190,7 @@ function handleNotAvailableClick() {
   </v-tabs>
 
   <div class="d-flex flex-column t-4 px-4 ga-8">
-    <p>
+    <p v-if="product.score && product.score > 0">
       <v-icon icon="mdi_star" />
       <span>{{ product.score }} </span>
       <span>
@@ -200,6 +200,9 @@ function handleNotAvailableClick() {
           })
         }}
       </span>
+    </p>
+    <p v-else class="text-medium-emphasis">
+      امتیازی ثبت نشده
     </p>
   </div>
 
@@ -230,6 +233,11 @@ function handleNotAvailableClick() {
       </RouterLink>
       شوید
     </span>
+  </div>
+  
+  <!-- Show message when logged in but no comments -->
+  <div v-if="isLoggedIn && (!product.feedbacks || product.feedbacks.length === 0)" class="pa-4 text-center">
+    <span class="text-medium-emphasis">نظری ثبت نشده است</span>
   </div>
   <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-surface">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant && !isOutOfStock" />

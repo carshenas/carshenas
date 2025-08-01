@@ -15,6 +15,7 @@ const props = defineProps<{
   alt: string;
   types?: ImageExtension[];
   aspectRatio?: string;
+  imgClass?: string;
 }>();
 const picture = ref<HTMLPictureElement>();
 const images = ref<any[]>([]);
@@ -67,7 +68,7 @@ watch(
     <source v-for="image in images" :key="image.type" :srcset="image.src" :type="image.type" />
 
     <img :src="defaultImage" :alt="props.alt" :width="props.width" :height="props.height"
-      :style="`aspect-ratio: ${props.aspectRatio};`" />
+      :style="`aspect-ratio: ${props.aspectRatio};`" :class="props.imgClass" />
   </picture>
 
   <v-icon v-else icon="hide_image" />

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CategoryList from "@/components/CategoryList.vue";
 import PopularModels from "./components/PopularModels.vue";
+import BannerCarousel from "@/components/BannerCarousel.vue";
 import { onMounted, ref, nextTick } from "vue";
 import { getMostViewedCategoriesService } from "@/services/carshenas/category";
 import type { Category } from "@/types/dto/category";
@@ -27,20 +28,10 @@ const getMostViewedCategories = async () => {
 };
 
 const scrollToBottom = () => {
-  console.log('🚀 scrollToBottom called');
-  console.log('📏 Current page height before scroll:', document.documentElement.scrollHeight);
-  console.log('📏 Current body height before scroll:', document.body.scrollHeight);
-  console.log('📍 Current scroll position:', window.scrollY);
+
   
-  // Try with longer delay
   setTimeout(() => {
-    console.log('⏰ After 600ms delay:');
-    console.log('📏 Page height after delay:', document.documentElement.scrollHeight);
-    console.log('📏 Body height after delay:', document.body.scrollHeight);
-    console.log('📍 Current scroll position before scroll:', window.scrollY);
-    
-    // Try multiple scroll methods
-    console.log('🔄 Trying window.scrollTo to documentElement.scrollHeight');
+
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth'
@@ -48,36 +39,23 @@ const scrollToBottom = () => {
     
     // Also try scrolling to footer element directly
     if (footerRef.value) {
-      console.log('🔄 Also trying scrollIntoView on footer element');
       footerRef.value.scrollIntoView({ 
         behavior: 'smooth', 
         block: 'end' 
       });
     }
     
-    console.log('✅ Scroll commands executed');
     
-    // Check if scroll actually happened after a longer delay
-    setTimeout(() => {
-      console.log('📍 Final scroll position after scroll:', window.scrollY);
-      console.log('📏 Final page height:', document.documentElement.scrollHeight);
-      console.log('📏 Final body height:', document.body.scrollHeight);
-    }, 1000);
-    
-  }, 600); // Increased delay to 600ms
+  }, 600); 
 };
 
 const toggleContactDetails = () => {
-  console.log('🔄 toggleContactDetails called');
-  console.log('📊 showContactDetails before toggle:', showContactDetails.value);
   
   showContactDetails.value = !showContactDetails.value;
   
-  console.log('📊 showContactDetails after toggle:', showContactDetails.value);
   
   // Scroll to bottom when expanding contact details
   if (showContactDetails.value) {
-    console.log('✅ Expanding contact details - calling scrollToBottom');
     scrollToBottom();
   } else {
     console.log('❌ Collapsing contact details - no scroll');
@@ -102,6 +80,9 @@ onMounted(() => getMostViewedCategories());
         <v-btn :text="$t('shared.search')" variant="outlined" color="outline" rounded="pill" size="large"
           class="d-flex justify-space-between mt-6 mb-12" append-icon="search" to="/search" block />
       </header>
+
+      <!-- Banner Carousel -->
+      <BannerCarousel />
 
       <section class="my-12">
         <h2 class="title-sm">
@@ -160,7 +141,7 @@ onMounted(() => getMostViewedCategories());
           
           <div class="contact-item">
             <strong>تلگرام:</strong>
-            <a href="https://t.me/CarshenasShopBot">@CarshenasShopBot</a>
+            <a href="https://t.me/@Carshenas_support">@@Carshenas_support</a>
           </div>
         </div>
       </v-expand-transition>

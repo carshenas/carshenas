@@ -73,7 +73,7 @@ onMounted(getVehicles)
       append-inner-icon="search" />
   </v-card-title>
 
-  <v-card-text class="pa-0">
+  <v-card-text class="pa-0 overflow-auto">
     <v-list :lines="false">
       <v-list-item v-for="item in filteredItems" :key="item.id" :title="item.name" append-icon="chevron_left"
         class="py-4" @click="handleClick(item)">
