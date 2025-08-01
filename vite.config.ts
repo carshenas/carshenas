@@ -1,4 +1,3 @@
-// vite.config.js
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
@@ -19,47 +18,92 @@ export default defineConfig({
       srcDir: 'src',
       registerType: 'autoUpdate',
       workbox: {
-        // Cache API responses
+        // ✅ CRITICAL: Enable these for proper updates
+        skipWaiting: true,
+        clientsClaim: true,
+        
+        // ✅ Use globPatterns to control what gets precached
+        globPatterns: [
+          '**/*.{js,css,html,ico,png,jpg,jpeg,svg,gif,webp,woff,woff2,ttf,eot}'
+        ],
+        
+        // ✅ Use globIgnores instead of exclude
+        globIgnores: [
+          '**/node_modules/**/*',
+          '**/sw.js',
+          '**/workbox-*.js',
+          '**/*.map',
+          '**/manifest*.js'
+        ],
+        
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/api\.yourbackend\.com\/.*/i,
+            urlPattern: /^https:\/\/api\.carshenas\.shop\/.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',
               expiration: {
-                maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
+                maxEntries: 50,
+                maxAgeSeconds: 2 * 60 * 60 // 2 hours
+              },
+              networkTimeoutSeconds: 10
+            }
+          },
+          {
+            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp|ico)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
               }
             }
           },
           {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/,
+            urlPattern: /\.(?:woff|woff2|ttf|eot)$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'images',
+              cacheName: 'fonts-cache',
               expiration: {
-                maxEntries: 60,
+                maxEntries: 30,
                 maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
               }
             }
           }
         ],
+        
+        // ✅ Navigation settings
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/]
+        navigateFallbackDenylist: [
+          /^\/_/,
+          /\/[^/?]+\.[^/]+$/,
+          /^\/api\//
+        ],
+        
+        // ✅ Important cleanup and optimization options
+        cleanupOutdatedCaches: true,
+        sourcemap: false
       },
+      
       manifestFilename: 'manifest.json',
       includeAssets: [
         'pwa-192x192.png',
-        'pwa-512x512.png',
+        'pwa-512x512.png', 
         'logo.svg',
         'carshenas.ico'
       ],
+      
+      injectRegister: 'auto',
 
       manifest: {
         name: 'Carshenas',
         short_name: 'Carshenas',
+        description: 'Carshenas PWA Application',
         start_url: '/',
+        scope: '/',
         display: 'standalone',
+        orientation: 'portrait-primary',
         background_color: '#0C0634',
         theme_color: '#0C0634',
         icons: [
@@ -84,18 +128,20 @@ export default defineConfig({
         ]
       },
 
-
       devOptions: {
         enabled: true,
-        type: 'module'
+        type: 'module',
+        navigateFallback: 'index.html'
       }
     })
   ],
+  
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  
   server: {
     host: '0.0.0.0',
     port: 3000,
@@ -105,6 +151,7 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin'
     }
   },
+  
   css: {
     preprocessorOptions: {
       scss: {
