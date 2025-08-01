@@ -148,7 +148,7 @@ onMounted(() => getMostViewedCategories());
       
       <!-- Version number for cache identification -->
       <div class="version-info">
-        <span class="version-text">v.1.0.0</span>
+        <span class="version-text">1.0.0</span>
       </div>
     </footer>
     
