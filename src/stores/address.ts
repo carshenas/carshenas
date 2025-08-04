@@ -2,12 +2,9 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
-interface Address {
-  id: number;
-  address: string;
-  postalCode: string;
-  isDefault: boolean;
-}
+import type { Address } from "@/types/dto/addresses";
+
+// Remove the local interface since we're importing it
 
 export const useAddressStore = defineStore("address", () => {
   // State
