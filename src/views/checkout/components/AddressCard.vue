@@ -6,6 +6,7 @@ import NewAddressInfo from "@/views/user/addresses/components/NewAddressInfo.vue
 import NewAddressMap from "@/views/user/addresses/components/NewAddressMap.vue";
 import { getOrderShipping } from "@/services/carshenas/order";
 import type { ShippingResponse } from "@/types/dto/order";
+import type { Address } from "@/types/dto/addresses";
 import { useCartStore } from "@/stores/cart";
 import TimeSelector from '@/components/TimeSelector.vue'
 
@@ -105,6 +106,29 @@ watch(
   { deep: true }
 );
 
+// Watch for changes in store's selectedAddressId to trigger shipping load
+watch(
+  () => addressStore.selectedAddressId,
+  async (newAddressId) => {
+    if (newAddressId && newAddressId !== 1) { // Don't load shipping for in-person pickup
+      console.log('Address selection changed in store:', newAddressId);
+      isReceiveInPerson.value = false;
+      await loadShippingOptions(newAddressId);
+      emit('validation', false);
+      emit('update:modelValue', false);
+    }
+  }
+);
+
+// Watch for changes in store's address list to keep local addressList in sync
+watch(
+  () => addressStore.addressList,
+  (newAddressList) => {
+    addressList.value = newAddressList;
+  },
+  { deep: true }
+);
+
 const selectInPersonPickup = async () => {
   console.log('selectInPersonPickup called');
   isReceiveInPerson.value = true;
@@ -116,9 +140,13 @@ const selectInPersonPickup = async () => {
       ...addressList.value,
       {
         id: 1,
+        name: "دریافت حضوری",
         address: "تهران خیابان امیر کبیر پاساژ کاشانی پلاک 107",
         postalCode: "1234567890",
-        isDefault: false
+        latitude: 35.6892,
+        longitude: 51.3890,
+        isDefault: false,
+        receiverName: "دریافت حضوری"
       }
     ]);
   }

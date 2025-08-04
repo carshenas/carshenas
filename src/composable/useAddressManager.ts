@@ -20,9 +20,10 @@ export function useAddressManagement() {
 const fetchAddressList = async (): Promise<Address[]> => {
   try {
     const response = await getAddressList();
-    addressList.value = response.data as unknown as Address[];
-    addressStore.setAddressList(addressList.value); 
-    return addressList.value;
+    const addresses = response.data as unknown as Address[];
+    addressList.value = addresses;
+    addressStore.setAddressList(addresses); 
+    return addresses;
   } catch (error) {
     console.error("Error fetching address list:", error);
     throw error;
@@ -54,6 +55,10 @@ const fetchAddressList = async (): Promise<Address[]> => {
           ? addresses.reduce((a, b) => (a.id > b.id ? a : b))
           : null;
       if (latest) {
+        console.log("Auto-selecting new address with id:", latest.id);
+        // Update the composable's addressList to match store
+        addressList.value = addresses;
+        // Set the selected address in store
         addressStore.setSelectedAddressId(latest.id);
         console.log("Auto-selected new address with id:", latest.id);
         // Log addressList in store and in composable
