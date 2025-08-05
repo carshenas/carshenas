@@ -45,7 +45,7 @@ const getVehicleBadges = (vehicles: string[]) => {
     totalCount: 0
   };
 
-  const maxVisible = 3;
+  const maxVisible = 2;
   const visibleVehicles = vehicles.slice(0, maxVisible);
   const hasMore = vehicles.length > maxVisible;
 
@@ -132,7 +132,7 @@ defineExpose({
                     </v-chip>
                     <v-chip rounded="lg" variant="tonal" v-if="getVehicleBadges(product.vehicles).hasMore" size="small" color="deep-orange"
                       class="text-caption font-weight-medium">
-                      بیشتر
+                      غیره
                     </v-chip>
                   </div>
                 </div>
