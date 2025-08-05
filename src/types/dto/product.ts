@@ -6,6 +6,7 @@ export interface ProductBase {
   quantity: number;
   stock?: number;
   out_of_stock?: boolean;
+  vehicles?: string[];
 }
 
 export interface ProductWithImage extends ProductBase {

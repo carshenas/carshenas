@@ -131,7 +131,7 @@ onMounted(() => getMostViewedCategories());
           
           <div class="contact-item">
             <strong>{{ $t("contactUs.phoneLabel") }}:</strong>
-            <a href="tel:02133907543">33907543-021</a>
+            <a href="tel:02133907543">021-33907543</a>
           </div>
           
           <div class="contact-item">
@@ -141,7 +141,7 @@ onMounted(() => getMostViewedCategories());
           
           <div class="contact-item">
             <strong>تلگرام:</strong>
-            <a href="https://t.me/@Carshenas_support">@@Carshenas_support</a>
+            <a href="https://t.me/@Carshenas_support">@Carshenas_support</a>
           </div>
         </div>
       </v-expand-transition>

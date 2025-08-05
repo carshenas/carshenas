@@ -25,29 +25,58 @@ const {
 } = useProductList(props);
 
 const emit = defineEmits<{
-    (e: 'update:filter', filter: ProductFilter): void
+  (e: 'update:filter', filter: ProductFilter): void
 }>();
 
 const router = useRouter();
 const route = useRoute();
 
+// Pastel colors for vehicle badges
+const pastelColors = [
+  '#155dfc',
+  '#155dfc',
+  '#155dfc',
+];
+
+const getVehicleBadges = (vehicles: string[]) => {
+  if (!vehicles || vehicles.length === 0) return {
+    visible: [],
+    hasMore: false,
+    totalCount: 0
+  };
+
+  const maxVisible = 3;
+  const visibleVehicles = vehicles.slice(0, maxVisible);
+  const hasMore = vehicles.length > maxVisible;
+
+  return {
+    visible: visibleVehicles,
+    hasMore,
+    totalCount: vehicles.length
+  };
+};
+
+const getBadgeColor = (index: number) => {
+  return pastelColors[index % pastelColors.length];
+};
+
 const handleFilterRemove = (key: string) => {
-    if (!props.filter) return;
-    
-    const newFilter = { ...props.filter };
-    delete newFilter[key as keyof ProductFilter];
-    
-    // Update URL parameters
-    const query = { ...route.query };
-    if (key === 'vehicleName') {
-        delete query.vehicle;
-        delete query.vehicleName;
-    } else {
-        delete query[key];
-    }
-    
-    router.push({ query });
-    emit('update:filter', newFilter);
+  if (!props.filter) return;
+
+  const newFilter = { ...props.filter };
+  delete newFilter[key as keyof ProductFilter];
+
+  // Update URL parameters
+  const query = { ...route.query };
+  if (key === 'vehicleName') {
+    delete query.vehicle;
+    delete query.vehicleName;
+  } else {
+    delete query[key];
+  }
+
+  router.push({ query });
+  emit('update:filter', newFilter);
 };
 
 onMounted(() => {
@@ -68,32 +97,18 @@ defineExpose({
 <template>
   <div>
     <!-- Add FilterChips component to display active filters -->
-    <FilterChips 
-      :filter="props.filter" 
-      @remove="handleFilterRemove"
-    />
+    <FilterChips :filter="props.filter" @remove="handleFilterRemove" />
 
     <v-infinite-scroll v-if="isListVisible" @load="getProducts">
       <template v-for="product in products" :key="product.id">
-        <v-card
-          variant="flat"
-          elevation="1"
-          shadow
-          class="product py-2 px-4 mt-2 ma-1 bg-surface"
+        <v-card variant="flat" elevation="1" shadow class="product py-2 px-4 mt-2 ma-1 bg-surface"
           @click="() => $router.push({ name: 'ProductDetailPage', params: { id: product.id } })"
-          style="cursor: pointer"
-        >
+          style="cursor: pointer">
           <v-row>
             <v-col cols="4" class="d-flex align-center">
-              <ImageLoader
-                :src="product.images && product.images.length > 0
-                  ? product.images[0]
-                  : product.image || 'placeholder.jpg'"
-                :alt="product.name!"
-                width="86"
-                height="86"
-                aspectRatio="1"
-              />
+              <ImageLoader :src="product.images && product.images.length > 0
+                ? product.images[0]
+                : product.image || 'placeholder.jpg'" :alt="product.name!" width="86" height="86" aspectRatio="1" />
             </v-col>
 
             <v-col cols="8" class="d-flex flex-column">
@@ -101,18 +116,26 @@ defineExpose({
                 <h2 class="title-sm">{{ product.name }}</h2>
               </div>
 
+              <!-- Vehicle Badges -->
+
+
               <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
 
-              <div
-                class="mt-2 flex-grow-1 d-flex justify-space-between align-end"
-              >
-                <CurrencyDisplay
-                  :value="product.price"
-                  value-class="text-primary font-weight-bold"
-                  unit-class="body-sm text-outline"
-                  class="d-flex justify-end body-md py-1"
-                />
-
+              <div class="mt-2 flex-grow-1 d-flex justify-space-between align-end">
+                <CurrencyDisplay :value="product.price" value-class="text-primary font-weight-bold"
+                  unit-class="body-sm text-outline" class="d-flex justify-end body-md py-1" />
+                <div v-if="product.vehicles && product.vehicles.length > 0" class="mt-2">
+                  <div class="d-flex flex-wrap gap-1">
+                    <v-chip rounded="lg" variant="tonal" v-for="(vehicle, index) in getVehicleBadges(product.vehicles).visible"
+                      :key="vehicle" color="deep-orange" size="small" class=" text-caption font-weight-medium">
+                      {{ vehicle }}
+                    </v-chip>
+                    <v-chip rounded="lg" variant="tonal" v-if="getVehicleBadges(product.vehicles).hasMore" size="small" color="deep-orange"
+                      class="text-caption font-weight-medium">
+                      بیشتر
+                    </v-chip>
+                  </div>
+                </div>
                 <!-- <v-btn
                   :text="$t('shared.more')"
                   variant="plain"
@@ -130,14 +153,7 @@ defineExpose({
       <template #loading>
         <v-row>
           <v-col cols="12">
-            <v-skeleton-loader
-              v-for="n in 4"
-              :key="n"
-              class="mt-2 mx-0 pa-0"
-              height="100"
-              width="315"
-              type="ossein"
-            />
+            <v-skeleton-loader v-for="n in 4" :key="n" class="mt-2 mx-0 pa-0" height="100" width="315" type="ossein" />
           </v-col>
         </v-row>
       </template>
@@ -156,5 +172,9 @@ defineExpose({
 
 .v-infinite-scroll {
   overflow: hidden;
+}
+
+.gap-1 {
+  gap: 4px;
 }
 </style>
