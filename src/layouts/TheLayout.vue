@@ -26,6 +26,7 @@ const isHomePage = computed(() => route.path === '/')
            padding: 0.5rem 1rem;
            background: #fb4847;
            color: white;
+            border-radius: 20px;
            border: none;
            border-radius: 4px;
            cursor: pointer;

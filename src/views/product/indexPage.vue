@@ -204,6 +204,23 @@ function handleNotAvailableClick() {
     <p v-else class="text-medium-emphasis">
       امتیازی ثبت نشده
     </p>
+    
+    <!-- Vehicle Badges -->
+    <div v-if="product.vehicles && product.vehicles.length > 0" class="mt-3">
+      <div class="d-flex flex-wrap gap-2">
+        <v-chip
+          v-for="vehicle in product.vehicles"
+          :key="vehicle"
+          rounded="lg"
+          variant="tonal"
+          color="deep-orange"
+          size="small"
+          class="text-caption font-weight-medium"
+        >
+          {{ vehicle }}
+        </v-chip>
+      </div>
+    </div>
   </div>
 
   <div>
@@ -295,5 +312,9 @@ function handleNotAvailableClick() {
 #summery #spec,
 #comments {
   scroll-margin-top: 20 rem;
+}
+
+.gap-2 {
+  gap: 8px;
 }
 </style>
