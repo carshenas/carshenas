@@ -133,8 +133,7 @@ const selectInPersonPickup = async () => {
   console.log('selectInPersonPickup called');
   isReceiveInPerson.value = true;
   addressStore.setSelectedAddressId(1);
-  console.log('addressStore.selectedAddressId after set:', addressStore.selectedAddressId);
-  console.log('addressStore.selectedAddress after set:', addressStore.selectedAddress);
+  console.log('addressLsit', addressList.value);
   if (!addressList.value.find(addr => addr.id === 1)) {
     addressStore.setAddressList([
       ...addressList.value,
@@ -220,11 +219,18 @@ watch(isValid, (newValue) => {
                 </template>
               </v-radio>
             </v-card>
-            <v-card v-for="address in addressList" :key="address.id" class="mb-2 pa-4" :class="{
-              'border-primary':
-                addressStore.selectedAddressId === address.id &&
-                !isReceiveInPerson,
-            }" variant="outlined" rounded="lg" @click="selectAddress(address.id)">
+            <v-card v-for="address in addressList.filter(addr => addr.id !== 1)" 
+              :key="address.id" 
+              class="mb-2 pa-4" 
+              :class="{
+                'border-primary':
+                  addressStore.selectedAddressId === address.id &&
+                  !isReceiveInPerson,
+              }" 
+              variant="outlined" 
+              rounded="lg" 
+              @click="selectAddress(address.id)"
+            >
               <v-radio :value="address.id" color="primary" hide-details>
                 <template #label>
                   <div class="d-flex flex-column ga-2">
