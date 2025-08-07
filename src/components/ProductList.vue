@@ -31,12 +31,7 @@ const emit = defineEmits<{
 const router = useRouter();
 const route = useRoute();
 
-// Pastel colors for vehicle badges
-const pastelColors = [
-  '#155dfc',
-  '#155dfc',
-  '#155dfc',
-];
+
 
 const getVehicleBadges = (vehicles: string[]) => {
   if (!vehicles || vehicles.length === 0) return {
@@ -56,10 +51,6 @@ const getVehicleBadges = (vehicles: string[]) => {
   };
 };
 
-const getBadgeColor = (index: number) => {
-  return pastelColors[index % pastelColors.length];
-};
-
 const handleFilterRemove = (key: string) => {
   if (!props.filter) return;
 
@@ -71,6 +62,9 @@ const handleFilterRemove = (key: string) => {
   if (key === 'vehicleName') {
     delete query.vehicle;
     delete query.vehicleName;
+  } else if (key === 'categoryName') {
+    delete query.category;
+    delete query.categoryName;
   } else {
     delete query[key];
   }
@@ -125,8 +119,8 @@ defineExpose({
                 <CurrencyDisplay :value="product.price" value-class="text-primary font-weight-bold"
                   unit-class="body-sm text-outline" class="d-flex justify-end body-md py-1" />
                 <div v-if="product.vehicles && product.vehicles.length > 0" class="mt-2">
-                  <div class="d-flex flex-wrap gap-1">
-                    <v-chip rounded="lg" variant="tonal" v-for="(vehicle, index) in getVehicleBadges(product.vehicles).visible"
+                  <div class="d-flex flex-nowrap gap-1">
+                    <v-chip rounded="lg" variant="tonal" v-for="(vehicle) in getVehicleBadges(product.vehicles).visible"
                       :key="vehicle" color="deep-orange" size="small" class=" text-caption font-weight-medium">
                       {{ vehicle }}
                     </v-chip>
@@ -175,6 +169,6 @@ defineExpose({
 }
 
 .gap-1 {
-  gap: 4px;
+  gap: 2px;
 }
 </style>

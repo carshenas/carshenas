@@ -29,6 +29,9 @@ watch(() => props.filter, (newFilter) => {
     if (newFilter.vehicleName && newFilter.vehicleName.trim() !== '') {
         activeFilters.value.vehicleName = newFilter.vehicleName; // Add vehicle name to active filters
     }
+    if (newFilter.categoryName && newFilter.categoryName.trim() !== '') {
+        activeFilters.value.categoryName = newFilter.categoryName; // Add category name to active filters
+    }
 
     logger.info('Active product filters updated', {
         activeFilters: { ...activeFilters.value },

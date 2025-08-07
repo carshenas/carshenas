@@ -61,7 +61,7 @@ onBeforeRouteLeave(async (to, from, next) => {
 
 <template>
   <div class="h-100 d-flex flex-column bar-padding position-relative">
-    <div class="fixed-bar pa-4">
+    <div class="fixed-bar pa-4 bg-surface">
       <div class="d-flex align-center">
         <v-app-bar-nav-icon icon="close" density="compact" @click="$router.back()" class="mr-2" />
         
