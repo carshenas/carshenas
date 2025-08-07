@@ -32,7 +32,10 @@ onMounted(() => getModels())
       :key="model.id"
       :to="{
         name: 'ProductsPage',
-        query: { vehicle: model.id }
+        query: { 
+          vehicle: model.id,
+          vehicleName: model.name
+        }
       }"
     >
       <ImageLoader

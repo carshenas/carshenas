@@ -85,7 +85,7 @@ const closeSearchResults = () => {
 <template>
   <v-navigation-drawer v-model="isOpen" :width="340" location="start" name="menu" mobile-breakpoint="xxl"
     disable-resize-watcher disable-route-watcher absolute touchless>
-    <div class="fixed-bar pa-4">
+    <div class="fixed-bar pa-4 bg-surface">
       <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
         append-inner-icon="search" />
     </div>

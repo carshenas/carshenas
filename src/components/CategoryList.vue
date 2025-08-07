@@ -62,7 +62,10 @@ onMounted(() => {
     >
       <router-link
         class="category w-100 d-flex flex-column justify-center align-center"
-        :to="{ name: 'ProductsPage', query: { category: category.id } }"
+        :to="{ name: 'ProductsPage', query: { 
+          category: category.id,
+          categoryName: category.name 
+        } }"
       >
         <div
           class="icon w-100 bg-category rounded-circle d-flex justify-center align-center"
