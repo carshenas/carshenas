@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import type { SendAddress } from '@/types/dto/addresses'
 import NewAddressInfo from './components/NewAddressInfo.vue'
 import NewAddressMap from './components/NewAddressMap.vue'
@@ -19,6 +19,19 @@ const {
   submitAddress,
   deleteAddress
 } = useAddressManagement()
+
+const deletingAddressId = ref<number | null>(null)
+
+const handleDelete = async (id: number) => {
+  if (deletingAddressId.value !== null) return // Prevent multiple clicks
+  
+  deletingAddressId.value = id
+  try {
+    await deleteAddress(id)
+  } finally {
+    deletingAddressId.value = null
+  }
+}
 
 onMounted(fetchAddressList)
 </script>
@@ -54,7 +67,13 @@ onMounted(fetchAddressList)
             {{ addr.receiverName || 'نامشخص' }}
           </span>
         <div class="d-flex w-100 justify-space-between text-grey align-center">
-          <v-btn icon="delete" variant="text" @click="() => deleteAddress(addr.id)" />
+          <v-btn 
+            icon="delete" 
+            variant="text" 
+            @click="() => handleDelete(addr.id)"
+            :loading="deletingAddressId === addr.id"
+            :disabled="deletingAddressId !== null"
+          />
 
           <div>
             <span>{{ addr.postalCode }}</span>
