@@ -24,6 +24,7 @@ export type Product = ProductWithImage | ProductWithImages;
 export interface ProductFilter {
   title?: string;
   vehicleName?: string;
+  categoryName?: string;
 }
 
 export interface Variant extends ProductWithImages {

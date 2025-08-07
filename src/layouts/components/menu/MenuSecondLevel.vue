@@ -44,7 +44,10 @@ const onClick = () => {
         </template>
 
         <router-link
-          :to="{ name: 'ProductsPage', query: { category: category.id } }"
+          :to="{ name: 'ProductsPage', query: { 
+            category: category.id,
+            categoryName: category.name
+          } }"
           @click="emit('close')"
         >
           <v-list-item
@@ -58,7 +61,10 @@ const onClick = () => {
       <v-list-item v-else :title="category.name">
         <template v-slot:prepend>
           <router-link
-            :to="{ name: 'ProductsPage', query: { category: category.id } }"
+            :to="{ name: 'ProductsPage', query: { 
+              category: category.id,
+              categoryName: category.name
+            } }"
             @click="emit('close')"
           >
             <ImageLoader
