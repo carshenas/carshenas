@@ -148,7 +148,7 @@ onMounted(() => getMostViewedCategories());
 
       <!-- Version number -->
       <div class="version-info">
-        <span class="version-text">1.0.3</span>
+        <span class="version-text">1.0.31</span>
       </div>
     </footer>
 
