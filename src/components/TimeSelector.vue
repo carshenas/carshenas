@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 // Define the type for shipping data
 interface ShippingDay {
@@ -16,6 +16,8 @@ interface ShippingData {
   cost: number;
   description: string;
   days: ShippingDay[];
+  hasVisibleSchedules: boolean;
+  isTehran: boolean;
 }
 
 const props = defineProps<{
@@ -33,51 +35,129 @@ const selectedTime = ref<string | null>(null);
 
 // Get days from shipping data
 const days = computed(() => {
+  console.log('TimeSelector - Computing days:', {
+    hasShippingData: !!props.shippingData,
+    daysLength: props.shippingData?.days?.length,
+    days: props.shippingData?.days
+  });
+
   if (!props.shippingData?.days) return [];
   return props.shippingData.days;
 });
 
 // Get available times from shipping data
 const times = computed(() => {
+  console.log('TimeSelector - Computing times:', {
+    selectedDay: selectedDay.value,
+    hasShippingData: !!props.shippingData?.days,
+    shouldAutoSelectTime: shouldAutoSelectTime.value
+  });
+
   if (!props.shippingData?.days || !selectedDay.value) return [];
 
   const day = props.shippingData.days.find(d => d.datetime === selectedDay.value);
   if (!day) return [];
 
-  return day.schedule.map(schedule => ({
+  const timesData = day.schedule.map(schedule => ({
     id: schedule.id,
     timeRange: `${schedule.startTime}-${schedule.endTime}`,
     startTime: schedule.startTime,
     endTime: schedule.endTime
   }));
+
+  console.log('TimeSelector - Times computed:', {
+    daySchedule: day.schedule,
+    timesData
+  });
+
+  return timesData;
+});
+
+// Check if time selection should be automatic
+const shouldAutoSelectTime = computed(() => {
+  const shouldAuto = props.shippingData?.isTehran && !props.shippingData?.hasVisibleSchedules;
+  console.log('TimeSelector - shouldAutoSelectTime:', {
+    isTehran: props.shippingData?.isTehran,
+    hasVisibleSchedules: props.shippingData?.hasVisibleSchedules,
+    shouldAuto
+  });
+  return shouldAuto;
 });
 
 const handleDaySelect = (dayData: ShippingDay) => {
+  console.log('TimeSelector - Day selected:', {
+    dayData,
+    shouldAutoSelectTime: shouldAutoSelectTime.value,
+    scheduleLength: dayData.schedule.length
+  });
+
   selectedDay.value = dayData.datetime;
   selectedTime.value = null;
-  // Don't emit yet, wait for time selection
+
+  // Only auto-select if it's Tehran with no visible schedules AND user manually selected a day
+  if (shouldAutoSelectTime.value && dayData.schedule.length > 0) {
+    const firstSchedule = dayData.schedule[0];
+    console.log('TimeSelector - Auto-selecting time:', {
+      firstSchedule,
+      timeRange: `${firstSchedule.startTime}-${firstSchedule.endTime}`
+    });
+
+    selectedTime.value = `${firstSchedule.startTime}-${firstSchedule.endTime}`;
+
+    // Emit the schedule selection immediately
+    console.log('TimeSelector - Emitting scheduleSelected:', firstSchedule.id);
+    emit("scheduleSelected", firstSchedule.id);
+
+    // Also emit the combined value
+    const value = `${dayData.datetime}T${firstSchedule.startTime}-${firstSchedule.endTime}`;
+    console.log('TimeSelector - Emitting modelValue:', value);
+    emit("update:modelValue", value);
+  }
 };
 
 const handleTimeSelect = (timeData: any) => {
+  console.log('TimeSelector - Time selected manually:', timeData);
   selectedTime.value = timeData.timeRange;
   updateValue(timeData.id);
 };
 
 const updateValue = (scheduleId: number) => {
+  console.log('TimeSelector - updateValue called:', {
+    selectedDay: selectedDay.value,
+    selectedTime: selectedTime.value,
+    scheduleId
+  });
+
   if (selectedDay.value && selectedTime.value) {
     const value = `${selectedDay.value}T${selectedTime.value}`;
+    console.log('TimeSelector - Emitting from updateValue:', { value, scheduleId });
     emit("update:modelValue", value);
-    // Also emit the schedule ID for the parent to use
     emit("scheduleSelected", scheduleId);
   }
 };
+
+// Watch for changes in shipping data to reset selections
+watch(() => props.shippingData, () => {
+
+
+  selectedDay.value = null;
+  selectedTime.value = null;
+});
+
+// Watch for changes in selections
+watch([selectedDay, selectedTime], ([newDay, newTime], [oldDay, oldTime]) => {
+  console.log('TimeSelector - Selection changed:', {
+    day: { old: oldDay, new: newDay },
+    time: { old: oldTime, new: newTime }
+  });
+});
 </script>
 
 <template>
   <div class="time-selector">
     <!-- Step 1: Day Selection -->
     <div class="step day-selection" :class="{ 'step-completed': selectedDay }">
-      <h3 class="step-title">{{ $t("checkout.deliveryTime") }}</h3>
+      <h3 class="step-title">انتخاب روز </h3>
       <div class="scroll-container">
         <div class="scroll-content">
           <v-btn v-for="day in days" :key="day.datetime"
@@ -92,8 +172,9 @@ const updateValue = (scheduleId: number) => {
       </div>
     </div>
 
-    <!-- Step 2: Time Selection -->
-    <div v-if="selectedDay" class="step time-selection">
+    <!-- Step 2: Time Selection - Only show if not auto-selecting -->
+    <div v-if="selectedDay && !shouldAutoSelectTime" class="step time-selection">
+      <h3 class="step-title">انتخاب زمان </h3>
       <div class="scroll-container">
         <div class="scroll-content">
           <v-btn v-for="time in times" :key="time.id"
@@ -105,8 +186,17 @@ const updateValue = (scheduleId: number) => {
         </div>
       </div>
     </div>
+
+    <!-- Show selected time for Tehran auto-selection -->
+    <div v-if="selectedDay && shouldAutoSelectTime && selectedTime" class="step auto-selected-time">
+      <v-chip color="primary" variant="text" size="large">
+        {{ selectedTime }}
+      </v-chip>
+    </div>
   </div>
 </template>
+
+
 <style scoped lang="scss">
 .time-selector {
   display: flex;
@@ -178,6 +268,13 @@ const updateValue = (scheduleId: number) => {
 .step-completed {
   .step-title {
     color: var(--v-primary-base);
+  }
+
+  .auto-selected-time {
+    .step-title {
+      color: var(--v-primary-base);
+      margin-bottom: 0.5rem;
+    }
   }
 }
 </style>

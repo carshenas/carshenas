@@ -6,7 +6,6 @@ import NewAddressInfo from "@/views/user/addresses/components/NewAddressInfo.vue
 import NewAddressMap from "@/views/user/addresses/components/NewAddressMap.vue";
 import { getOrderShipping } from "@/services/carshenas/order";
 import type { ShippingResponse } from "@/types/dto/order";
-import type { Address } from "@/types/dto/addresses";
 import { useCartStore } from "@/stores/cart";
 import TimeSelector from '@/components/TimeSelector.vue'
 
@@ -48,7 +47,6 @@ onMounted(async () => {
     addressStore.initializeDefaultAddress();
     if (addressStore.selectedAddressId) {
       isReceiveInPerson.value = false;
-      await loadShippingOptions(addressStore.selectedAddressId);
     }
   } catch (error) {
     console.error("Failed to fetch addresses:", error);
@@ -62,13 +60,20 @@ const loadShippingOptions = async (addressId: number) => {
 
     console.log(response.data.cost);
     addressStore.resetSelectedShipping();
-    cartStore.deliveryPriceComputed = response.data.cost;
+    
+    // Set shipping cost based on Tehran status
+    if (response.data.isTehran === false) {
+      console.log('Non-Tehran address detected, setting delivery cost to -1');
+      cartStore.deliveryPriceComputed = -1;
+    } else {
+      console.log('Tehran address or other case, using API cost:', response.data.cost);
+      cartStore.deliveryPriceComputed = response.data.cost;
+    }
+
     // Set the first day as selected if available
     if (response.data.days && response.data.days.length > 0) {
       selectedDayTab.value = response.data.days[0].datetime;
     }
-
-    console.log("Shipping options loaded:", response);
   } catch (error) {
     console.error("Failed to fetch shipping:", error);
   }
@@ -77,19 +82,12 @@ const loadShippingOptions = async (addressId: number) => {
 const selectAddress = async (addressId: number) => {
   console.log('selectAddress called with:', addressId);
   addressStore.setSelectedAddressId(addressId);
-  console.log('addressStore.selectedAddressId after set:', addressStore.selectedAddressId);
-  console.log('addressStore.selectedAddress after set:', addressStore.selectedAddress);
   isReceiveInPerson.value = false;
-  await loadShippingOptions(addressId);
-  emit('validation', false);
-  emit('update:modelValue', false);
 };
 
 const selectSchedule = (scheduleId: number) => {
   selectedScheduleId.value = scheduleId;
   addressStore.setSelectedShipping(scheduleId);
-  emit('validation', true);
-  emit('update:modelValue', true);
   console.log("Selected schedule:", scheduleId);
 };
 
@@ -110,16 +108,13 @@ watch(
 watch(
   () => addressStore.selectedAddressId,
   async (newAddressId) => {
-    if (newAddressId && newAddressId !== 1) { // Don't load shipping for in-person pickup
+    if (newAddressId && newAddressId !== 1) {
       console.log('Address selection changed in store:', newAddressId);
       isReceiveInPerson.value = false;
       await loadShippingOptions(newAddressId);
-      emit('validation', false);
-      emit('update:modelValue', false);
     }
   }
 );
-
 // Watch for changes in store's address list to keep local addressList in sync
 watch(
   () => addressStore.addressList,
@@ -133,7 +128,6 @@ const selectInPersonPickup = async () => {
   console.log('selectInPersonPickup called');
   isReceiveInPerson.value = true;
   addressStore.setSelectedAddressId(1);
-  console.log('addressLsit', addressList.value);
   if (!addressList.value.find(addr => addr.id === 1)) {
     addressStore.setAddressList([
       ...addressList.value,
@@ -150,8 +144,6 @@ const selectInPersonPickup = async () => {
     ]);
   }
   await loadShippingOptions(1);
-  emit('validation', true);
-  emit('update:modelValue', true);
 };
 
 
@@ -177,15 +169,43 @@ const handleDateTimeSelect = (value: string) => {
 
 // Add computed property for validation
 const isValid = computed(() => {
-  if (isReceiveInPerson.value) return true;
+  console.log('Computing isValid:', {
+    isReceiveInPerson: isReceiveInPerson.value,
+    selectedAddressId: addressStore.selectedAddressId,
+    hasVisibleSchedules: shippingData.value?.hasVisibleSchedules,
+    isTehran: shippingData.value?.isTehran,
+    selectedScheduleId: selectedScheduleId.value,
+    hasDays: (shippingData.value?.days?.length ?? 0) > 0
+  });
+
+  // Must always have an address selected (either real address or receive in person)
+  if (!addressStore.selectedAddressId) {
+    return false;
+  }
+
+  // If no shipping data available yet, not valid
+  if (!shippingData.value) {
+    return false;
+  }
+
+  // Case 1: No visible schedules and not Tehran - just need address (no schedule selection)
+  if (!shippingData.value.hasVisibleSchedules && !shippingData.value.isTehran) {
+    console.log('teststst')
+    return true; // Only address needed
+  }
+
+  // Case 2: All other cases (Tehran, visible schedules, or receive in person) - need schedule
   return !!selectedScheduleId.value;
 });
 
+
 // Watch for validation changes
 watch(isValid, (newValue) => {
+  console.log('Validation changed to:', newValue);
   emit('validation', newValue);
   emit('update:modelValue', newValue);
 });
+
 </script>
 
 <template>
@@ -209,7 +229,6 @@ watch(isValid, (newValue) => {
                 <template #label>
                   <div class="d-flex  flex-column ga-2">
                     <div class="d-flex align-center">
-                      <v-icon class="mr-2">mdi-store</v-icon>
                       <span class="text-body-1 font-weight-medium">دریافت حضوری</span>
                     </div>
                     <span class="text-caption text-grey">
@@ -219,18 +238,12 @@ watch(isValid, (newValue) => {
                 </template>
               </v-radio>
             </v-card>
-            <v-card v-for="address in addressList.filter(addr => addr.id !== 1)" 
-              :key="address.id" 
-              class="mb-2 pa-4" 
+            <v-card v-for="address in addressList.filter(addr => addr.id !== 1)" :key="address.id" class="mb-2 pa-4"
               :class="{
                 'border-primary':
                   addressStore.selectedAddressId === address.id &&
                   !isReceiveInPerson,
-              }" 
-              variant="outlined" 
-              rounded="lg" 
-              @click="selectAddress(address.id)"
-            >
+              }" variant="outlined" rounded="lg" @click="selectAddress(address.id)">
               <v-radio :value="address.id" color="primary" hide-details>
                 <template #label>
                   <div class="d-flex flex-column ga-2">
@@ -250,7 +263,8 @@ watch(isValid, (newValue) => {
         </div>
       </div>
 
-      <div v-if="shippingData && addressStore.selectedAddressId" class="mt-6">
+      <div v-if="shippingData && addressStore.selectedAddressId &&
+        (shippingData.hasVisibleSchedules || shippingData.isTehran)" class="mt-6">
         <h2 class="my-2 title-sm">{{ $t("checkout.deliveryTime") }} :</h2>
         <v-card class="pa-4 mt-2" variant="flat" rounded="lg">
           <p class="text-body-3 text-red-accent-4">{{ shippingData.description }}</p>
@@ -261,9 +275,17 @@ watch(isValid, (newValue) => {
                 @update:modelValue="handleDateTimeSelect" @schedule-selected="handleScheduleSelect" />
             </div>
           </div>
-
         </v-card>
       </div>
+      <div v-else-if="shippingData && addressStore.selectedAddressId &&
+        !shippingData.hasVisibleSchedules &&
+        !shippingData.isTehran" class="mt-6">
+        <v-card class="pa-4 mt-2" variant="flat" rounded="lg">
+          <p class="text-body-3 text-red-accent-4">{{ shippingData.description }}</p>
+        </v-card>
+      </div>
+
+
 
       <!-- Address management bottom sheet -->
       <v-bottom-sheet v-model="bottomSheetVisible">

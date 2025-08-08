@@ -21,14 +21,13 @@ const isHomePage = computed(() => route.path === '/')
   </teleport>
   <button id="install-button" v-if="isHomePage" style="display: none;
            position: fixed;
-           bottom: 1rem;
+           bottom: 1.5rem;
            right: 1rem;
            padding: 0.5rem 1rem;
            background: #fb4847;
            color: white;
-            border-radius: 20px;
            border: none;
-           border-radius: 4px;
+           border-radius: 100px;
            cursor: pointer;
            z-index: 10;">
     نصب اپلیکشن

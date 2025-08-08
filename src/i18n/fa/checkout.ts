@@ -5,7 +5,7 @@ export default {
   transport: "حمل و نقل",
   payment: "صورتحساب",
   sendTo: "ارسال به",
-  deliveryTime: "زمان تحویل",
+  deliveryTime: "توضیحات ",
   productsPrice: "قیمت کالاها",
   discount: "تخفیف",
   deliveryPrice: "هزینه ارسال",

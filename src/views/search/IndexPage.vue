@@ -10,7 +10,9 @@ import type { Category } from '@/types/dto/category'
 import { debounce } from 'lodash'
 import type { Product } from '@/types/dto/product'
 import { getSearchResultsService } from '@/services/carshenas/search'
+
 const { open: openDatabase, getDb, getStore, add } = useDatabaseStore()
+
 const products = ref<Product[]>()
 const categories = ref<Category[]>()
 const search = ref<string>()
@@ -22,9 +24,9 @@ const fetchSearchResults = async () => {
     categories.value = []
     return
   }
-  
+
   isLoading.value = true
-  
+
   try {
     const response = await getSearchResultsService(search.value)
     products.value = response.data.products || []
@@ -39,7 +41,8 @@ const fetchSearchResults = async () => {
 const onInput = debounce(fetchSearchResults, 1000)
 
 const updateSearch = (e: string) => {
-  search.value = e
+  search.value = e;
+  fetchSearchResults();
 }
 
 openDatabase('search', undefined, (db: IDBDatabase) => {
@@ -47,44 +50,39 @@ openDatabase('search', undefined, (db: IDBDatabase) => {
 })
 
 onBeforeRouteLeave(async (to, from, next) => {
-  if (
-    (to.name === 'ProductsPage' || to.name === 'ProductDetail') &&
-    search.value
-  ) {
-    const searchDb = await getDb('search')
-    const suggestions = getStore(searchDb, 'suggestions')
-    add(suggestions, { title: search.value, id: generateNumericId() })
+  const allowedRoutes = ['ProductsPage', 'ProductDetailPage']
+
+  if (typeof to.name === 'string' && allowedRoutes.includes(to.name) && search.value) {
+    try {
+      const searchDb = await getDb('search')
+      const suggestions = getStore(searchDb, 'suggestions')
+      await add(suggestions, {
+        title: search.value,
+        id: generateNumericId()
+      })
+    } catch (error) {
+      console.error('Error saving search suggestion:', error)
+    }
   }
+
   next()
 })
 </script>
+
+
 
 <template>
   <div class="h-100 d-flex flex-column bar-padding position-relative">
     <div class="fixed-bar pa-4 bg-surface">
       <div class="d-flex align-center">
         <v-app-bar-nav-icon icon="close" density="compact" @click="$router.back()" class="mr-2" />
-        
-        <v-text-field 
-          v-model="search" 
-          :placeholder="$t('shared.search')" 
-          variant="outlined" 
-          rounded 
-          hide-details
-          append-inner-icon="search" 
-          @input="onInput"
-          :loading="isLoading"
-          class="flex-grow-1"
-        />
+
+        <v-text-field v-model="search" :placeholder="$t('shared.search')" variant="outlined" rounded hide-details
+          append-inner-icon="search" @input="onInput" :loading="isLoading" class="flex-grow-1" />
       </div>
     </div>
 
-    <SearchSuggestions 
-      class="px-4" 
-      :title="search" 
-      @select="updateSearch" 
-      style="height: 68px" 
-    />
+    <SearchSuggestions class="px-4" :title="search" @select="updateSearch" style="height: 68px" />
 
     <!-- Loading state -->
     <div v-if="isLoading" class="loading-container">
@@ -93,9 +91,7 @@ onBeforeRouteLeave(async (to, from, next) => {
     </div>
 
     <!-- Search results -->
-    <template
-      v-else-if="search && search.length > 1 && (products?.length || categories?.length)"
-    >
+    <template v-else-if="search && search.length > 1 && (products?.length || categories?.length)">
       <div v-if="categories?.length">
         <h2 class="title-sm mt-6 px-4">
           {{
@@ -124,18 +120,11 @@ onBeforeRouteLeave(async (to, from, next) => {
         </RouterLink>
       </div>
 
-      <ProductList
-        class="mt-6"
-        :limit="4"
-        :filter="{ title: search }"
-        @update:filter="(newFilter) => search = newFilter.title || ''"
-      />
+      <ProductList class="mt-6" :limit="4" :filter="{ title: search }"
+        @update:filter="(newFilter) => search = newFilter.title || ''" />
     </template>
 
-    <div
-      v-else-if="!search || search.length < 2"
-      class="flex-grow-1 d-flex align-center"
-    >
+    <div v-else-if="!search || search.length < 2" class="flex-grow-1 d-flex align-center">
       <span class="w-100 text-center">
         {{ $t('search.whatProductAreYouLookingFor') }}
       </span>
