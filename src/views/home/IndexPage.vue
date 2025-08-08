@@ -29,31 +29,31 @@ const getMostViewedCategories = async () => {
 
 const scrollToBottom = () => {
 
-  
+
   setTimeout(() => {
 
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth'
     });
-    
+
     // Also try scrolling to footer element directly
     if (footerRef.value) {
-      footerRef.value.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'end' 
+      footerRef.value.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
       });
     }
-    
-    
-  }, 600); 
+
+
+  }, 600);
 };
 
 const toggleContactDetails = () => {
-  
+
   showContactDetails.value = !showContactDetails.value;
-  
-  
+
+
   // Scroll to bottom when expanding contact details
   if (showContactDetails.value) {
     scrollToBottom();
@@ -102,7 +102,7 @@ onMounted(() => getMostViewedCategories());
         <CategoryList :items :loading manual class="mt-4" />
       </section>
     </div>
-    
+
     <footer ref="footerRef" class="footer-container">
       <div class="d-flex justify-space-between align-center pa-4">
         <a class="pa-1  bg-red-lighten-5" referrerpolicy='origin' target='_blank'
@@ -111,47 +111,47 @@ onMounted(() => getMostViewedCategories());
             src='https://trustseal.enamad.ir/logo.aspx?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64' alt='eNamad'
             style='cursor:pointer' code='pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64' height="40">
         </a>
-        
+
         <v-btn variant="text" color="primary" @click="toggleContactDetails" class="contact-btn">
           {{ showContactDetails ? $t("shared.hideContact") : $t("shared.contactUs") }}
         </v-btn>
       </div>
-      
+
       <v-expand-transition>
         <div v-if="showContactDetails" class="contact-details text-right pa-4">
           <div class="contact-item">
             <strong>{{ $t("contactUs.emailLabel") }}:</strong>
             <a href="mailto:carshenas.shop@gmail.com">carshenas.shop@gmail.com</a>
           </div>
-          
+
           <div class="contact-item">
             <strong>{{ $t("contactUs.phoneLabel") }}:</strong>
             <a href="tel:09358766744">09358766744</a>
           </div>
-          
+
           <div class="contact-item">
             <strong>{{ $t("contactUs.phoneLabel") }}:</strong>
             <a href="tel:02133907543">021-33907543</a>
           </div>
-          
+
           <div class="contact-item">
             <strong>{{ $t("contactUs.addressLabel") }}:</strong>
             <span>خیابان امیر کبیر پاساژ کاشانی پلاک 107</span>
           </div>
-          
+
           <div class="contact-item">
             <strong>تلگرام:</strong>
             <a href="https://t.me/@Carshenas_support">@Carshenas_support</a>
           </div>
         </div>
       </v-expand-transition>
-      
-      <!-- Version number for cache identification -->
+
+      <!-- Version number -->
       <div class="version-info">
-        <span class="version-text">1.0.2</span>
+        <span class="version-text">1.0.31</span>
       </div>
     </footer>
-    
+
     <BrandFilterBottomSheet />
   </div>
 </template>
