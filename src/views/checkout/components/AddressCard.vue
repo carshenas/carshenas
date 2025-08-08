@@ -47,7 +47,6 @@ onMounted(async () => {
     addressStore.initializeDefaultAddress();
     if (addressStore.selectedAddressId) {
       isReceiveInPerson.value = false;
-      await loadShippingOptions(addressStore.selectedAddressId);
     }
   } catch (error) {
     console.error("Failed to fetch addresses:", error);
@@ -84,7 +83,6 @@ const selectAddress = async (addressId: number) => {
   console.log('selectAddress called with:', addressId);
   addressStore.setSelectedAddressId(addressId);
   isReceiveInPerson.value = false;
-  await loadShippingOptions(addressId);
 };
 
 const selectSchedule = (scheduleId: number) => {

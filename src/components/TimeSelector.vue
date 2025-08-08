@@ -40,7 +40,7 @@ const days = computed(() => {
     daysLength: props.shippingData?.days?.length,
     days: props.shippingData?.days
   });
-  
+
   if (!props.shippingData?.days) return [];
   return props.shippingData.days;
 });
@@ -101,13 +101,13 @@ const handleDaySelect = (dayData: ShippingDay) => {
       firstSchedule,
       timeRange: `${firstSchedule.startTime}-${firstSchedule.endTime}`
     });
-    
+
     selectedTime.value = `${firstSchedule.startTime}-${firstSchedule.endTime}`;
-    
+
     // Emit the schedule selection immediately
     console.log('TimeSelector - Emitting scheduleSelected:', firstSchedule.id);
     emit("scheduleSelected", firstSchedule.id);
-    
+
     // Also emit the combined value
     const value = `${dayData.datetime}T${firstSchedule.startTime}-${firstSchedule.endTime}`;
     console.log('TimeSelector - Emitting modelValue:', value);
@@ -137,21 +137,9 @@ const updateValue = (scheduleId: number) => {
 };
 
 // Watch for changes in shipping data to reset selections
-watch(() => props.shippingData, (newData, oldData) => {
-  console.log('TimeSelector - Shipping data changed:', {
-    oldData: oldData ? {
-      isTehran: oldData.isTehran,
-      hasVisibleSchedules: oldData.hasVisibleSchedules,
-      daysLength: oldData.days?.length
-    } : null,
-    newData: newData ? {
-      isTehran: newData.isTehran,
-      hasVisibleSchedules: newData.hasVisibleSchedules,
-      daysLength: newData.days?.length
-    } : null,
-    resettingSelections: true
-  });
-  
+watch(() => props.shippingData, () => {
+
+
   selectedDay.value = null;
   selectedTime.value = null;
 });
@@ -169,14 +157,12 @@ watch([selectedDay, selectedTime], ([newDay, newTime], [oldDay, oldTime]) => {
   <div class="time-selector">
     <!-- Step 1: Day Selection -->
     <div class="step day-selection" :class="{ 'step-completed': selectedDay }">
-      <h3 class="step-title">انتخاب روز تحویل</h3>
+      <h3 class="step-title">انتخاب روز </h3>
       <div class="scroll-container">
         <div class="scroll-content">
           <v-btn v-for="day in days" :key="day.datetime"
             :color="selectedDay === day.datetime ? 'primary' : 'grey-lighten-1'"
-            :variant="selectedDay === day.datetime ? 'flat' : 'outlined'" 
-            class="day-btn" 
-            @click="handleDaySelect(day)">
+            :variant="selectedDay === day.datetime ? 'flat' : 'outlined'" class="day-btn" @click="handleDaySelect(day)">
             <div class="d-flex flex-column align-center">
               <span class="text-caption">{{ day.weekday }}</span>
               <span class="text-body-2">{{ day.datetime }}</span>
@@ -188,13 +174,12 @@ watch([selectedDay, selectedTime], ([newDay, newTime], [oldDay, oldTime]) => {
 
     <!-- Step 2: Time Selection - Only show if not auto-selecting -->
     <div v-if="selectedDay && !shouldAutoSelectTime" class="step time-selection">
-      <h3 class="step-title">انتخاب زمان تحویل</h3>
+      <h3 class="step-title">انتخاب زمان </h3>
       <div class="scroll-container">
         <div class="scroll-content">
           <v-btn v-for="time in times" :key="time.id"
             :color="selectedTime === time.timeRange ? 'primary' : 'grey-lighten-1'"
-            :variant="selectedTime === time.timeRange ? 'flat' : 'outlined'" 
-            class="time-btn"
+            :variant="selectedTime === time.timeRange ? 'flat' : 'outlined'" class="time-btn"
             @click="handleTimeSelect(time)">
             {{ time.timeRange }}
           </v-btn>
@@ -204,7 +189,6 @@ watch([selectedDay, selectedTime], ([newDay, newTime], [oldDay, oldTime]) => {
 
     <!-- Show selected time for Tehran auto-selection -->
     <div v-if="selectedDay && shouldAutoSelectTime && selectedTime" class="step auto-selected-time">
-      <h3 class="step-title">زمان تحویل</h3>
       <v-chip color="primary" variant="text" size="large">
         {{ selectedTime }}
       </v-chip>

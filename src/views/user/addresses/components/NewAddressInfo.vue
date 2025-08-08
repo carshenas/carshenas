@@ -41,6 +41,7 @@ const positiveInteger = (value: string) => {
 }
 
 const postalCodeValidation = (value: string) => {
+  // if (!value) return true // Make it optional by returning true if empty
   const regex = /^[13-9]{4}[1346-9][013-9]{5}$/
   return regex.test(value) || 'کد پستی درست وارد کنید'
 }
@@ -106,7 +107,7 @@ const handleSubmit = async () => {
 
           <v-col>
             <v-text-field v-model="postalCode" type="tel" class="pa-1" :label="$t('user.postalCode')" variant="outlined"
-              :rules="[postalCodeValidation]" maxlength="10" prepend-inner-icon="mdi-mailbox-outline" />
+              :rules="[postalCodeValidation]" maxlength="10"  />
           </v-col>
         </v-row>
       </div>
