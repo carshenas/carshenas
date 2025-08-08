@@ -32,11 +32,24 @@ onMounted(async () => {
 const calculateDiscountAmount = computed(() => {
   if (!appliedDiscount.value) return 0
   
-  const totalPrice = cartStore.payableAmount + cartStore.deliveryPriceComputed
+  // Don't include delivery price in discount calculation if it's -1
+  const basePrice = cartStore.payableAmount
+  const deliveryPrice = cartStore.deliveryPriceComputed === -1 ? 0 : cartStore.deliveryPriceComputed
+  const totalPrice = basePrice + deliveryPrice
+  
   if (appliedDiscount.value.type === 'Percentage') {
     return (totalPrice * appliedDiscount.value.amount) / 100
   }
   return appliedDiscount.value.amount
+})
+
+// Computed for final payable amount
+const finalPayableAmount = computed(() => {
+  const basePrice = cartStore.payableAmount
+  const deliveryPrice = cartStore.deliveryPriceComputed === -1 ? 0 : cartStore.deliveryPriceComputed
+  const discountAmount = calculateDiscountAmount.value
+  
+  return (basePrice + deliveryPrice) - discountAmount
 })
 
 const applyDiscountCode = async () => {
@@ -121,9 +134,13 @@ const removeDiscount = () => {
         unit-class="body-sm text-outline" class="d-flex justify-end body-md" />
     </div>
 
+    <!-- Delivery Price Row - Conditional Display -->
     <div class="d-flex justify-space-between">
       <p class="label-md text-outline">{{ $t('checkout.deliveryPrice') }}</p>
-      <CurrencyDisplay :value="cartStore.deliveryPriceComputed" value-class="text-primary font-weight-bold"
+      <div v-if="cartStore.deliveryPriceComputed === -1" class="d-flex justify-end body-md">
+        <span class="text-primary font-weight-bold">پس کرایه</span>
+      </div>
+      <CurrencyDisplay v-else :value="cartStore.deliveryPriceComputed" value-class="text-primary font-weight-bold"
         unit-class="body-sm text-outline" class="d-flex justify-end body-md" />
     </div>
 
@@ -137,10 +154,8 @@ const removeDiscount = () => {
 
     <div class="d-flex justify-space-between">
       <p class="label-md">{{ $t('checkout.payable') }} :</p>
-      <CurrencyDisplay
-        :value="(cartStore.payableAmount + cartStore.deliveryPriceComputed) - calculateDiscountAmount"
-        value-class="text-primary font-weight-bold" unit-class="body-sm text-outline"
-        class="d-flex justify-end body-md" />
+      <CurrencyDisplay :value="finalPayableAmount" value-class="text-primary font-weight-bold" 
+        unit-class="body-sm text-outline" class="d-flex justify-end body-md" />
     </div>
   </v-container>
 </template>

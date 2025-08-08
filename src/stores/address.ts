@@ -1,10 +1,7 @@
-// src/stores/address.ts
+// In address.ts store
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-
 import type { Address } from "@/types/dto/addresses";
-
-// Remove the local interface since we're importing it
 
 export const useAddressStore = defineStore("address", () => {
   // State
@@ -12,20 +9,25 @@ export const useAddressStore = defineStore("address", () => {
   const selectedAddressId = ref<number | null>(null);
   const loading = ref(false);
   const selectedShipping = ref<number | null>(null);
+  // Add shipping data to store to track schedule requirements
+  const currentShippingData = ref<any>(null);
 
   // Getters
   const selectedAddress = computed(() =>
     addressList.value.find((address) => address.id === selectedAddressId.value)
   );
-  const setSelectedShipping = (shipping: number | null) => {
-    selectedShipping.value = shipping;
-  };
-  const resetSelectedShipping = () => {
-    selectedShipping.value = null;
-  };
+
   const defaultAddress = computed(() =>
     addressList.value.find((address) => address.isDefault)
   );
+
+  // Schedule is required when both conditions are true:
+  // - has_visible_schedules is true OR is_tehran is true
+  const isScheduleRequired = computed(() => {
+    if (!currentShippingData.value) return false;
+    
+    return currentShippingData.value.hasVisibleSchedules || currentShippingData.value.isTehran;
+  });
 
   // Actions
   const setAddressList = (addresses: Address[]) => {
@@ -38,6 +40,23 @@ export const useAddressStore = defineStore("address", () => {
 
   const addAddress = (address: Address) => {
     addressList.value.push(address);
+  };
+
+  const setSelectedShipping = (shipping: number | null) => {
+    selectedShipping.value = shipping;
+  };
+
+  const resetSelectedShipping = () => {
+    selectedShipping.value = null;
+  };
+
+  const setScheduleNotRequired = () => {
+    selectedShipping.value = -1; // Use -1 to indicate "no schedule needed but valid"
+  };
+
+  // Add method to set shipping data
+  const setCurrentShippingData = (data: any) => {
+    currentShippingData.value = data;
   };
 
   const updateAddress = (updatedAddress: Address) => {
@@ -69,10 +88,12 @@ export const useAddressStore = defineStore("address", () => {
     selectedAddressId,
     loading,
     selectedShipping,
+    currentShippingData,
 
     // Getters
     selectedAddress,
     defaultAddress,
+    isScheduleRequired,
 
     // Actions
     setAddressList,
@@ -83,6 +104,7 @@ export const useAddressStore = defineStore("address", () => {
     deleteAddress,
     initializeDefaultAddress,
     resetSelectedShipping,
-
+    setScheduleNotRequired,
+    setCurrentShippingData,
   };
 });

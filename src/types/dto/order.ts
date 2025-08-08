@@ -18,7 +18,7 @@
 export interface OrderRequest {
   variants: OrderItem[];
   location: number;
-  shipping: number;
+  shipping: number | null;
   discount?: string;
 }
 export interface OrderItem {
@@ -73,6 +73,8 @@ export interface ShippingResponse {
   cost: number;
   description: string;
   days: ShippingDay[];
+  hasVisibleSchedules: boolean;
+  isTehran: boolean;
 }
 
 export interface DiscountResponse {
