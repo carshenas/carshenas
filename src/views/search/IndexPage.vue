@@ -57,7 +57,7 @@ onBeforeRouteLeave(async (to, from, next) => {
       const searchDb = await getDb('search')
       const suggestions = getStore(searchDb, 'suggestions')
       await add(suggestions, {
-        title: search.value,
+        name: search.value,
         id: generateNumericId()
       })
     } catch (error) {
@@ -120,7 +120,7 @@ onBeforeRouteLeave(async (to, from, next) => {
         </RouterLink>
       </div>
 
-      <ProductList class="mt-6" :limit="4" :filter="{ title: search }"
+      <ProductList class="mt-6" :limit="4" :filter="{ name: search }"
         @update:filter="(newFilter) => search = newFilter.title || ''" />
     </template>
 
