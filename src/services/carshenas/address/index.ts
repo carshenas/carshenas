@@ -7,13 +7,35 @@ export const getAddressService = (lat: number, lng: number) =>
 
 export const sendAddressService = (body: SendAddress) => {
   const formData = new FormData();
-  formData.append("name", body.name);
-  formData.append("address", body.address);
-  formData.append("postal_code", body.postalCode);
-  formData.append("latitude", body.latitude.toString());
-  formData.append("longitude", body.longitude.toString());
-  formData.append("is_default	", body.isDefault.toString());
-  formData.append("receiver_name", body.receiverName || "");
+  
+  // Only append if value exists and is not empty
+  if (body.name) {
+    formData.append("name", body.name);
+  }
+  
+  if (body.address) {
+    formData.append("address", body.address);
+  }
+  
+  if (body.postalCode) {
+    formData.append("postal_code", body.postalCode);
+  }
+  
+  if (body.latitude !== undefined && body.latitude !== null) {
+    formData.append("latitude", body.latitude.toString());
+  }
+  
+  if (body.longitude !== undefined && body.longitude !== null) {
+    formData.append("longitude", body.longitude.toString());
+  }
+  
+  if (body.isDefault !== undefined && body.isDefault !== null) {
+    formData.append("is_default", body.isDefault.toString());
+  }
+  
+  if (body.receiverName) {
+    formData.append("receiver_name", body.receiverName);
+  }
 
   return carshenasService.post<{
     id: number;
