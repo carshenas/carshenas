@@ -4,7 +4,7 @@ import { updateFeedback } from "@/services/carshenas/feedback";
 import { useUserStore } from "@/stores/user";
 
 const props = defineProps<{
-  comments: { user: string; score: 5; date: string; comment: string }[];
+  comments: { user: string; score: number; date: string; comment: string }[];
   id: number;
 }>();
 
@@ -18,10 +18,10 @@ const hasCommented = ref(false);
 const checkUserComment = () => {
   const userStore = useUserStore();
   const currentUser = userStore.user;
-  
+
   if (currentUser && props.comments) {
     // Check if any comment has the current user's name
-    hasCommented.value = props.comments.some(comment => 
+    hasCommented.value = props.comments.some(comment =>
       comment.user === `${currentUser.firstName} ${currentUser.lastName}`
     );
   }
@@ -99,7 +99,8 @@ const handleSubmit = async () => {
 
               <span>{{ comment.date }}</span>
             </div>
-            <v-rating disabled color="orange-lighten-1" density="compact" v-model="comment.score"></v-rating>
+            <v-rating v-if="comment.score !== 0" disabled color="orange-lighten-1" density="compact"
+              v-model="comment.score"></v-rating>
           </div>
         </div>
         <p>{{ comment.comment }}</p>

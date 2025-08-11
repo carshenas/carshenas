@@ -23,6 +23,7 @@ export type Product = ProductWithImage | ProductWithImages;
 
 export interface ProductFilter {
   title?: string;
+  name?:string;
   vehicleName?: string;
   categoryName?: string;
 }
