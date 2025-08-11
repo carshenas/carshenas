@@ -35,13 +35,16 @@ const receiverName = ref('') // Added receiver name field
 
 const requiredRule = (value: string) => !!value || 'لطفا آدرس خود را بنویسد'
 
+// Made optional by checking if value exists first
 const positiveInteger = (value: string) => {
+  if (!value) return true // Optional field
   const intValue = parseInt(value)
-  return (Number.isInteger(intValue) && intValue >= 0) || 'وارد کنید '
+  return (Number.isInteger(intValue) && intValue >= 0) || 'عدد صحیح مثبت وارد کنید'
 }
 
+// Made optional by checking if value exists first
 const postalCodeValidation = (value: string) => {
-  // if (!value) return true // Make it optional by returning true if empty
+  if (!value) return true // Optional field
   const regex = /^[13-9]{4}[1346-9][013-9]{5}$/
   return regex.test(value) || 'کد پستی درست وارد کنید'
 }
@@ -50,8 +53,12 @@ const receiverNameValidation = (value: string) => {
   if (!value) return true // Make it optional
   return value.length >= 2 || 'نام تحویل گیرنده باید حداقل ۲ کاراکتر باشد'
 }
+
 const concatenatedAddress = computed(() => {
-  return `${address.value} پلاک: ${plaque.value} واحد: ${unit.value}`
+  let result = address.value
+  if (plaque.value) result += ` پلاک: ${plaque.value}`
+  if (unit.value) result += ` واحد: ${unit.value}`
+  return result
 })
 
 const handleSubmit = async () => {
