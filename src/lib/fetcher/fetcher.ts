@@ -3,6 +3,14 @@ import { generateURL, mergeOptions } from "./helpers";
 import { useUserStore } from "@/stores/user";
 import { useSnackbar } from "@/stores/snackbar";
 
+// Global state for token refresh management
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+const failedQueue: Array<{
+  resolve: (value: boolean) => void;
+  reject: (reason?: any) => void;
+}> = [];
+
 const useFetch = async <R = unknown, D = unknown>(
   path: FetchPath,
   options?: FetcherOptions
@@ -21,10 +29,11 @@ const useFetch = async <R = unknown, D = unknown>(
       return {
         status: response.status,
         statusText: response.statusText,
-        data: null as unknown as R, // Null data for responses with no content
+        data: null as unknown as R,
         headers: response.headers,
       };
     }
+
     const responseClone = response.clone();
     responseClone.json().catch((err) => {
       console.log("Failed to parse response:", err);
@@ -57,18 +66,6 @@ const statusChecker = async <R>(
   });
 
   const responseBody = await responseForLogging.json();
-  // console.log("Full Response:", {
-  //   response: {
-  //     type: response.type,
-  //     url: response.url,
-  //     redirected: response.redirected,
-  //     status: response.status,
-  //     ok: response.ok,
-  //     statusText: response.statusText,
-  //     headers,
-  //     body: responseBody,
-  //   },
-  // });
 
   if (response.ok) {
     return Promise.resolve(await formattedResponse<R>(response));
@@ -84,9 +81,22 @@ const statusChecker = async <R>(
     console.warn(
       `401 Unauthorized at ${response.url}. Attempting to refresh token.`
     );
-    const refreshed = await refreshAccessToken();
+    
+    // Handle token refresh with queue
+    const refreshed = await handleTokenRefresh();
+    
     if (refreshed) {
-      const retriedResponse = await fetch(originalUrl, originalOptions);
+      // Update the Authorization header with the new token
+      const { user } = useUserStore();
+      const updatedOptions = {
+        ...originalOptions,
+        headers: {
+          ...originalOptions.headers,
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      
+      const retriedResponse = await fetch(originalUrl, updatedOptions);
       if (retriedResponse.ok) {
         return Promise.resolve(await formattedResponse<R>(retriedResponse));
       }
@@ -97,15 +107,57 @@ const statusChecker = async <R>(
   throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
 };
 
+const handleTokenRefresh = async (): Promise<boolean> => {
+  // If already refreshing, wait for the current refresh to complete
+  if (isRefreshing) {
+    return new Promise((resolve, reject) => {
+      failedQueue.push({ resolve, reject });
+    });
+  }
+
+  // If there's already a refresh promise, return it
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  // Start the refresh process
+  isRefreshing = true;
+  refreshPromise = refreshAccessToken();
+
+  try {
+    const result = await refreshPromise;
+    
+    // Process the failed queue
+    if (result) {
+      // Success: resolve all waiting requests
+      failedQueue.forEach(({ resolve }) => resolve(true));
+    } else {
+      // Failure: reject all waiting requests
+      failedQueue.forEach(({ reject }) => reject(new Error('Token refresh failed')));
+    }
+    
+    // Clear the queue
+    failedQueue.length = 0;
+    
+    return result;
+  } finally {
+    // Reset the refresh state
+    isRefreshing = false;
+    refreshPromise = null;
+  }
+};
+
 const refreshAccessToken = async (): Promise<boolean> => {
   try {
     const refreshUrl = "https://api.carshenas.shop/user/refresh/";
     const { user, wipeUserData, updateStoredData } = useUserStore();
     const refreshToken = user.refreshToken;
+    
     if (!refreshToken) {
       console.error("No refresh token available in user store.");
       return false;
     }
+    
     const refreshOptions = {
       method: "POST",
       headers: {
@@ -113,18 +165,29 @@ const refreshAccessToken = async (): Promise<boolean> => {
         Authorization: `Bearer ${refreshToken}`,
       },
     };
+    
     const response = await fetch(refreshUrl, refreshOptions);
+    
     if (response.ok) {
       const { access, refresh } = await response.json();
+      
+      // Update tokens atomically
       user.token = access;
       user.refreshToken = refresh;
       updateStoredData();
+      
+      console.log("Token refreshed successfully");
       return true;
     } else {
-      wipeUserData();
       console.error(
         `Failed to refresh token: ${response.status} ${response.statusText}`
       );
+      
+      // Only wipe user data if it's a client error (4xx)
+      if (response.status >= 400 && response.status < 500) {
+        wipeUserData();
+      }
+      
       return false;
     }
   } catch (error) {
