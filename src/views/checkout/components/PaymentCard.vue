@@ -32,15 +32,15 @@ onMounted(async () => {
 const calculateDiscountAmount = computed(() => {
   if (!appliedDiscount.value) return 0
   
-  // Don't include delivery price in discount calculation if it's -1
+  // Only apply discount to the product price, not delivery
   const basePrice = cartStore.payableAmount
-  const deliveryPrice = cartStore.deliveryPriceComputed === -1 ? 0 : cartStore.deliveryPriceComputed
-  const totalPrice = basePrice + deliveryPrice
   
   if (appliedDiscount.value.type === 'Percentage') {
-    return (totalPrice * appliedDiscount.value.amount) / 100
+    return (basePrice * appliedDiscount.value.amount) / 100
   }
-  return appliedDiscount.value.amount
+  
+  // For fixed amount discount, make sure it doesn't exceed the product price
+  return Math.min(appliedDiscount.value.amount, basePrice)
 })
 
 // Computed for final payable amount
