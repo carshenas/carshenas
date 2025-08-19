@@ -104,7 +104,9 @@ useOnBack((_, _2, next) => {
   if (!step.value) next()
   else {
     next(false)
-    step.value--
+    step.value--,
+    props.phoneNumber = null
+
   }
 })
 </script>
