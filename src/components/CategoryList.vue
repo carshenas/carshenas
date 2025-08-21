@@ -54,23 +54,15 @@ onMounted(() => {
 
 <template>
   <v-row class="align-start" v-if="!_loading && !props.loading" no-gutters>
-    <v-col
-      v-for="category in limitedCategories"
-      :key="category.id"
-      cols="3"
-      class="d-flex justify-center"
-    >
-      <router-link
-        class="category w-100 d-flex flex-column justify-center align-center"
-        :to="{ name: 'ProductsPage', query: { 
+    <v-col v-for="category in limitedCategories" :key="category.id" cols="3" class="d-flex justify-center">
+      <router-link class="category w-100 d-flex flex-column justify-center align-center" :to="{
+        name: 'ProductsPage', query: {
           category: category.id,
-          categoryName: category.name 
-        } }"
-      >
-        <div
-          class="icon w-100 bg-category rounded-circle d-flex justify-center align-center"
-        >
-          <ImageLoader :src="category.image" :alt="category.name" width="44" />
+          categoryName: category.name
+        }
+      }">
+        <div class="icon w-100 bg-category rounded-circle d-flex justify-center align-center">
+          <ImageLoader :src="category.image" :alt="category.name" width="120" class="catag_image" />
         </div>
 
         <span class="title mt-2 text-text w-100">{{ category.name }}</span>
@@ -85,7 +77,7 @@ onMounted(() => {
   </v-row>
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss" >
 .bg-category {
   background: #ffeee4;
 }
@@ -103,6 +95,17 @@ onMounted(() => {
     font-weight: 500;
     text-wrap: wrap;
     text-align: center;
+  }
+}
+
+.catag_image {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+
+  img {
+    width: 84px;
+    margin: -8px;
   }
 }
 </style>

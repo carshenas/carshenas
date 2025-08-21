@@ -2,7 +2,7 @@
 import CategoryList from "@/components/CategoryList.vue";
 import PopularModels from "./components/PopularModels.vue";
 import BannerCarousel from "@/components/BannerCarousel.vue";
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref } from "vue";
 import { getMostViewedCategoriesService } from "@/services/carshenas/category";
 import type { Category } from "@/types/dto/category";
 import BrandFilterBottomSheet from '@/views/product/list/components/BrandFilterBottomSheet.vue'
@@ -12,26 +12,47 @@ const loading = ref<boolean>();
 const showContactDetails = ref(false);
 const error = ref<string | null>(null);
 const footerRef = ref<HTMLElement>();
+const retryAttempts = ref<number>(0);
+const maxRetries = 3;
 
-const getMostViewedCategories = async () => {
-  loading.value = true;
-  error.value = null;
+const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+
+const getMostViewedCategories = async (isRetry: boolean = false): Promise<void> => {
+  if (!isRetry) {
+    retryAttempts.value = 0;
+    loading.value = true;
+    error.value = null;
+  }
+
   try {
     const response = await getMostViewedCategoriesService();
     items.value = response.data;
+    // Reset retry counter on success
+    retryAttempts.value = 0;
+    error.value = null;
   } catch (e) {
-    error.value = 'خطا در بارگذاری دسته‌بندی‌ها. لطفا دوباره تلاش کنید.';
-    console.error(e);
+    console.error(`Attempt ${retryAttempts.value + 1} failed:`, e);
+    retryAttempts.value++;
+
+    if (retryAttempts.value < maxRetries) {
+      // Wait for a short delay before retrying (exponential backoff)
+      const delay = Math.pow(2, retryAttempts.value) * 1000; // 1s, 2s, 4s
+      console.log(`Retrying in ${delay}ms... (attempt ${retryAttempts.value}/${maxRetries})`);
+
+      await sleep(delay);
+      return await getMostViewedCategories(true);
+    } else {
+      // All retries exhausted, show error to user
+      error.value = 'خطا در بارگذاری دسته‌بندی‌ها. لطفا دوباره تلاش کنید.';
+      console.error('All retry attempts failed');
+    }
   } finally {
     loading.value = false;
   }
 };
 
-const scrollToBottom = () => {
-
-
+const scrollToBottom = (): void => {
   setTimeout(() => {
-
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth'
@@ -44,15 +65,11 @@ const scrollToBottom = () => {
         block: 'end'
       });
     }
-
-
   }, 600);
 };
 
-const toggleContactDetails = () => {
-
+const toggleContactDetails = (): void => {
   showContactDetails.value = !showContactDetails.value;
-
 
   // Scroll to bottom when expanding contact details
   if (showContactDetails.value) {
@@ -64,6 +81,8 @@ const toggleContactDetails = () => {
 
 onMounted(() => getMostViewedCategories());
 </script>
+
+
 
 <template>
   <div class="pa-4 pb-0 d-flex flex-column h-100 justify-space-between">
