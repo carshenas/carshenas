@@ -2,7 +2,7 @@
 import CategoryList from "@/components/CategoryList.vue";
 import PopularModels from "./components/PopularModels.vue";
 import BannerCarousel from "@/components/BannerCarousel.vue";
-import { onMounted, ref, nextTick } from "vue";
+import { onMounted, ref } from "vue";
 import { getMostViewedCategoriesService } from "@/services/carshenas/category";
 import type { Category } from "@/types/dto/category";
 import BrandFilterBottomSheet from '@/views/product/list/components/BrandFilterBottomSheet.vue'
@@ -15,9 +15,9 @@ const footerRef = ref<HTMLElement>();
 const retryAttempts = ref<number>(0);
 const maxRetries = 3;
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
-const getMostViewedCategories = async (isRetry: boolean = false) => {
+const getMostViewedCategories = async (isRetry: boolean = false): Promise<void> => {
   if (!isRetry) {
     retryAttempts.value = 0;
     loading.value = true;
@@ -51,7 +51,7 @@ const getMostViewedCategories = async (isRetry: boolean = false) => {
   }
 };
 
-const scrollToBottom = () => {
+const scrollToBottom = (): void => {
   setTimeout(() => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
@@ -68,7 +68,7 @@ const scrollToBottom = () => {
   }, 600);
 };
 
-const toggleContactDetails = () => {
+const toggleContactDetails = (): void => {
   showContactDetails.value = !showContactDetails.value;
 
   // Scroll to bottom when expanding contact details
@@ -81,6 +81,7 @@ const toggleContactDetails = () => {
 
 onMounted(() => getMostViewedCategories());
 </script>
+
 
 
 <template>
