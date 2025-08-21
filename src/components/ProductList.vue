@@ -85,7 +85,13 @@ onUnmounted(() => {
 defineExpose({
   debugLogs,
   resetList,
-});
+}); const handleClearFilters = () => {
+  // Clear all query parameters
+  router.push({ query: {} });
+
+  // Emit empty filter object
+  emit('update:filter', {});
+};
 </script>
 
 <template>
@@ -112,7 +118,6 @@ defineExpose({
 
               <!-- Vehicle Badges -->
 
-
               <p class="body-sm mt-2 text-outline">{{ product.description }}</p>
 
               <div class="mt-2 flex-grow-1 d-flex justify-space-between align-end">
@@ -124,20 +129,12 @@ defineExpose({
                       :key="vehicle" color="deep-orange" size="small" class=" text-caption font-weight-medium">
                       {{ vehicle }}
                     </v-chip>
-                    <v-chip rounded="lg" variant="tonal" v-if="getVehicleBadges(product.vehicles).hasMore" size="small" color="deep-orange"
-                      class="text-caption font-weight-medium">
+                    <v-chip rounded="lg" variant="tonal" v-if="getVehicleBadges(product.vehicles).hasMore" size="small"
+                      color="deep-orange" class="text-caption font-weight-medium">
                       غیره
                     </v-chip>
                   </div>
                 </div>
-                <!-- <v-btn
-                  :text="$t('shared.more')"
-                  variant="plain"
-                  class="px-0"
-                  append-icon="chevron_left"
-                  density="compact"
-                  @click.stop
-                /> -->
               </div>
             </v-col>
           </v-row>
@@ -153,11 +150,24 @@ defineExpose({
       </template>
 
       <template #empty>
-        <div style="height: 24px"></div>
+        <!-- Empty State -->
+        <div class="empty-state d-flex flex-column align-center justify-center pa-8 text-center">
+          <h3 class="text-h6 text-grey-darken-1 mb-2">
+            محصولی برای نمایش وجود ندارد
+          </h3>
+          <p class="text-body-2 text-grey mb-4">
+            متاسفانه هیچ محصولی با فیلترهای انتخابی شما پیدا نشد
+          </p>
+          <v-btn v-if="props.filter && Object.keys(props.filter).length > 0" variant="outlined" color="primary"
+            @click="handleClearFilters" class="mt-2">
+            پاک کردن فیلترها
+          </v-btn>
+        </div>
       </template>
     </v-infinite-scroll>
   </div>
 </template>
+
 
 <style scoped>
 .centered-input {
@@ -170,5 +180,9 @@ defineExpose({
 
 .gap-1 {
   gap: 2px;
+}
+
+.empty-state {
+  min-height: 300px;
 }
 </style>
