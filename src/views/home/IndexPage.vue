@@ -12,26 +12,47 @@ const loading = ref<boolean>();
 const showContactDetails = ref(false);
 const error = ref<string | null>(null);
 const footerRef = ref<HTMLElement>();
+const retryAttempts = ref<number>(0);
+const maxRetries = 3;
 
-const getMostViewedCategories = async () => {
-  loading.value = true;
-  error.value = null;
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const getMostViewedCategories = async (isRetry: boolean = false) => {
+  if (!isRetry) {
+    retryAttempts.value = 0;
+    loading.value = true;
+    error.value = null;
+  }
+
   try {
     const response = await getMostViewedCategoriesService();
     items.value = response.data;
+    // Reset retry counter on success
+    retryAttempts.value = 0;
+    error.value = null;
   } catch (e) {
-    error.value = 'خطا در بارگذاری دسته‌بندی‌ها. لطفا دوباره تلاش کنید.';
-    console.error(e);
+    console.error(`Attempt ${retryAttempts.value + 1} failed:`, e);
+    retryAttempts.value++;
+
+    if (retryAttempts.value < maxRetries) {
+      // Wait for a short delay before retrying (exponential backoff)
+      const delay = Math.pow(2, retryAttempts.value) * 1000; // 1s, 2s, 4s
+      console.log(`Retrying in ${delay}ms... (attempt ${retryAttempts.value}/${maxRetries})`);
+
+      await sleep(delay);
+      return await getMostViewedCategories(true);
+    } else {
+      // All retries exhausted, show error to user
+      error.value = 'خطا در بارگذاری دسته‌بندی‌ها. لطفا دوباره تلاش کنید.';
+      console.error('All retry attempts failed');
+    }
   } finally {
     loading.value = false;
   }
 };
 
 const scrollToBottom = () => {
-
-
   setTimeout(() => {
-
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth'
@@ -44,15 +65,11 @@ const scrollToBottom = () => {
         block: 'end'
       });
     }
-
-
   }, 600);
 };
 
 const toggleContactDetails = () => {
-
   showContactDetails.value = !showContactDetails.value;
-
 
   // Scroll to bottom when expanding contact details
   if (showContactDetails.value) {
@@ -64,6 +81,7 @@ const toggleContactDetails = () => {
 
 onMounted(() => getMostViewedCategories());
 </script>
+
 
 <template>
   <div class="pa-4 pb-0 d-flex flex-column h-100 justify-space-between">
