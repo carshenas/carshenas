@@ -78,10 +78,11 @@ const getOTP = async () => {
   try {
     const body = new FormData()
     body.append('phone_number', formData.phoneNumber!)
-    
-    const response = await getOTPService(body as GetOTPBody)
 
+    const response = await getOTPService(body as GetOTPBody)
+    console.log('OTP Response:', response)
     formData.otpExpireTime = response.data.otpExp
+    console.log('Received OTP Expire Time:', formData.otpExpireTime)
     step.value++
   } catch (e) {
     console.error('Failed to get OTP:', e)
@@ -97,9 +98,9 @@ const sendOTP = async (otp: string) => {
     const body = new FormData()
     body.append('phone_number', formData.phoneNumber!)
     body.append('otp', otp)
-    
+
     const response = await validateOTPService(body as ValidateOTPBody)
-    
+
     // Update user store
     userStore.user.token = response.data.access
     userStore.user.refreshToken = response.data.refresh
@@ -108,13 +109,13 @@ const sendOTP = async (otp: string) => {
 
     // Close bottom sheet
     close()
-    
+
     // Emit complete event
     emit('complete', { phoneNumber: formData.phoneNumber! })
-    
+
     // Show success message
     snackbarStore.show(t('message.loginSuccessfully'))
-    
+
     // Handle redirect if needed
     if (route.query.redirect) {
       router.replace(route.query.redirect as string)
@@ -149,46 +150,24 @@ const handleResendOTP = async () => {
 </script>
 
 <template>
-  <v-bottom-sheet
-    v-model="isOpen"
-    persistent
-    :scrim="true"
-    :max-height="600"
-  >
+  <v-bottom-sheet v-model="isOpen" persistent :scrim="true" :max-height="600">
     <v-card>
       <!-- Header with close button -->
       <v-card-title class="d-flex align-center justify-space-between">
         <span class="text-h6">
           {{ step === 0 ? $t('auth.login') : $t('auth.verificationCode') }}
         </span>
-        <v-btn
-          icon="close"
-          variant="text"
-          size="small"
-          @click="close"
-          :disabled="loading"
-        />
+        <v-btn icon="close" variant="text" size="small" @click="close" :disabled="loading" />
       </v-card-title>
 
       <!-- Form content -->
       <v-card-text>
         <v-form ref="form" @submit.prevent="next">
-          <FirstStep 
-            v-if="step === 0"
-            :modelValue="formData.phoneNumber"
-            :loading="loading"
-            @update:modelValue="updatePhoneNumber"
-          />
-          
-          <SecondStep 
-            v-else
-            :phoneNumber="formData.phoneNumber!"
-            :otpExpireTime="formData.otpExpireTime!"
-            :loading="loading"
-            @back="goBack"
-            @submit-otp="sendOTP"
-            @resend="handleResendOTP"
-          />
+          <FirstStep v-if="step === 0" :modelValue="formData.phoneNumber" :loading="loading"
+            @update:modelValue="updatePhoneNumber" />
+
+          <SecondStep v-else :phoneNumber="formData.phoneNumber!" :otpExpireTime="formData.otpExpireTime!"
+            :loading="loading" @back="goBack" @submit-otp="sendOTP" @resend="handleResendOTP" />
         </v-form>
       </v-card-text>
     </v-card>
