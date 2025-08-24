@@ -1,5 +1,7 @@
 import { registerPlugins } from '@/plugins'
 import { createApp } from 'vue'
+import { MotionPlugin } from '@vueuse/motion'
+
 import App from './App.vue'
 import './pwa' // Import PWA logic
 
@@ -7,6 +9,7 @@ import './pwa' // Import PWA logic
 import '@/assets/styles/main.scss'
 
 const app = createApp(App)
+app.use(MotionPlugin)
 
 // Define interfaces for install prompt
 interface BeforeInstallPromptEvent extends Event {
@@ -32,7 +35,7 @@ async function installApp(): Promise<void> {
             const { outcome } = await deferredPrompt.userChoice;
             console.log(`User response: ${outcome}`);
             deferredPrompt = null;
-            
+
             const installButton = document.getElementById('install-button');
             if (installButton) installButton.style.display = 'none';
         } catch (error) {
@@ -57,7 +60,7 @@ function showInstallButton(): void {
 document.addEventListener('DOMContentLoaded', () => {
     installPromptTimeout = setTimeout(() => {
         console.log('⏱️ No install prompt after 10 seconds');
-        
+
         if (window.matchMedia('(display-mode: standalone)').matches) {
             console.log('ℹ️ PWA is already installed');
         } else {
@@ -70,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('🎉 beforeinsallprompt event fired!');
         clearTimeout(installPromptTimeout);
         e.preventDefault();
-        
+
         deferredPrompt = e as BeforeInstallPromptEvent;
         console.log('Available platforms:', deferredPrompt.platforms);
         showInstallButton();
