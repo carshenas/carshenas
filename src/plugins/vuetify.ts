@@ -50,7 +50,7 @@ export default createVuetify({
           "on-background": "#262626",
           text: "#262626",
           "on-text": "#ffffff",
-          surface: "#f3f3f3",
+          surface: "#f9f9f9",
 
           "on-surface": "#242424",
           success: "#4bb543",
