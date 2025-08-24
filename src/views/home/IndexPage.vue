@@ -27,7 +27,6 @@ const getMostViewedCategories = async (isRetry: boolean = false): Promise<void> 
   try {
     const response = await getMostViewedCategoriesService();
     items.value = response.data;
-    // Reset retry counter on success
     retryAttempts.value = 0;
     error.value = null;
   } catch (e) {
@@ -35,14 +34,11 @@ const getMostViewedCategories = async (isRetry: boolean = false): Promise<void> 
     retryAttempts.value++;
 
     if (retryAttempts.value < maxRetries) {
-      // Wait for a short delay before retrying (exponential backoff)
-      const delay = Math.pow(2, retryAttempts.value) * 1000; // 1s, 2s, 4s
+      const delay = Math.pow(2, retryAttempts.value) * 1000;
       console.log(`Retrying in ${delay}ms... (attempt ${retryAttempts.value}/${maxRetries})`);
-
       await sleep(delay);
       return await getMostViewedCategories(true);
     } else {
-      // All retries exhausted, show error to user
       error.value = 'خطا در بارگذاری دسته‌بندی‌ها. لطفا دوباره تلاش کنید.';
       console.error('All retry attempts failed');
     }
@@ -58,7 +54,6 @@ const scrollToBottom = (): void => {
       behavior: 'smooth'
     });
 
-    // Also try scrolling to footer element directly
     if (footerRef.value) {
       footerRef.value.scrollIntoView({
         behavior: 'smooth',
@@ -70,19 +65,13 @@ const scrollToBottom = (): void => {
 
 const toggleContactDetails = (): void => {
   showContactDetails.value = !showContactDetails.value;
-
-  // Scroll to bottom when expanding contact details
   if (showContactDetails.value) {
     scrollToBottom();
-  } else {
-    console.log('❌ Collapsing contact details - no scroll');
   }
 };
 
 onMounted(() => getMostViewedCategories());
 </script>
-
-
 
 <template>
   <div class="pa-4 pb-0 d-flex flex-column h-100 justify-space-between">
@@ -96,8 +85,17 @@ onMounted(() => getMostViewedCategories());
           {{ $t("home.description") }}
         </p>
 
-        <v-btn :text="$t('shared.search')" variant="outlined" color="outline" rounded="pill" size="large"
-          class="d-flex justify-space-between mt-6 mb-12" append-icon="search" to="/search" block />
+        <v-btn 
+          :text="$t('shared.search')" 
+          variant="outlined" 
+          color="outline" 
+          rounded="pill" 
+          size="large"
+          class="d-flex justify-space-between mt-6 mb-12" 
+          append-icon="search" 
+          to="/search" 
+          block 
+        />
       </header>
 
       <!-- Banner Carousel -->
@@ -124,7 +122,7 @@ onMounted(() => getMostViewedCategories());
 
     <footer ref="footerRef" class="footer-container">
       <div class="d-flex justify-space-between align-center pa-4">
-        <a class="pa-1  bg-red-lighten-5" referrerpolicy='origin' target='_blank'
+        <a class="pa-1 bg-red-lighten-5" referrerpolicy='origin' target='_blank'
           href='https://trustseal.enamad.ir/?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64'>
           <img referrerpolicy='origin'
             src='https://trustseal.enamad.ir/logo.aspx?id=555064&Code=pT1dFV6M7cdFAecFPZ5vJ6oReSgSeV64' alt='eNamad'
@@ -199,6 +197,11 @@ onMounted(() => getMostViewedCategories());
 
 .contact-item strong {
   margin-left: 4px;
+}
+
+.contact-item a {
+  color: var(--v-theme-primary);
+  text-decoration: none;
 }
 
 .contact-btn {

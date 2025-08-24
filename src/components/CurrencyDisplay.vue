@@ -24,16 +24,17 @@ const computedValue = computed(() => {
 
 <template>
   <div class="d-flex">
-    <span :class="props.valueClass" data-test="value">
+    <span :class="['flex-shrink-0', props.valueClass]" data-test="value">
       {{ computedValue }}
     </span>
 
     <span
       v-if="props.showUnit"
-      :class="['ms-1', props.unitClass]"
+      :class="['ms-1', 'flex-shrink-0', props.unitClass]"
       data-test="unit"
     >
       {{ $t(`currency.${appConfig.displayCurrencyUnit}`) }}
     </span>
   </div>
 </template>
+
