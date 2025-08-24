@@ -9,25 +9,28 @@ const firebaseConfig = {
 };
 
 /* eslint-disable no-undef */
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"
-);
-importScripts(
-  "https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"
-);
-
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
-// Retrieve an instance of Firebase Messaging to handle background messages
+// Retrieve Firebase Messaging
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage(function (payload) {
-  const { title, body } = payload.notification;
+// Handle background messages
+messaging.onBackgroundMessage((payload) => {
+  console.log(
+    "[firebase-messaging-sw.js] Received background message ",
+    payload
+  );
+
+  const notificationTitle = payload.notification.title || "New Message";
   const notificationOptions = {
-    body,
-    icon: "/firebase-logo.png",
+    body: payload.notification.body || "You have a new message",
+    icon: "/pwa-192x192.png",
+    badge: "/pwa-192x192.png",
+    data: payload.data,
   };
 
-  self.registration.showNotification(title, notificationOptions);
+  return self.registration.showNotification(
+    notificationTitle,
+    notificationOptions
+  );
 });

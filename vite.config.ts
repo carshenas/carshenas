@@ -21,21 +21,33 @@ export default defineConfig({
         // ✅ CRITICAL: Enable these for proper updates
         skipWaiting: true,
         clientsClaim: true,
-        
-        // ✅ Use globPatterns to control what gets precached
-        globPatterns: [
-          '**/*.{js,css,html,ico,png,jpg,jpeg,svg,gif,webp,woff,woff2,ttf,eot}'
+
+        // ✅ Add Firebase imports to the generated SW
+        importScripts: [
+          'https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js',
+          'https://www.gstatic.com/firebasejs/9.0.0/firebase-messaging-compat.js',
+          '/firebase-messaging-sw-import.js' // Your Firebase config and messaging logic
         ],
-        
-        // ✅ Use globIgnores instead of exclude
+
+        // ✅ Don't precache the Firebase SW file
         globIgnores: [
           '**/node_modules/**/*',
           '**/sw.js',
           '**/workbox-*.js',
           '**/*.map',
-          '**/manifest*.js'
+          '**/manifest*.js',
+          '**/firebase-messaging-sw.js', // Add this
+          '**/firebase-messaging-sw-import.js' // Add this
         ],
-        
+
+        // ✅ Add to navigation fallback denylist
+        navigateFallbackDenylist: [
+          /^\/_/,
+          /\/[^/?]+\.[^/]+$/,
+          /^\/api\//,
+          /^\/firebase-messaging-sw\.js$/, // Add this
+          /^\/firebase-messaging-sw-import\.js$/ // Add this
+        ],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.carshenas\.shop\/.*/i,
@@ -72,30 +84,25 @@ export default defineConfig({
             }
           }
         ],
-        
+
         // ✅ Navigation settings
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [
-          /^\/_/,
-          /\/[^/?]+\.[^/]+$/,
-          /^\/api\//
-        ],
-        
+
+
         // ✅ Important cleanup and optimization options
         cleanupOutdatedCaches: true,
         sourcemap: false
       },
-      
+
       manifestFilename: 'manifest.json',
       includeAssets: [
         'pwa-192x192.png',
-        'pwa-512x512.png', 
+        'pwa-512x512.png',
         'logo.svg',
         'carshenas.ico'
       ],
-      
-      injectRegister: 'auto',
 
+      injectRegister: 'auto',
       manifest: {
         name: 'Carshenas',
         short_name: 'Carshenas',
@@ -135,13 +142,14 @@ export default defineConfig({
       }
     })
   ],
-  
+
+
+
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  
   server: {
     host: '0.0.0.0',
     port: 3000,
@@ -151,7 +159,6 @@ export default defineConfig({
       'Cross-Origin-Opener-Policy': 'same-origin'
     }
   },
-  
   css: {
     preprocessorOptions: {
       scss: {

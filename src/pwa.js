@@ -1,4 +1,5 @@
 import { registerSW } from 'virtual:pwa-register'
+import { requestPermission } from './composable/notification'
 
 console.log('🔧 PWA Update System Starting...');
 
@@ -6,12 +7,27 @@ const isDev = import.meta.env.DEV;
 let isUpdating = false;
 let refreshing = false;
 
+// Add reload prevention mechanism
+const RELOAD_KEY = 'pwa_last_reload';
+const RELOAD_THRESHOLD = 5000; // 5 seconds
+
+function safeReload() {
+  const lastReload = localStorage.getItem(RELOAD_KEY);
+  const now = Date.now();
+  
+  if (!lastReload || now - parseInt(lastReload) > RELOAD_THRESHOLD) {
+    localStorage.setItem(RELOAD_KEY, now.toString());
+    window.location.reload();
+  } else {
+    console.warn('Reload prevented - too frequent reload attempts');
+  }
+}
+
 const updateSW = registerSW({
     onNeedRefresh() {
         console.log('🆕 New content available');
         
         if (isDev) {
-            // In development, be more careful about updates
             console.log('🔧 Dev mode - skipping automatic update');
             return;
         }
@@ -30,7 +46,13 @@ const updateSW = registerSW({
     onRegistered(registration) {
         console.log('✅ SW registered');
         
+        // Request Firebase permission after SW is ready
+        setTimeout(() => {
+            requestPermission();
+        }, 1000);
+        
         if (registration && !isDev) {
+            // Only check for updates on visibility change, not periodically
             document.addEventListener('visibilitychange', () => {
                 if (document.visibilityState === 'visible' && !isUpdating) {
                     registration.update().catch(() => {});
@@ -44,16 +66,20 @@ const updateSW = registerSW({
     }
 });
 
-// Only handle controllerchange in production or when we expect an update
+// Handle controller changes with safe reload
 if ('serviceWorker' in navigator && !isDev) {
-    navigator.serviceWorker.addEventListener('controllerchange', (event) => {
-        if (refreshing) return;
+    let reloadPrevented = false;
+    
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing || reloadPrevented) return;
         
-        // Check if there's actually a new controller
         if (navigator.serviceWorker.controller) {
             refreshing = true;
             console.log('🔄 SW updated, reloading...');
-            window.location.reload();
+            
+            // Prevent multiple reloads
+            reloadPrevented = true;
+            safeReload();
         }
     });
 }
