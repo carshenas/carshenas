@@ -4,11 +4,12 @@ import TheTransport from './components/TheTransport.vue'
 import TheGateway from './components/TheGateway.vue'
 import { ref, computed, watch } from 'vue'
 import { useUserStore } from "@/stores/user"
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useSnackbar } from '@/stores/snackbar'
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const step = ref<0 | 1 | 2>(0)
 const snackbarStore = useSnackbar()
@@ -23,12 +24,20 @@ watch(step, (newStep) => {
 
 const onNext = () => {
   if (!userStore.isLoggedIn && step.value === 0) {
-    router.push('/authentication?redirect=/checkout')
+    router.push({
+      path: route.path,
+      query: {
+        ...route.query,
+        auth: 'true',
+        redirect: '/checkout'
+      }
+    })
     snackbarStore.show(t('message.loginNeeded'))
     return
   }
   step.value++
 }
+
 </script>
 
 <template>
