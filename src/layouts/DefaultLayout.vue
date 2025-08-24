@@ -36,18 +36,33 @@ const toggleTheme = () => {
 }
 
 onMounted(async () => {
+  // Load saved theme first
   const savedTheme = localStorage.getItem('theme')
   if (savedTheme) {
     theme.global.name.value = savedTheme
   }
-  try {
-    const response = await getUser();
-    userStore.user.firstName = response.data.firstName
-    userStore.user.lastName = response.data.lastName
-    userStore.user.phoneNumber = response.data.phoneNumber
-    userStore.user.nationalCode = response.data.nationalCode
-  } catch (error) {
-    console.log(error)
+
+  // Only fetch user data if user is logged in
+  if (userStore.isLoggedIn) {
+    try {
+      console.log('🔄 Fetching user data...')
+      const response = await getUser();
+      
+      // Update user store with fetched data
+      userStore.user.firstName = response.data.firstName
+      userStore.user.lastName = response.data.lastName
+      userStore.user.phoneNumber = response.data.phoneNumber
+      userStore.user.nationalCode = response.data.nationalCode
+      
+      console.log('✅ User data loaded successfully')
+    } catch (error) {
+      console.error('❌ Failed to fetch user data:', error)
+      
+      // Optional: Handle specific error cases
+
+    }
+  } else {
+    console.log('👤 User not logged in, skipping user data fetch')
   }
 });
 
@@ -61,6 +76,38 @@ watch(
   () => route.fullPath,
   () => {
     isMenuOpen.value = false;
+  }
+);
+
+// Optional: Watch for login status changes and fetch user data when user logs in
+watch(
+  () => userStore.isLoggedIn,
+  async (newValue, oldValue) => {
+    // If user just logged in
+    if (newValue && !oldValue) {
+      try {
+        console.log('🔄 User logged in, fetching user data...')
+        const response = await getUser();
+        
+        userStore.user.firstName = response.data.firstName
+        userStore.user.lastName = response.data.lastName
+        userStore.user.phoneNumber = response.data.phoneNumber
+        userStore.user.nationalCode = response.data.nationalCode
+        
+        console.log('✅ User data loaded after login')
+      } catch (error) {
+        console.error('❌ Failed to fetch user data after login:', error)
+      }
+    }
+    
+    // If user logged out, clear user data
+    if (!newValue && oldValue) {
+      console.log('👋 User logged out, clearing user data')
+      userStore.user.firstName = ''
+      userStore.user.lastName = ''
+      userStore.user.phoneNumber = ''
+      userStore.user.nationalCode = ''
+    }
   }
 );
 </script>
@@ -144,6 +191,7 @@ watch(
   </div>
 </template>
 
+<!-- Your existing styles remain the same -->
 <style lang="scss" scoped>
 .app-bar {
   background: rgb(var(--v-theme-surface));

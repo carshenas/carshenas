@@ -2,7 +2,6 @@
 import TheLayout from '@/layouts/TheLayout.vue'
 import { RouterView } from 'vue-router'
 import { onMounted } from 'vue'
-import { registerServiceWorker } from '@/composable/notification'
 import useAppConfig from '@/composable/app-config'
 import GlobalSnackbar from './components/GlobalSnackbar.vue'
 
@@ -14,7 +13,6 @@ onMounted(() => {
 🌟 Web App Version ${appVersion} 🌟
 ===============================
 `)
-  registerServiceWorker()
 })
 </script>
 
