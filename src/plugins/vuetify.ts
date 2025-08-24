@@ -33,17 +33,25 @@ export default createVuetify({
       light: {
         variables: {
           "btn-height": "50px",
+          // Gradient variables
+          "gradient-primary": "linear-gradient(135deg, #FB4847 0%, #FF6B6B 100%)",
+          "gradient-secondary": "linear-gradient(135deg, #0C0634 0%, #1a1054 100%)",
+          "gradient-success": "linear-gradient(135deg, #4bb543 0%, #6bc563 100%)",
+          "gradient-error": "linear-gradient(135deg, #A80710 0%, #d91a24 100%)",
+          "gradient-surface": "linear-gradient(135deg, #f7efefff 0%, #f8f9fa 100%)",
+          "gradient-background": "linear-gradient(180deg, #ffffff 0%, #fafafa 100%)",
         },
         colors: {
           primary: "#FB4847",
           "on-primary": "#FFFFFF",
           secondary: "#0C0634",
           "on-secondary": "#FFFFFF",
-          background: "#FFFFFF",
+          background: "#ffffff",
           "on-background": "#262626",
           text: "#262626",
           "on-text": "#ffffff",
-          surface: "#ffffff",
+          surface: "#f3f3f3",
+
           "on-surface": "#242424",
           success: "#4bb543",
           "on-success": "#FFFFFF",
@@ -61,6 +69,13 @@ export default createVuetify({
         dark: true,
         variables: {
           "btn-height": "50px",
+          // Gradient variables for dark theme
+          "gradient-primary": "linear-gradient(135deg, #FB4847 0%, #FF7B7B 100%)",
+          "gradient-secondary": "linear-gradient(135deg, #24acf2 0%, #4ebcf5 100%)",
+          "gradient-success": "linear-gradient(135deg, #4bb543 0%, #6bc563 100%)",
+          "gradient-error": "linear-gradient(135deg, #eb5656 0%, #ff7070 100%)",
+          "gradient-surface": "linear-gradient(135deg, #232323 0%, #2a2a2a 100%)",
+          "gradient-background": "linear-gradient(180deg, #181818 0%, #1f1f1f 100%)",
         },
         colors: {
           primary: "#FB4847",

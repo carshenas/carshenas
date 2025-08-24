@@ -89,22 +89,22 @@ const hasColorVariants = computed<boolean>(() => {
 
 const tabItems = computed(() => {
   const items = []
-  
+
   // Only add summary tab if there's a description
   if (product.value.description) {
     items.push({ title: 'product.summery', href: '#summery' })
   }
-  
+
   // Only add details tab if there are specifications
   if (Object.keys(spec.value).length > 0) {
     items.push({ title: 'product.details', href: '#spec' })
   }
-  
+
   // Only add comments tab if user is logged in and there are comments
   if (isLoggedIn && product.value.feedbacks?.length > 0) {
     items.push({ title: 'product.comments', href: '#comments' })
   }
-  
+
   return items
 })
 
@@ -182,8 +182,8 @@ function handleNotAvailableClick() {
   <v-skeleton-loader v-else class="mx-auto" max-width="300" elevation="0" type="image" boilerplate></v-skeleton-loader>
   <h1 class="px-4 title-md">{{ product.name }}</h1>
 
-  <v-tabs v-if="shouldShowTabs && tabItems.length > 0" v-model="selectedTab" bg-color="white" align-tabs="center" class="position-sticky tab-pdp"
-    slider-color="primary" comfortable>
+  <v-tabs v-if="shouldShowTabs && tabItems.length > 0" v-model="selectedTab" bg-color="white" align-tabs="center"
+    class="position-sticky tab-pdp" slider-color="primary" comfortable>
     <v-tab v-for="(tab, index) in tabItems" :key="index" :href="tab.href" rounded="5" color="red-darken-3">
       {{ $t(tab.title) }}
     </v-tab>
@@ -204,19 +204,12 @@ function handleNotAvailableClick() {
     <p v-else class="text-medium-emphasis">
       امتیازی ثبت نشده
     </p>
-    
+
     <!-- Vehicle Badges -->
     <div v-if="product.vehicles && product.vehicles.length > 0" class="mt-3">
       <div class="d-flex flex-wrap gap-2">
-        <v-chip
-          v-for="vehicle in product.vehicles"
-          :key="vehicle"
-          rounded="lg"
-          variant="tonal"
-          color="deep-orange"
-          size="small"
-          class="text-caption font-weight-medium"
-        >
+        <v-chip v-for="vehicle in product.vehicles" :key="vehicle" rounded="lg" variant="tonal" color="deep-orange"
+          size="small" class="text-caption font-weight-medium">
           {{ vehicle }}
         </v-chip>
       </div>
@@ -245,18 +238,27 @@ function handleNotAvailableClick() {
     @feedbackSubmitted="fetchProductDetails" />
   <div class="pa-4 text-center" v-else>
     <span>برای ثبت نظر
-      <RouterLink :to="{ name: 'AuthPage' }">
+      <RouterLink :to="{
+        path: route.path,
+        query: {
+          ...route.query,
+          auth: 'true',
+          redirect: route.fullPath
+        }
+      }">
         وارد
       </RouterLink>
       شوید
     </span>
   </div>
-  
+
+
+
   <!-- Show message when logged in but no comments -->
   <div v-if="isLoggedIn && (!product.feedbacks || product.feedbacks.length === 0)" class="pa-4 text-center">
     <span class="text-medium-emphasis">نظری ثبت نشده است</span>
   </div>
-  <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-surface">
+  <div class="d-flex justify-space-between align-center px-4 py-3 elevation-5 position-sticky bottom-0 bg-surface z-10">
     <ItemCounter :variant="selectedVariant" v-if="selectedVariant && !isOutOfStock" />
     <div v-else>
       <v-btn v-if="!isOutOfStock" rounded="xs" @click="handleAddToCartClick" prepend-icon="add" color="#fd9d9c">

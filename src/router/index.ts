@@ -3,7 +3,6 @@ import product from "./product";
 import checkout from "./checkout";
 import user from "./user";
 import search from "./search";
-import login from "./login";
 import contacts from "./contacts";
 
 import { useUserStore } from "@/stores/user";
@@ -19,7 +18,6 @@ const router = createRouter({
     search,
     product,
     checkout,
-    login,
     user,
     contacts,
     {
