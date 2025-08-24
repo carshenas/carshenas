@@ -56,17 +56,14 @@ const goBack = () => {
 }
 
 const submitOtp = () => {
-  if (otpValue.value.length === 4) {
-    emit('submit-otp', otpValue.value)
-  }
+  // Guard against double call - only check props.loading
+  if (props.loading) return;
+  if (otpValue.value.length !== 4) return;
+  emit('submit-otp', otpValue.value);
 }
 
-// Auto-submit when 4 digits are entered
-watch(otpValue, (newValue) => {
-  if (newValue.length === 4) {
-    submitOtp()
-  }
-})
+// Remove auto-submit from watch to prevent double submission
+// Let v-otp-input's @finish handle auto-submit
 
 // Watch for changes in otpExpireTime (when resending OTP)
 watch(() => props.otpExpireTime, (newExpireTime) => {
@@ -113,7 +110,7 @@ onUnmounted(() => {
       />
 
       <div class="counter mt-4 d-flex justify-center align-center">
-        <p v-if="counter" class="timer-text">
+        <p v-if="counter > 0" class="-">
           {{ $t('auth.leftToReceiveTheCodeAgain', { timer }) }}
         </p>
 
@@ -128,10 +125,9 @@ onUnmounted(() => {
     </div>
 
     <v-btn 
-      :disabled="otpValue.length !== 4 || loading"
+      :disabled="otpValue.length !== 4 || loading" 
       :loading="loading" 
-      @click="submitOtp"
-      block
+      block 
       size="large"
       class="mt-4"
     >
@@ -142,7 +138,7 @@ onUnmounted(() => {
 
 <style scoped>
 .timer-text {
-  color: rgb(var(--v-theme-on-surface));
+  color: rgb(var(--v-theme-on-surface-variant));
   font-size: 0.875rem;
 }
 </style>
