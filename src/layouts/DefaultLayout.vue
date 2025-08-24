@@ -166,7 +166,7 @@ watch(
           </v-badge>
         </v-btn>
 
-        <div v-if="!userStore.isLoggedIn" v-motion :initial="{ scale: 0.9, opacity: 0 }" :enter="{
+        <div v-if="!userStore.isLoggedIn" v-motion :initial="{ scale: 0.9 }" :enter="{
           scale: 1,
           opacity: 1,
           transition: {

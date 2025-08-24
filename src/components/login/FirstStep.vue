@@ -29,7 +29,6 @@ const updateValue = (value: string) => {
 <template>
   <div class="h-100 d-flex flex-column ga-8">
     <div class="flex-grow-1">
-      <h1 class="title-lg">{{ $t('auth.login') }}</h1>
 
       <p class="body-md mt-4">{{ $t('auth.enterPhone') }}</p>
 

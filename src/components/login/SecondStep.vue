@@ -4,7 +4,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 interface Props {
   phoneNumber: string
-  otpExpireTime: number
+  otpExpireTime: number // This is seconds, not a timestamp!
   loading?: boolean
 }
 
@@ -15,12 +15,10 @@ const emit = defineEmits<{
   'resend': []
 }>()
 
-// Calculate initial counter value from expiry time
+// Since otpExpireTime is already in seconds (60), just use it directly
 const calculateInitialCounter = () => {
-  const now = Date.now()
-  const expireTime = props.otpExpireTime * 1000 // Convert to milliseconds
-  const remainingTime = Math.max(0, Math.floor((expireTime - now) / 1000))
-  return remainingTime
+  // The otpExpireTime prop is the number of seconds, not a timestamp
+  return props.otpExpireTime || 60
 }
 
 const counter = ref(calculateInitialCounter())
@@ -31,7 +29,7 @@ const startTimer = () => {
   if (refreshIntervalId) {
     clearInterval(refreshIntervalId)
   }
-  
+
   refreshIntervalId = setInterval(() => {
     if (counter.value > 0) {
       counter.value--
@@ -63,13 +61,23 @@ const submitOtp = () => {
   }
 }
 
+// Auto-submit when 4 digits are entered
+watch(otpValue, (newValue) => {
+  if (newValue.length === 4) {
+    submitOtp()
+  }
+})
+
 // Watch for changes in otpExpireTime (when resending OTP)
-watch(() => props.otpExpireTime, () => {
-  counter.value = calculateInitialCounter()
+watch(() => props.otpExpireTime, (newExpireTime) => {
+  console.log('OTP Expire Time Changed:', newExpireTime)
+  counter.value = newExpireTime || 60
   startTimer()
 })
 
 onMounted(() => {
+  console.log('Component mounted, otpExpireTime:', props.otpExpireTime)
+  console.log('Initial counter:', counter.value)
   startTimer()
 })
 
@@ -83,7 +91,6 @@ onUnmounted(() => {
 <template>
   <div class="h-100 d-flex flex-column">
     <div class="flex-grow-1">
-
       <p class="body-md mt-4">
         {{ $t('auth.enterTheVerificationCodeSent', { number: phoneNumber }) }}
       </p>
@@ -91,41 +98,51 @@ onUnmounted(() => {
       <v-btn 
         :text="$t('auth.editPhone')" 
         variant="plain" 
-        @click="goBack"
-        :disabled="loading"
+        @click="goBack" 
+        :disabled="loading" 
       />
 
       <v-otp-input 
-        v-model="otpValue"
+        v-model="otpValue" 
         dir="ltr" 
         class="mt-8" 
         autofocus 
-        :length="4"
-        :disabled="loading"
-        @finish="submitOtp"
+        :length="4" 
+        :disabled="loading || counter === 0"
+        @finish="submitOtp" 
       />
 
       <div class="counter mt-4 d-flex justify-center align-center">
-        <p v-if="counter">
+        <p v-if="counter" class="timer-text">
           {{ $t('auth.leftToReceiveTheCodeAgain', { timer }) }}
         </p>
 
-        <v-btn
-          v-else
-          :text="$t('auth.receiveTheCodeAgain')"
-          variant="plain"
+        <v-btn 
+          v-else 
+          :text="$t('auth.receiveTheCodeAgain')" 
+          variant="plain" 
           @click="receiveCodeAgain"
-          :loading="loading"
+          :loading="loading" 
         />
       </div>
     </div>
 
     <v-btn 
-      :disabled="otpValue.length !== 4"
-      :loading="loading"
+      :disabled="otpValue.length !== 4 || loading"
+      :loading="loading" 
       @click="submitOtp"
+      block
+      size="large"
+      class="mt-4"
     >
       {{ $t('auth.login') }}
     </v-btn>
   </div>
 </template>
+
+<style scoped>
+.timer-text {
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 0.875rem;
+}
+</style>
