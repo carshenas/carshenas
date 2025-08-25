@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import 'leaflet/dist/leaflet.css'
 import type { LatLng } from '@/types/dto/the-map'
 import type { VForm } from 'vuetify/components'
+import { useUserStore } from '@/stores/user' // Import the user store
 
 const props = defineProps<{
   position: LatLng
@@ -26,12 +27,22 @@ const emit = defineEmits<{
 }>()
 
 const formRef = ref<VForm | null>(null)
+const userStore = useUserStore() // Initialize user store
 
 const address = ref(props.latLngString || '')
 const plaque = ref('')
 const unit = ref('')
 const postalCode = ref('')
-const receiverName = ref('') // Added receiver name field
+const receiverName = ref('') // Receiver name field
+
+// Set default receiver name from user store on component mount
+onMounted(() => {
+  const { firstName, lastName } = userStore.user
+  if (firstName || lastName) {
+    const fullName = [firstName, lastName].filter(Boolean).join(' ')
+    receiverName.value = fullName
+  }
+})
 
 const requiredRule = (value: string) => !!value || 'لطفا آدرس خود را بنویسد'
 
@@ -49,8 +60,9 @@ const postalCodeValidation = (value: string) => {
   return regex.test(value) || 'کد پستی درست وارد کنید'
 }
 
+// Made required - updated validation
 const receiverNameValidation = (value: string) => {
-  if (!value) return true // Make it optional
+  if (!value || !value.trim()) return 'نام تحویل گیرنده الزامی است' // Required field
   return value.length >= 2 || 'نام تحویل گیرنده باید حداقل ۲ کاراکتر باشد'
 }
 
@@ -87,8 +99,14 @@ const handleSubmit = async () => {
         <!-- Receiver Name Field -->
         <v-row no-gutters>
           <v-col>
-            <v-text-field v-model="receiverName" class="pa-1 mt-4" :label="$t('user.receiverName')" variant="outlined"
-              :rules="[receiverNameValidation]" :placeholder="$t('user.receiverNamePlaceholder')" />
+            <v-text-field 
+              v-model="receiverName" 
+              class="pa-1 mt-4" 
+              :label="$t('user.receiverName')" 
+              variant="outlined"
+              :rules="[receiverNameValidation]" 
+              :placeholder="$t('user.receiverNamePlaceholder')"
+              required /> <!-- Added required attribute -->
           </v-col>
         </v-row>
 
@@ -114,7 +132,7 @@ const handleSubmit = async () => {
 
           <v-col>
             <v-text-field v-model="postalCode" type="tel" class="pa-1" :label="$t('user.postalCode')" variant="outlined"
-              :rules="[postalCodeValidation]" maxlength="10"  />
+              :rules="[postalCodeValidation]" maxlength="10" />
           </v-col>
         </v-row>
       </div>
